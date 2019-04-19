@@ -1,0 +1,14 @@
+<div>
+    <style>
+      .gotop {
+        bottom: 50px;
+        right: 50px;
+      }
+    </style>
+    <slot name="top"></slot>
+    <div x-on:click="show" class='gotop'>TOP{{msg}}</div>
+    {{list}}
+    <span x-for='i in list'  x-key='5'>show</span>
+    <p x-text=attributes.msg.value></p>
+    <slot name="bottom"></slot>
+</div>

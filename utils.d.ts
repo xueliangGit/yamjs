@@ -1,0 +1,1 @@
+declare function _extends(obj:object,oriObj:object): void
