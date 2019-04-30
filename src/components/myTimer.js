@@ -4,7 +4,8 @@ import BaseComponent, { Component } from '../lib/BaseComponent'
  @Component({
    tagName: 'my-timer',
    style: require('./myTimers.styl'),
-   shadow: false
+   shadow: false,
+   props: ['msg']
  })
 class App extends BaseComponent {
    $config () {

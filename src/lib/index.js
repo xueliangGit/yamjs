@@ -6,4 +6,4 @@ Array.prototype.flat = Array.prototype.flat || function () {
 export default BaseComponent
 // TODO 1 添加路由
 // TODO 2 添加增加减少动画
-// TODO 3 ref
+// TODO 3 添加使用注解去配置组件
