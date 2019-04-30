@@ -15,6 +15,7 @@
   "devDependencies": {
     "@babel/core": "^7.4.3",
     "@babel/plugin-proposal-decorators": "^7.4.0",
+    "@babel/plugin-proposal-export-default-from": "^7.2.0",
     "@babel/plugin-proposal-export-namespace-from": "^7.2.0",
     "@babel/plugin-proposal-function-sent": "^7.2.0",
     "@babel/plugin-proposal-numeric-separator": "^7.2.0",
@@ -24,13 +25,17 @@
     "@babel/preset-env": "^7.4.3",
     "@babel/preset-stage-2": "^7.0.0",
     "@babel/runtime": "^7.4.3",
+    "autoprefixer": "^9.5.1",
+    "babel-eslint": "^10.0.1",
     "babel-loader": "^8.0.5",
     "clean-webpack-plugin": "^2.0.1",
     "copy-webpack-plugin": "^5.0.2",
+    "css-loader": "^2.1.1",
     "eslint": "^5.16.0",
     "eslint-config-standard": "^12.0.0",
     "eslint-friendly-formatter": "^4.0.1",
     "eslint-loader": "^2.1.2",
+    "eslint-plugin-babel": "^5.3.0",
     "eslint-plugin-import": "^2.16.0",
     "eslint-plugin-node": "^8.0.1",
     "eslint-plugin-promise": "^4.1.1",
@@ -43,8 +48,13 @@
     "optimize-css-assets-webpack-plugin": "^5.0.1",
     "ora": "^3.4.0",
     "portfinder": "^1.0.20",
+    "postcss": "^7.0.14",
+    "postcss-loader": "^3.0.0",
     "rimraf": "^2.6.3",
     "shelljs": "^0.8.3",
+    "style-loader": "^0.23.1",
+    "stylus": "^0.54.5",
+    "stylus-loader": "^3.0.2",
     "tern": "^0.23.0",
     "text-loader": "0.0.1",
     "uglifyjs-webpack-plugin": "^2.1.2",
@@ -60,6 +70,9 @@
   "engines": {
     "node": ">= 6.0.0",
     "npm": ">= 3.0.0"
+  },
+  "standard": {
+    "parser": "babel-eslint"
   },
   "browserslist": [
     "> 1%",

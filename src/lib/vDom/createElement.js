@@ -1,137 +1,62 @@
 /** @jsx createElement */
 import { HTML_TAGS, GLOBAL_ATTRIBUTES, EVENT_HANDLERS } from './creatConfig'
-export function createElementJson (...arg) {
-  return [...arg]
+// eslint-disable-next-line no-extend-native
+Array.prototype.flat = Array.prototype.flat || function () {
+  return this.reduce((acc, val) => Array.isArray(val) ? acc.concat(val.flat()) : acc.concat(val), [])
 }
-
-export function createElementByJson (nodeJson) {
-  if (!nodeJson.tagName) {
-    if (Array.isArray(nodeJson)) {
-      let flag = document.createDocumentFragment()
-      nodeJson.forEach(v => flag.appendChild(createElementByJson(v)))
-      return flag
-    } else if (typeof nodeJson === 'string' || typeof nodeJson === 'number') {
-      return document.createTextNode(nodeJson.toString())
+// let i = 0
+class Element {
+  constructor (tagName, props = {}, childNodes, _root) {
+    if (typeof tagName !== 'string') {
+      console.log('tagName', typeof tagName, tagName._tagName)
     }
-    return document.createTextNode('')
+    this.tagName = tagName
+    this.props = props || {}
+    this.childNodes = Array.isArray(childNodes) ? childNodes.flat(3) : [childNodes]
+    this._root = _root // 带搞根结点
   }
-  let { tagName, props = {}, childNodes } = nodeJson
-  if (props === null) {
-    props = {}
-  }
-  const tag = HTML_TAGS[tagName]
-  const object = typeof tag === 'object'
-  const localAttrs = object ? tag.attributes || {} : {}
-  const attrs = Object.assign({}, GLOBAL_ATTRIBUTES, localAttrs)
-  const tagType = object ? tag.name : tag
-  const el = document.createElement(tagType)
-  Object.keys(props).forEach(prop => {
-    if (prop in attrs) {
-      el.setAttribute(attrs[prop], props[prop])
-    }
-    if (prop in EVENT_HANDLERS) {
-      el.addEventListener(EVENT_HANDLERS[prop], props[prop])
-    }
-  })
-  if ('style' in props) {
-    const styles = props.style
-    Object.keys(styles).forEach(prop => {
-      const value = styles[prop]
-      if (typeof value === 'number') {
-        el.style[prop] = `${value}px`
-      } else if (typeof value === 'string') {
-        el.style[prop] = value
+  render () {
+    const tag = HTML_TAGS[this.tagName] || this.tagName
+    const object = typeof tag === 'object'
+    const tagClass = typeof tag === 'function'
+    const localAttrs = object ? tag.attributes || {} : {}
+    const attrs = Object.assign({}, GLOBAL_ATTRIBUTES, localAttrs)
+    const tagType = object ? tag.name : tagClass ? tag._tagName : tag
+    const el = document.createElement(tagType)
+    el.props = this.props
+    Object.keys(this.props).forEach(prop => {
+      if (prop in attrs) {
+        el.setAttribute(attrs[prop], this.props[prop])
+      } else if (prop in EVENT_HANDLERS) {
+        el.addEventListener(EVENT_HANDLERS[prop], this.props[prop])
       } else {
-        throw new Error(`Expected "number" or "string" but received "${typeof value}"`)
+        el.setAttribute(prop, this.props[prop])
       }
     })
-  }
-  if (childNodes) {
-    doChildJSON(childNodes, el)
-  }
-  return el
-}
-function doChildJSON (childNodes, el) {
-  if (typeof childNodes === 'string') {
-    el.appendChild(document.createTextNode(childNodes))
-  } else if (childNodes.tagName) {
-    el.appendChild(createElementByJson(childNodes))
-  } else {
-    childNodes.forEach(childNode => {
-      if (typeof childNode === 'object') {
-        if (childNode.tagName) {
-          el.appendChild(createElementByJson(childNode))
+    if ('style' in this.props) {
+      const styles = this.props.style
+      Object.keys(styles).forEach(prop => {
+        const value = styles[prop]
+        if (typeof value === 'number') {
+          el.style[prop] = `${value}px`
+        } else if (typeof value === 'string') {
+          el.style[prop] = value
         } else {
-          if (Array.isArray(childNode)) {
-            doChildJSON(childNode, el)
-          } else {
-            el.appendChild(document.createTextNode(childNode.toString()))
-          }
+          throw new Error(`Expected "number" or "string" but received "${typeof value}"`)
         }
-      } else if (typeof childNode === 'string' || typeof childNode === 'number') {
-        el.appendChild(document.createTextNode(childNode))
-      } else if (typeof childNode === 'function') {
-        el.appendChild(document.createTextNode(childNode.toString()))
-      } else {
-        console.warn(new Error(`${childNode} Expected "object" or "string" but received "${typeof value}"`))
-      }
+      })
+    }
+    this.childNodes.forEach(function (child) {
+      el.appendChild(renderElement(child))
     })
+    return el
   }
 }
-export function createElement (tagName, props = {}, ...childNodes) {
-  console.log(arguments)
-  if (props === null) {
-    props = {}
-  }
-  const tag = HTML_TAGS[tagName]
-  const object = typeof tag === 'object'
-  const localAttrs = object ? tag.attributes || {} : {}
-  const attrs = Object.assign({}, GLOBAL_ATTRIBUTES, localAttrs)
-  const tagType = object ? tag.name : tag
-  const el = document.createElement(tagType)
-  Object.keys(props).forEach(prop => {
-    if (prop in attrs) {
-      el.setAttribute(attrs[prop], props[prop])
-    }
-    if (prop in EVENT_HANDLERS) {
-      el.addEventListener(EVENT_HANDLERS[prop], props[prop])
-    }
-  })
-  if ('style' in props) {
-    const styles = props.style
-    Object.keys(styles).forEach(prop => {
-      const value = styles[prop]
-      if (typeof value === 'number') {
-        el.style[prop] = `${value}px`
-      } else if (typeof value === 'string') {
-        el.style[prop] = value
-      } else {
-        throw new Error(`Expected "number" or "string" but received "${typeof value}"`)
-      }
-    })
-  }
-  doChild(childNodes, el)
-  return el
+export function renderElement (dom) {
+  return (dom instanceof Element)
+    ? dom.render() // 如果子节点也是虚拟DOM，递归构建DOM节点
+    : document.createTextNode(dom) // 如果字符串，只构建文本节点
 }
-function doChild (childNodes, el) {
-  childNodes.forEach(childNode => {
-    if (typeof childNode === 'object') {
-      if (childNode.tagName) {
-        el.appendChild(childNode)
-      } else {
-        if (Array.isArray(childNode)) {
-          doChild(childNode, el)
-        } else {
-          el.appendChild(document.createTextNode(childNode.toString()))
-        }
-      }
-    } else if (typeof childNode === 'string' || typeof childNode === 'number') {
-      el.appendChild(document.createTextNode(childNode))
-    } else if (typeof childNode === 'function') {
-      el.appendChild(document.createTextNode(childNode.toString()))
-    } else {
-      console.warn(new Error(`${childNode} Expected "object" or "string" but received "${typeof value}"`))
-    }
-  })
+export function createElementJson (tagName, props = {}, childNodes, root) {
+  return new Element(tagName, props, childNodes, root)
 }
-export default createElement

@@ -23,7 +23,7 @@ module.exports = {
   },
 
   resolve: {
-    extensions: ['.js', '.vue', '.json', '.css', '.scss'], // 添加在此的后缀所对应的文件可以省略后缀
+    extensions: ['.js', '.vue', '.json', '.css', '.scss', 'styl'], // 添加在此的后缀所对应的文件可以省略后缀
     alias: {
       // 'vue$': 'vue/dist/vue.esm.js',
       '@': resolve('src')
@@ -71,6 +71,14 @@ module.exports = {
             }
           },
           'css-loader'
+        ]
+      }, {
+        test: /\.styl$/,
+        use: [
+          // { loader: MiniCssExtractPlugin.loader },
+          'css-loader',
+          'postcss-loader',
+          'stylus-loader'
         ]
       },
       {

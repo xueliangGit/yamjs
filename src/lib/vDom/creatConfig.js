@@ -355,7 +355,8 @@ export const HTML_TAGS = {
       src: 'src',
       width: 'width'
     }
-  }
+  },
+  slot: 'slot'
 }
 export const GLOBAL_ATTRIBUTES = {
   accessKey: 'accesskey',

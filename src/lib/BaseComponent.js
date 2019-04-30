@@ -1,20 +1,21 @@
 import updateElement from './vDom'
+import { createElementJson } from './vDom/createElement'
 import { creatMutationObserser,
   proxy,
   setAttributes, _extends } from './utils'
 // eslint-disable-next-line no-unused-vars
+var $vdom = Symbol('$vdom')
+var comps = window.comps = {}
 // eslint-disable-next-line
-class BaseComponent extends HTMLElement  {
+class BaseComponent extends HTMLElement {
   constructor () {
     super()
-    console.log('BaseComponent')
+    this._config()
+    comps[this._id] = this
+    console.log('BaseComponent', this._style)
   }
   static __createElement (tagName, props = {}, ...childNodes) {
-    return {
-      tagName,
-      props,
-      childNodes: childNodes.flat(3)
-    }
+    return createElementJson(tagName, props, childNodes)
   }
   __init () {
     _extends(this.$config(), this)
@@ -44,14 +45,14 @@ class BaseComponent extends HTMLElement  {
       }))
     })
     // observe(data || {}, this)
-  }
-  connectedCallback () {
-    this.__init()
-    this.__$Els = {}
-
     if (this.component) {
       this._created()
     }
+    this.__initRefs()
+  }
+  connectedCallback () {
+    this.__$Els = {}
+    this.__init()
     this.$connectedCallback && this.$connectedCallback()
   }
   disconnectedCallback () {
@@ -70,31 +71,51 @@ class BaseComponent extends HTMLElement  {
     }
   }
   _created () {
-    if (this.template) {
-      var shadowRoot = this.__shadowRoot || (this.__shadowRoot = this.attachShadow({ mode: 'closed' }))
-      // var clone = document.importNode(this.$getFram(), true)
-      shadowRoot.appendChild(this.$getFram())
+    if (this.render) {
+      let style = document.createElement('style')
+      style.innerText = this._style
+      if (this._shadow) {
+        var shadowRoot = this.__shadowRoot || (this.__shadowRoot = this.attachShadow({ mode: 'closed' }))
+        // var clone = document.importNode(this.$getFram(), true)
+        shadowRoot.appendChild(style)
+        shadowRoot.appendChild(this.$getFram())
+      } else {
+        this.appendChild(style)
+        this.appendChild(this.$getFram())
+        this.__shadowRoot = this
+      }
     }
   }
   $update () {
-    if (this.$vdom) {
+    if (this[$vdom]) {
       console.time('$update')
-      let newNode = this.template()
+      let newNode = this.render()
       console.log(newNode)
       console.log('updte')
-      updateElement(this.$div, newNode, this.$vdom)
-      this.$vdom = newNode
+      updateElement(this.$div, newNode, this[$vdom])
+      this[$vdom] = newNode
       console.timeEnd('$update')
     }
   }
   $getFram () {
     this.$div = document.createElement('div')
-    console.log(this.template)
-    this.$vdom = this.template()
-    console.log(this.$vdom)
-    console.log('onece')
-    updateElement(this.$div, this.$vdom)
+    this.$div.setAttribute('dom', this._id)
+    // console.log(this.render)
+    try {
+      this[$vdom] = this.render()
+    } catch (e) {
+      console.log('e', e)
+    }
+    updateElement(this.$div, this[$vdom])
     return this.$div
+  }
+  __initRefs () {
+    this.$refs = this.$refs || {}
+    this.__shadowRoot.querySelectorAll('[ref]').forEach(v => {
+      this.$refs[v.getAttribute('ref')] = v
+      v.removeAttribute('ref')
+    })
+    console.log(this.__shadowRoot.querySelectorAll('[ref]'))
   }
   _animate (keyframes, duration) {
     for (let i in keyframes[0]) {
@@ -119,5 +140,36 @@ class BaseComponent extends HTMLElement  {
     return this._animate(keyframes, duration).finished
   }
 }
-
 export default BaseComponent
+export function Component (Config) {
+  let { tagName, shadow, style } = Config
+  return function (Target) {
+    Target._tagName = tagName
+    Target._shadow = !!shadow
+    Target.prototype._config = function () {
+      this._tagName = tagName
+      this._shadow = !!shadow
+      this._id = 'com_' + Date.now()
+      this._style = getStyleStr(this._id, style)
+      console.log('this._style', this._style)
+    }
+    try {
+      window.customElements.define(tagName, Target)
+    } catch (e) {
+      console.log('e', e)
+    }
+  }
+}
+function getStyleStr (_id, style) {
+  if (style) {
+    let str = style[0][1].split('\n')
+    console.log(str)
+    return str.map(v => {
+      if (v.includes('{')) {
+        return '[dom="' + _id + '"] ' + v
+      }
+      return v
+    }).join('')
+  }
+  return ''
+}

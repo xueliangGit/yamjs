@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Dom</title>
+</head>
+<body>
+    <div id="demo">
+      <p v-for='(item,key) in list' :key=key>{{item}}</p>
+    </div>
+    <script src="https://cdn.bootcss.com/vue/2.6.3/vue.min.js"></script>
+    <script>
+     var test = new Vue({
+        el:'#demo',
+        data:{
+          list:[0,2,5]
+        }
+      })
+    </script>
+</body>
+</html>
