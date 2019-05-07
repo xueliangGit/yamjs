@@ -1,4 +1,4 @@
-import BaseComponent, { Component } from '../lib/BaseComponent'
+import BaseComponent, { Component } from '../lib'
 // var style = require('./myTimers.styl')
 // console.log('style', style, style.toString())
  @Component({
@@ -8,21 +8,13 @@ import BaseComponent, { Component } from '../lib/BaseComponent'
    props: ['msg']
  })
 class App extends BaseComponent {
-   $config () {
-     console.log('my-timer:#config', this._style)
-     return {
-       component: true,
-       //  style,
-       props: ['msg']
-     }
-   }
    $data () {
      return {
        list: [1, 2, 3]
      }
    }
    show (v) {
-     alert('现在时间' + v)
+     window.alert('现在时间' + v)
    }
    showList () {
      return this.list.map(v => <li>{v}</li>)
@@ -31,11 +23,14 @@ class App extends BaseComponent {
      console.log('jsx')
      return (
        <div >
-         <p className='red' ref='p' >4341321</p>
+         <p onClick={this.show.bind(this)} className='red' ref='p' >4341321</p>
           我是myTimer
          {this.showList()}
        </div>
      )
+   }
+   $updated () {
+     console.log('isMYTIMEUpdtaeing')
    }
    $connectedCallback () {
      console.log('$connectedCallback')

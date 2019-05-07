@@ -1,4 +1,4 @@
-var generator = require('@babel/generator').default
+var generator = require('./@babel/generator').default
 function buildAttrsCall (attribs, t) {
   let properties = []
   attribs.forEach(attr => {

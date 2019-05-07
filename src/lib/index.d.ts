@@ -4,7 +4,7 @@ export  interface $config {
 }
  declare class BASEElement {
   constructor(name: string, age: number)  //构造函数
-  getName(id: number): string
+  use(plugins: object): void
   /**
     * 组件配置信息.
     * @return {props} 组件传值

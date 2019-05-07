@@ -1,5 +1,3 @@
-import { renderElement } from './createElement'
-
 /**
  *
  * [tagName,porp,child]
@@ -37,14 +35,14 @@ function doTransition (tag, child, cb = () => {}) {
 }
 export default function updateElement ($parent, newNode, oldNode, index = 0) {
   if (!oldNode && newNode) {
-    $parent.appendChild(renderElement(newNode))
+    $parent.appendChild(newNode.render())
   } else if (!newNode) {
     delItem($parent, index)
   } else if (changed(newNode, oldNode)) {
     if ($parent.childNodes[index]) {
-      $parent.replaceChild(renderElement(newNode), $parent.childNodes[index])
+      $parent.replaceChild(newNode.render(), $parent.childNodes[index])
     } else {
-      addItem($parent, renderElement(newNode))
+      addItem($parent, newNode.render())
     }
   } else if (newNode.tagName) {
     const newLength = newNode.childNodes.length

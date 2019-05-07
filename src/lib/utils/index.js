@@ -94,7 +94,65 @@ function _extends (obj, oriObj) {
 function isForDirective (str) {
 
 }
+// 获取styleStr
+function getStyleStr (_id, style) {
+  if (!style) return ''
+  if (style.i) {
+    style = [style]
+  }
+  let isScope = styleIsScope(style[0])
+  // console.log(style)
+  return style.map(v => _getStrByStyle(_id, v, isScope)).join('')
+}
+function styleIsScope (style) {
+  if (style) {
+    return style[0][1].includes('[scope]')
+  }
+  return false
+}
+function _getStrByStyle (_id, style, isScope) {
+  if (style) {
+    let str = style[0][1].split('\n')
+    let isScope = str[0].includes('scope')
+    if (isScope) {
+      str.shift()
+    }
+    console.log(str)
+    return str.map(v => {
+      if (v.includes('{')) {
+        return isScope ? '[dom="' + _id + '"] ' + v : v
+      }
+      return v
+    }).join('')
+  }
+  return ''
+}
+function isUndef (v) {
+  return v === undefined || v === null
+}
 
+function isDef (v) {
+  return v !== undefined && v !== null
+}
+
+function isTrue (v) {
+  return v === true
+}
+
+function isFalse (v) {
+  return v === false
+}
+function forEach (array, v = () => {}, get = false) {
+  let getArr = []
+  // eslint-disable-next-line no-cond-assign
+  for (let i = 0, item; item = array[i]; i++) {
+    get ? getArr.push(v(item, i)) : v(item, i)
+  }
+  return get ? getArr : null
+}
+function map (array, v = () => {}) {
+  return forEach(array, v, true)
+}
 module.exports = {
   def: def,
   protoAugment: protoAugment,
@@ -104,5 +162,12 @@ module.exports = {
   proxy,
   setAttributes,
   _extends,
-  isForDirective
+  isForDirective,
+  getStyleStr,
+  isDef,
+  isUndef,
+  isTrue,
+  isFalse,
+  forEach,
+  map
 }

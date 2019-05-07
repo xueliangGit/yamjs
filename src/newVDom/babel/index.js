@@ -1,5 +1,5 @@
-var babel = require('@babel/core')
-var t = require('@babel/types')
+var babel = require('./@babel/core')
+var t = require('./@babel/types')
 var h = require('../../components/goTopTem.html').toString()
 const code = `import {uniq, extend, flatten, cloneDeep } from "lodash"`
 const visitor = {

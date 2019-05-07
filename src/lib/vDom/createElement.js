@@ -6,16 +6,36 @@ Array.prototype.flat = Array.prototype.flat || function () {
 }
 // let i = 0
 class Element {
-  constructor (tagName, props = {}, childNodes, _root) {
-    if (typeof tagName !== 'string') {
-      console.log('tagName', typeof tagName, tagName._tagName)
+  constructor (tagName, props = undefined, childNodes, _root, isText) {
+    if (isText) {
+      this.tagName = tagName
+      this.props = props
+      this.text = childNodes
+      this.childNodes = undefined
+      this.isText = true
+    } else {
+      if (typeof tagName !== 'string') {
+        console.log('tagName', typeof tagName, tagName._tagName)
+      }
+      this.tagName = tagName
+      this.props = props
+      this.childNodes = Array.isArray(childNodes) ? childNodes.flat(3) : [childNodes]
+      this.childNodes = this.childNodes.map((v, key) => {
+        if (typeof v === 'string' || typeof v === 'number' || typeof v === 'function') {
+          v = new Element('textNode', '', v + '', _root, true)
+        }
+        v.key = key
+        return v
+      })
     }
-    this.tagName = tagName
-    this.props = props || {}
-    this.childNodes = Array.isArray(childNodes) ? childNodes.flat(3) : [childNodes]
     this._root = _root // 带搞根结点
   }
-  render () {
+  render (key) {
+    // this.key = key || 0
+    if (this.isText) {
+      this.elm = document.createTextNode(this.text)
+      return this.elm
+    }
     const tag = HTML_TAGS[this.tagName] || this.tagName
     const object = typeof tag === 'object'
     const tagClass = typeof tag === 'function'
@@ -24,32 +44,36 @@ class Element {
     const tagType = object ? tag.name : tagClass ? tag._tagName : tag
     const el = document.createElement(tagType)
     el.props = this.props
-    Object.keys(this.props).forEach(prop => {
-      if (prop in attrs) {
-        el.setAttribute(attrs[prop], this.props[prop])
-      } else if (prop in EVENT_HANDLERS) {
-        el.addEventListener(EVENT_HANDLERS[prop], this.props[prop])
-      } else {
-        el.setAttribute(prop, this.props[prop])
-      }
-    })
-    if ('style' in this.props) {
-      const styles = this.props.style
-      Object.keys(styles).forEach(prop => {
-        const value = styles[prop]
-        if (typeof value === 'number') {
-          el.style[prop] = `${value}px`
-        } else if (typeof value === 'string') {
-          el.style[prop] = value
+    if (this.props) {
+      Object.keys(this.props).forEach(prop => {
+        if (prop in attrs) {
+          el.setAttribute(attrs[prop], this.props[prop])
+        } else if (prop in EVENT_HANDLERS) {
+          el.addEventListener(EVENT_HANDLERS[prop], this.props[prop])
         } else {
-          throw new Error(`Expected "number" or "string" but received "${typeof value}"`)
+          el.setAttribute(prop, this.props[prop])
         }
       })
+      if ('style' in this.props) {
+        const styles = this.props.style
+        Object.keys(styles).forEach(prop => {
+          const value = styles[prop]
+          if (typeof value === 'number') {
+            el.style[prop] = `${value}px`
+          } else if (typeof value === 'string') {
+            el.style[prop] = value
+          } else {
+            throw new Error(`Expected "number" or "string" but received "${typeof value}"`)
+          }
+        })
+      }
     }
-    this.childNodes.forEach(function (child) {
-      el.appendChild(renderElement(child))
+
+    this.childNodes.forEach((child, key) => {
+      el.appendChild(child.render(key))
     })
-    return el
+    this.elm = el
+    return this.elm
   }
 }
 export function renderElement (dom) {
