@@ -33,8 +33,8 @@ class App extends BaseComponent {
      console.log('isMYTIMEUpdtaeing')
    }
    $connectedCallback () {
-     console.log('$connectedCallback')
      setTimeout(() => {
+       console.log('$connectedCallback')
        this.list = [1111, 2222, 333]
        console.log(this.list)
      }, 3000)

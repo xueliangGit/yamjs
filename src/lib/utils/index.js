@@ -1,6 +1,3 @@
-/**
- * @author qiangdada 2017.06.07
- */
 
 /**
  * [def 定义对象属性]
@@ -153,6 +150,30 @@ function forEach (array, v = () => {}, get = false) {
 function map (array, v = () => {}) {
   return forEach(array, v, true)
 }
+function setProp (obj, el) {
+  // Object.keys(obj.props).forEach(prop => {
+  //   if (prop in attrs) {
+  //     el.setAttribute(attrs[prop], obj.props[prop])
+  //   } else if (prop in EVENT_HANDLERS) {
+  //     el.addEventListener(EVENT_HANDLERS[prop], obj.props[prop])
+  //   } else {
+  //     el.setAttribute(prop, obj.props[prop])
+  //   }
+  // })
+  // if ('style' in obj.props) {
+  //   const styles = obj.props.style
+  //   Object.keys(styles).forEach(prop => {
+  //     const value = styles[prop]
+  //     if (typeof value === 'number') {
+  //       el.style[prop] = `${value}px`
+  //     } else if (typeof value === 'string') {
+  //       el.style[prop] = value
+  //     } else {
+  //       throw new Error(`Expected "number" or "string" but received "${typeof value}"`)
+  //     }
+  //   })
+  // }
+}
 module.exports = {
   def: def,
   protoAugment: protoAugment,
@@ -169,5 +190,6 @@ module.exports = {
   isTrue,
   isFalse,
   forEach,
-  map
+  map,
+  setProp
 }

@@ -6,7 +6,7 @@ Array.prototype.flat = Array.prototype.flat || function () {
 }
 // let i = 0
 class Element {
-  constructor (tagName, props = undefined, childNodes, _root, isText) {
+  constructor (tagName, props = {}, childNodes, _root, isText) {
     if (isText) {
       this.tagName = tagName
       this.props = props
@@ -18,7 +18,7 @@ class Element {
         console.log('tagName', typeof tagName, tagName._tagName)
       }
       this.tagName = tagName
-      this.props = props
+      this.props = props || {}
       this.childNodes = Array.isArray(childNodes) ? childNodes.flat(3) : [childNodes]
       this.childNodes = this.childNodes.map((v, key) => {
         if (typeof v === 'string' || typeof v === 'number' || typeof v === 'function') {
@@ -27,6 +27,14 @@ class Element {
         v.key = key
         return v
       })
+      const tag = HTML_TAGS[this.tagName] || this.tagName
+      const object = typeof tag === 'object'
+      const tagClass = typeof tag === 'function'
+      const localAttrs = object ? tag.attributes || {} : {}
+      const attrs = Object.assign({}, GLOBAL_ATTRIBUTES, localAttrs)
+      const tagType = object ? tag.name : tagClass ? tag._tagName : tag
+      this.tagType = tagType
+      this.attrs = attrs
     }
     this._root = _root // 带搞根结点
   }
@@ -36,18 +44,13 @@ class Element {
       this.elm = document.createTextNode(this.text)
       return this.elm
     }
-    const tag = HTML_TAGS[this.tagName] || this.tagName
-    const object = typeof tag === 'object'
-    const tagClass = typeof tag === 'function'
-    const localAttrs = object ? tag.attributes || {} : {}
-    const attrs = Object.assign({}, GLOBAL_ATTRIBUTES, localAttrs)
-    const tagType = object ? tag.name : tagClass ? tag._tagName : tag
-    const el = document.createElement(tagType)
+
+    const el = document.createElement(this.tagType)
     el.props = this.props
     if (this.props) {
       Object.keys(this.props).forEach(prop => {
-        if (prop in attrs) {
-          el.setAttribute(attrs[prop], this.props[prop])
+        if (prop in this.attrs) {
+          el.setAttribute(this.attrs[prop], this.props[prop])
         } else if (prop in EVENT_HANDLERS) {
           el.addEventListener(EVENT_HANDLERS[prop], this.props[prop])
         } else {

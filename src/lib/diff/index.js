@@ -113,31 +113,37 @@ function sameVnode (a, b) {
   return (
     a.key === b.key &&
     a.tagName === b.tagName &&
-    sameInputType(a, b)
+    sameInputType(a, b) &&
+    editProp(a, b)
     // &&
-    // sameProp(a.props, b.props) &&
     //   // a.isComment === b.isComment &&
     //   // (!!a.data) === (!!b.data) &&
     //   sameInputType(a, b)
   )
 }
-// function sameProp (a, b) {
-//   let newProp = Object.keys(Object.assign({}, a, b))
-//   if (!newProp) return true
-//   for (let i = 0, keys; keys = newProp[i]; i++) {
-//     // console.log(a[keys], b[keys], keys)
-//     if (keys.indexOf('on') === 0) {
-//       if (a[keys].toString() !== b[keys].toString()) {
-//         return false
-//       }
-//     } else {
-//       if (a[keys] !== b[keys]) {
-//         return false
-//       }
-//     }
-//   }
-//   return true
-// }
+function editProp (a, b) {
+  let newProp = Object.keys(Object.assign({}, a.props || {}, b.props || {}))
+  // eslint-disable-next-line no-cond-assign
+  for (let i = 0, keys; keys = newProp[i]; i++) {
+    if (b.props[keys]) {
+      if (a.props[keys] !== b.props[keys]) {
+        a.props[keys] = b.props[keys]
+        setProp(keys, b.attrs, b.props[keys], a.elm)
+      }
+    } else {
+      if (a.props[keys]) {
+        delete a.props[keys]
+        a.elm.removeAttribute(a.attrs[keys])
+      }
+    }
+  }
+  return true
+}
+function setProp (keys, attrs, props, elm) {
+  if (keys in attrs) {
+    elm.setAttribute(attrs[keys], props)
+  }
+}
 /**
 * 比较两个节点是否同为 input 标签且 type 相同
 */
@@ -154,6 +160,10 @@ function sameInputType (a, b) {
     */
 function patchVnode (oldVnode, vnode) {
   /* 两个节点全等，不做改变，直接 return  */
+  // 如果新老 vnode 相等
+  if (oldVnode === vnode) {
+    return
+  }
   if (oldVnode.text && oldVnode.text === vnode.text) {
     vnode.elm = oldVnode.elm
     return
@@ -173,21 +183,12 @@ function patchVnode (oldVnode, vnode) {
 
   /* 新节点是文本节点，直接设置文本 */
   if (vnode.text) {
-    /// / console.log(vnode, oldVnode)
     nodeOps.setTextContent(elm, vnode.text)
   } else {
     /* 新老节点的孩子节点都存在且不相等，调用 updateChildren 比较孩子节点 */
     // && (oldCh !== ch)
     if (oldCh && ch && ch.length) {
       updateChildren(elm, oldCh, ch)
-
-      // if (ch.length === 1) {
-      //   if (ch[0].text) {
-      //     nodeOps.setTextContent(elm, ch[0].text)
-      //   }
-      // } else {
-      //   updateChildren(elm, oldCh, ch)
-      // }
     } else if (ch && ch.length) {
       /* 只有新节点的孩子节点存在 */
       /* 老节点为文本节点，则首先清除其节点文本内容  */
@@ -240,16 +241,18 @@ function updateChildren (parentElm, oldCh, newCh) {
       patchVnode(oldEndVnode, newEndVnode)
       oldEndVnode = oldCh[--oldEndIdx]
       newEndVnode = newCh[--newEndIdx]
-    } else if (sameVnode(oldStartVnode, newEndVnode)) {
+    } else if (sameVnode(oldStartVnode, newEndVnode)) { // Vnode moved right
       /* 当两个节点相同时，调用 patchVnode ，将 oldStartVnode 插入父节点最后并更新索引以及对应的节点指向 */
       patchVnode(oldStartVnode, newEndVnode)
       nodeOps.insertBefore(parentElm, oldStartVnode.elm, nodeOps.nextSibling(oldEndVnode.elm))
       oldStartVnode = oldCh[++oldStartIdx]
-    } else if (sameVnode(oldEndVnode, newStartVnode)) {
-      /* 当两个节点相同时，调用 patchVnode ，将 oldStartVnode 插入父节点最前面并更新索引以及对应的节点指向 */
+      newEndVnode = newCh[--newEndIdx]
+    } else if (sameVnode(oldEndVnode, newStartVnode)) { // Vnode moved left
+      /* 当两个节点相同时，调用 patchVnode ，将oldEndVnode  插入oldStartVnode前面并更新索引以及对应的节点指向 */
       patchVnode(oldEndVnode, newStartVnode)
       nodeOps.insertBefore(parentElm, oldEndVnode.elm, oldStartVnode.elm)
       oldEndVnode = oldCh[--oldEndIdx]
+      newStartVnode = newCh[++newStartIdx]
     } else {
       /* 当以上条件都不满足，调用 createKeyToOldIdx 获取一个 key-索引 的 map 集合 */
       let elmToMove = oldCh[idxInOld]

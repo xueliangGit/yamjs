@@ -8,7 +8,7 @@ var $vdom = Symbol('$vdom')
 var $componentData = Symbol('$componentData')
 // 初始化 init
 let styleIsInstalled = {}
-function init () {
+function _init () {
   _extends(this.$config(), this)
   let data = this[$componentData] = this.$data()
   if (this._props) {
@@ -66,26 +66,26 @@ function createdComponent () {
       // this.appendChild(style)
       this.appendChild(getFram.call(this))
       this.__shadowRoot = this
-      // let parent = this.parentElement
-      // while (parent.parentElement) {
-      //   parent = parent.parentNode
-      // }
-      // let nameStyle = parent.tagName === 'HTML' ? 'HTML' : parent.parentNode.host.tagName
-      // if (!styleIsInstalled[nameStyle]) {
-      //   styleIsInstalled[nameStyle] = []
-      // }
-      // if (!styleIsInstalled[nameStyle].includes(this._eid)) {
-      //   if (parent.tagName === 'HTML') {
-      //   // body
-      //     document.head.appendChild(style)
-      //   } else {
-      //   // div inner
-      //     parent.parentNode.insertBefore(style, parent)
-      //   }
-      //   // nameStyle
-      //   console.log('parent', parent.parentNode, styleIsInstalled)
-      //   styleIsInstalled[nameStyle].push(this._eid)
-      // }
+      let parent = this.parentElement
+      while (parent.parentElement) {
+        parent = parent.parentNode
+      }
+      let nameStyle = parent.tagName === 'HTML' ? 'HTML' : parent.parentNode.host.tagName
+      if (!styleIsInstalled[nameStyle]) {
+        styleIsInstalled[nameStyle] = []
+      }
+      if (!styleIsInstalled[nameStyle].includes(this._eid)) {
+        if (parent.tagName === 'HTML') {
+        // body
+          document.head.appendChild(style)
+        } else {
+        // div inner
+          parent.parentNode.insertBefore(style, parent)
+        }
+        // nameStyle
+        console.log('parent', parent.parentNode, styleIsInstalled)
+        styleIsInstalled[nameStyle].push(this._eid)
+      }
     }
     //
   }
@@ -94,7 +94,7 @@ function createdComponent () {
 function getFram () {
   this.$div = document.createElement('div')
   this.$div.setAttribute('dom', this._eid)
-  // console.log(this.render)
+  // console.log(this.render.toString())
   try {
     this[$vdom] = this.render()
   } catch (e) {
@@ -113,8 +113,11 @@ async function update () {
       this[$vdom] = newNode
       updateElement(this.$div, newNode, oldNode)
       console.timeEnd('------$update')
+      console.log(newNode)
       this.$updated()
     }
   })
 }
-export default init
+export default function init (context) {
+  _init.call(context)
+}

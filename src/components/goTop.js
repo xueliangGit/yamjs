@@ -11,8 +11,8 @@ import MyTimer from './myTimer'
 class App extends BaseComponent {
   $data () {
     return {
-      list: [0, 1, 2, 3],
-      index: 0
+      list: [0, 12, 2, 3],
+      index: 1
     }
   }
   show (v) {
@@ -38,11 +38,12 @@ class App extends BaseComponent {
   render () {
     return (
       <div >
-        <div>
+        {this.list.map((v, k) => <li key={k} ani='fade'>{v}</li>) }
+        {/* <div>
           <span onClick={this.switch.bind(this, 2)}>我的</span>
           <span onClick={this.switch.bind(this, 1)}>nide</span>
-        </div>
-        {this.getList()}
+        </div> */}
+        {/* {this.getList()} */}
         <div />
         {/* {this.list.length > 3 ? <input type='text' placeholder='asdas' /> : <input type='text' placeholder='123' />} */}
         {/* <my-timer >
@@ -67,13 +68,13 @@ class App extends BaseComponent {
     setTimeout(() => {
       // this.list = [5, 6, 7, 78]
       let p = []
-      for (let j = 0; j < 10; j++) {
+      for (let j = 0; j < 500; j++) {
         p.push(j)
       }
       console.time('beginUpdate1')
       this.list = p
       console.timeEnd('beginUpdate1')
-      // console.log(this.list)
+      console.log(this.list)
       setTimeout(() => {
         let pp = []
         for (let l = 0; l < 8000; l++) {
