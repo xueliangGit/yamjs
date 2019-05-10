@@ -33,6 +33,7 @@ class Element {
       const localAttrs = object ? tag.attributes || {} : {}
       const attrs = Object.assign({}, GLOBAL_ATTRIBUTES, localAttrs)
       const tagType = object ? tag.name : tagClass ? tag._tagName : tag
+      this.isElement = tagClass ? tag.customElements : true
       this.tagType = tagType
       this.attrs = attrs
     }
@@ -44,7 +45,18 @@ class Element {
       this.elm = document.createTextNode(this.text)
       return this.elm
     }
-
+    if (!this.isElement) {
+      this.elm = document.createElement('div');
+      // this.elm._domInsertCall = () => {
+      //  eslint-disable-next-line new-cap
+      (new this.tagName()).renderAt(this.elm)
+      // }
+      this.elm.disconnectedCallback = () => {
+        //  eslint-disable-next-line new-cap
+        (new this.tagName()).disconnectedCallback(this.elm)
+      }
+      return this.elm
+    }
     const el = document.createElement(this.tagType)
     el.props = this.props
     if (this.props) {

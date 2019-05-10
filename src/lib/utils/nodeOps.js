@@ -21,12 +21,18 @@ function createComment (text) {
 }
 function insertBefore (parentNode, newNode, referenceNode) {
   parentNode.insertBefore(newNode, referenceNode)
+  insertCall(newNode)
 }
 function removeChild (node, child) {
   node.removeChild(child)
+  // 移除事件 触发
+  if (child.disconnectedCallback && !child.isUnset) {
+    child.disconnectedCallback()
+  }
 }
 function appendChild (node, child) {
   node.appendChild(child)
+  insertCall(child)
 }
 function parentNode (node) {
   return node.parentNode
@@ -43,6 +49,15 @@ function setTextContent (node, text) {
 function setAttribute (node, key, val) {
   node.setAttribute(key, val)
 }
+function setAttachShadow (node, conf = {}) {
+  return node.attachShadow(conf)
+}
+// addCallBack
+function insertCall (child) {
+  if (child._domInsertCall) {
+    child._domInsertCall()
+  }
+}
 var nodeOps = Object.freeze({
   createElement: createElement$1,
   // createElementNS: createElementNS,
@@ -55,6 +70,7 @@ var nodeOps = Object.freeze({
   nextSibling: nextSibling,
   tagName: tagName,
   setTextContent: setTextContent,
-  setAttribute: setAttribute
+  setAttribute: setAttribute,
+  setAttachShadow
 })
 export default nodeOps

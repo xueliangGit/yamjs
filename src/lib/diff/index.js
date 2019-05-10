@@ -1,4 +1,4 @@
-import nodeOps from './nodeOps'
+import nodeOps from '../utils/nodeOps'
 // import { renderElement } from '../vDom/createElement'
 import { isDef } from '../utils'
 // import _ from 'lodash'

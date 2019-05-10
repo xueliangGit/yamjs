@@ -1,8 +1,7 @@
 // import updateElement from '../vDom'
 import updateElement from '../diff'
-// /creatMutationObserser ,setAttributes,
-import { proxy, _extends } from '../utils'
-import nodeOps from '../utils/nodeOps'
+
+import { creatMutationObserser, proxy, setAttributes, _extends } from '../utils'
 // $vdom Symbol
 var $vdom = Symbol('$vdom')
 // $componentData Symbol
@@ -10,24 +9,19 @@ var $componentData = Symbol('$componentData')
 // 初始化 init
 let styleIsInstalled = {}
 function _init () {
-  if (this.elm) {
-    bindElmentEvent(this)
-  } else {
-    this.elm = this
-  }
   _extends(this.$config(), this)
   let data = this[$componentData] = this.$data()
-  // if (this._props) {
-  //   this._props.forEach(v => {
-  //     data[v] = this.getAttribute(v)
-  //     setAttributes(this, v, this.getAttribute(v))
-  //   })
-  //   this.mutation = creatMutationObserser(this, (record) => {
-  //     if (record.type === 'attributes') {
-  //       setAttributes(this, record.attributeName, this.getAttribute(record.attributeName))
-  //     }
-  //   }, { attributeFilter: this._props })
-  // }
+  if (this._props) {
+    this._props.forEach(v => {
+      data[v] = this.getAttribute(v)
+      setAttributes(this, v, this.getAttribute(v))
+    })
+    this.mutation = creatMutationObserser(this, (record) => {
+      if (record.type === 'attributes') {
+        setAttributes(this, record.attributeName, this.getAttribute(record.attributeName))
+      }
+    }, { attributeFilter: this._props })
+  }
   Object.keys(data).forEach(key => {
     proxy(key, Object.defineProperty(this, key, {
       configurable: false,
@@ -64,18 +58,15 @@ function createdComponent () {
     style.type = 'text/css'
     style.innerText = this._style
     if (this._shadow) {
-      var shadowRoot = this.__shadowRoot || (this.__shadowRoot = nodeOps.setAttachShadow(this.elm, { mode: 'closed' }))
+      var shadowRoot = this.__shadowRoot || (this.__shadowRoot = this.attachShadow({ mode: 'closed' }))
       // var clone = document.importNode(getFram.call(this), true)
-      nodeOps.appendChild(shadowRoot, style)
-      nodeOps.appendChild(shadowRoot, getFram.call(this, true))
-      // shadowRoot.appendChild(style)
-      // shadowRoot.appendChild(getFram.call(this))
+      shadowRoot.appendChild(style)
+      shadowRoot.appendChild(getFram.call(this))
     } else {
       // this.appendChild(style)
-      nodeOps.appendChild(this.elm, getFram.call(this))
-      // this.appendChild(getFram.call(this))
-      this.__shadowRoot = this.elm
-      let parent = this.elm
+      this.appendChild(getFram.call(this))
+      this.__shadowRoot = this
+      let parent = this.parentElement
       while (parent.parentElement) {
         parent = parent.parentNode
       }
@@ -99,18 +90,10 @@ function createdComponent () {
     //
   }
 }
-// 若不是 自定元素仅仅值一个自定义组件需要绑定 相应的到元素上事件
-function bindElmentEvent (context) {
-  context.elm.disconnectedCallback = context.disconnectedCallback
-}
 // 获取dom片段
-function getFram (isNeedDiv = false) {
-  if (isNeedDiv) {
-    this.$div = document.createElement('div')
-    this.$div.setAttribute('dom', this._eid)
-  } else {
-    this.$div = document.createDocumentFragment()
-  }
+function getFram () {
+  this.$div = document.createElement('div')
+  this.$div.setAttribute('dom', this._eid)
   // console.log(this.render.toString())
   try {
     this[$vdom] = this.render()

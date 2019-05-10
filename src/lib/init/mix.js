@@ -4,10 +4,12 @@ import { createElementJson } from '../vDom/createElement'
 var reserved = 'constructor __createElement connectedCallback $connectedCallback disconnectedCallback $config $data mutation render'
 // 安装的扩展
 var installed = []
+window.parant = []
 export function Mix () {
   return function (Target) {
     Target.__createElement = (tagName, props = {}, ...childNodes) => {
       // childNodes = childNodes.length ? childNodes : undefined
+      window.parant.push(tagName)
       return createElementJson(tagName, props, childNodes)
     }
     Target.use = (Config) => {

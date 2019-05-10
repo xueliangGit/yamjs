@@ -1,4 +1,4 @@
-import nodeOps from './nodeOps'
+import nodeOps from '../utils/nodeOps'
 /**
  * 跨平台 Dom 操作 API 适配器
  */

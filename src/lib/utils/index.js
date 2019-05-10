@@ -82,9 +82,9 @@ function setAttributes (obj, name, value) {
     obj[name] = value
   }
 }
-function _extends (obj, oriObj) {
-  for (let i in obj) {
-    oriObj[i] = obj[i]
+function _extends (oriObj, obj) {
+  for (let i in oriObj) {
+    obj[i] = oriObj[i]
   }
 }
 // 处理list forDiractive

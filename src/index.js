@@ -1,2 +1,4 @@
 import './components/common'
-import './components/goTop.js'
+import App from './components/goTop.js'
+// eslint-disable-next-line no-new
+(new App()).renderAt('#app')

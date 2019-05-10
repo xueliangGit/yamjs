@@ -5,6 +5,7 @@ import BaseComponent, { Component } from '../lib'
    tagName: 'my-timer',
    style: require('./myTimers.styl'),
    shadow: false,
+   customElements: false,
    props: ['msg']
  })
 class App extends BaseComponent {

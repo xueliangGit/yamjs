@@ -5,10 +5,15 @@ import MyTimer from './myTimer'
 @Component({
   tagName: 'go-top',
   style: require('./goTop.styl'),
-  shadow: false,
+  shadow: true,
+  customElements: false,
   props: ['msg']
 })
 class App extends BaseComponent {
+  constructor () {
+    super()
+    console.log('isCustomElements', this)
+  }
   $data () {
     return {
       list: [0, 12, 2, 3],
@@ -29,21 +34,21 @@ class App extends BaseComponent {
     if (this.index === 1) {
       return this.list.map((v, k) => <div key={k} ani='fade'>{v}</div>)
     } else if (this.index === 2) {
-      return <my-timer >
+      return <MyTimer >
       123123
-      </my-timer>
+      </MyTimer>
     }
     return ''
   }
   render () {
     return (
       <div >
-        {this.list.map((v, k) => <li key={k} ani='fade'>{v}</li>) }
-        {/* <div>
+        {/* {this.list.map((v, k) => <li key={k} ani='fade'>{v}</li>) } */}
+        <div>
           <span onClick={this.switch.bind(this, 2)}>我的</span>
           <span onClick={this.switch.bind(this, 1)}>nide</span>
-        </div> */}
-        {/* {this.getList()} */}
+        </div>
+        {this.getList()}
         <div />
         {/* {this.list.length > 3 ? <input type='text' placeholder='asdas' /> : <input type='text' placeholder='123' />} */}
         {/* <my-timer >
@@ -77,7 +82,7 @@ class App extends BaseComponent {
       console.log(this.list)
       setTimeout(() => {
         let pp = []
-        for (let l = 0; l < 8000; l++) {
+        for (let l = 0; l < 8; l++) {
           pp.push(l)
         }
         console.time('beginUpdate2')
