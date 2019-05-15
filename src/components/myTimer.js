@@ -6,7 +6,7 @@ import BaseComponent, { Component } from '../lib'
    style: require('./myTimers.styl'),
    shadow: false,
    customElements: false,
-   props: ['msg']
+   props: ['msgTime']
  })
 class App extends BaseComponent {
    $data () {
@@ -15,17 +15,21 @@ class App extends BaseComponent {
      }
    }
    show (v) {
-     window.alert('现在时间' + v)
+     console.log(this.emitProp('showFn', 'asdasd'))
+   }
+   showP (v) {
+     console.log('adsasd')
+     console.log(this)
    }
    showList () {
      return this.list.map(v => <li>{v}</li>)
    }
    render () {
-     console.log('jsx')
      return (
        <div >
          <p onClick={this.show.bind(this)} className='red' ref='p' >4341321</p>
           我是myTimer
+         <p> {this.msgTime }</p>
          {this.showList()}
        </div>
      )
@@ -37,7 +41,6 @@ class App extends BaseComponent {
      setTimeout(() => {
        console.log('$connectedCallback')
        this.list = [1111, 2222, 333]
-       console.log(this.list)
      }, 3000)
    }
  }

@@ -49,7 +49,7 @@ function insert (parent, elm, ref) {
     * @param {object} vnode 当前节点的下一个节点，如果存在则表示将当前节点插入此节点（refElm）之前
     */
 function createElm (vnode, parentElm, refElm) {
-  insert(parentElm, vnode.render(), refElm)
+  insert(parentElm, vnode.render(null, parentElm), refElm)
 
   /* 存在tag，则创建标签，否则创建文本节点 */
   // if (vnode.tag) {
@@ -110,9 +110,10 @@ function sameVnode (a, b) {
   //     // (!!a.data) === (!!b.data) &&
   //     sameInputType(a, b)
   // )
+  // tagType 代替tagName
   return (
     a.key === b.key &&
-    a.tagName === b.tagName &&
+    a.tagType === b.tagType &&
     sameInputType(a, b) &&
     editProp(a, b)
     // &&

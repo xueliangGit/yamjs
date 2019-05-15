@@ -1,5 +1,7 @@
 /** @jsx createElement */
 import { HTML_TAGS, GLOBAL_ATTRIBUTES, EVENT_HANDLERS } from './creatConfig'
+import nodeOps from '../utils/nodeOps'
+import { $ComponentSymbol } from '../symbol'
 // eslint-disable-next-line no-extend-native
 Array.prototype.flat = Array.prototype.flat || function () {
   return this.reduce((acc, val) => Array.isArray(val) ? acc.concat(val.flat()) : acc.concat(val), [])
@@ -21,7 +23,8 @@ class Element {
       this.props = props || {}
       this.childNodes = Array.isArray(childNodes) ? childNodes.flat(3) : [childNodes]
       this.childNodes = this.childNodes.map((v, key) => {
-        if (typeof v === 'string' || typeof v === 'number' || typeof v === 'function') {
+        // if (typeof v === 'string' || typeof v === 'number' || typeof v === 'function' || typeof v === 'undefined' || typeof v === 'null') {
+        if (typeof v !== 'object') {
           v = new Element('textNode', '', v + '', _root, true)
         }
         v.key = key
@@ -39,26 +42,35 @@ class Element {
     }
     this._root = _root // 带搞根结点
   }
-  render (key) {
+  render (key, parentELm = null) {
     // this.key = key || 0
     if (this.isText) {
       this.elm = document.createTextNode(this.text)
       return this.elm
     }
+    let el = null
     if (!this.isElement) {
-      this.elm = document.createElement('div');
-      // this.elm._domInsertCall = () => {
+      let cacheDom = document.createElement('div')
+      // let cacheDom = document.createDocumentFragment()
+      // 回调
+      cacheDom._parentNode = parentELm
+      cacheDom._parentElement = parentELm
       //  eslint-disable-next-line new-cap
-      (new this.tagName()).renderAt(this.elm)
-      // }
-      this.elm.disconnectedCallback = () => {
-        //  eslint-disable-next-line new-cap
-        (new this.tagName()).disconnectedCallback(this.elm)
+      this[$ComponentSymbol] = new this.tagName()
+      this[$ComponentSymbol].props = this.props
+      this[$ComponentSymbol].renderAt(cacheDom)
+      cacheDom[$ComponentSymbol] = this[$ComponentSymbol]
+      console.log(this[$ComponentSymbol])
+      cacheDom.firstChild.disconnectedCallback = () => {
+        this[$ComponentSymbol].disconnectedCallback && this[$ComponentSymbol].disconnectedCallback()
       }
-      return this.elm
+      el = cacheDom
+    } else {
+      el = document.createElement(this.tagType)
+      el._parentNode = parentELm
+      el._parentElement = parentELm
     }
-    const el = document.createElement(this.tagType)
-    el.props = this.props
+    // el.props = this.props
     if (this.props) {
       Object.keys(this.props).forEach(prop => {
         if (prop in this.attrs) {
@@ -83,9 +95,9 @@ class Element {
         })
       }
     }
-
     this.childNodes.forEach((child, key) => {
-      el.appendChild(child.render(key))
+      nodeOps.appendChild(el, child.render(key, el))
+      // el.appendChild(child.render(key))
     })
     this.elm = el
     return this.elm

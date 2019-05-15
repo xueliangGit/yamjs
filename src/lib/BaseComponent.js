@@ -35,15 +35,29 @@ class BaseComponent {
   // 会被覆盖的方法
   $updated () {
   }
+  // 渲染
   renderAt (el) {
     if (!this.isCustomElements) {
       this.elm = typeof el === 'string' ? document.querySelector(el) : el
-      // _extends($el, this)
-      // _extends($el.prototype, this.prototype)
       this.connectedCallback(true)
     }
   }
+  // 执行方法
+  emit (fnName, ...params) {
+    console.log(fnName, this)
+    return (typeof this[fnName] === 'function' ? this[fnName](...params) : (() => {
+      console.warn(`该组件【${this._tagName}】没有这个方法:【${fnName}】`)
+    })(...params))
+  }
+  // 触发父级方法
+  emitProp (fnName, ...params) {
+    console.log(fnName, this.props[fnName])
+    return typeof this.props[fnName] === 'function' ? this.props[fnName](...params) : (() => {
+      console.warn(`该组件【${this._tagName}】没有接收到父组件的传值:【${fnName}】`)
+    })(...params)
+  }
 }
+
 export default BaseComponent
 // 注解
 export function Component (Config) {
