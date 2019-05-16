@@ -86,9 +86,9 @@ class App extends BaseComponent {
         {this.list.map(v => <p key={v} onClick={this.show.bind(this, v)}>{v * -1 }</p>)}
         {this.list.map(v => <p key={v} onClick={this.show.bind(this, v)}>{v * -10 }</p>)} */}
         {/* <video /> */}
-        {/* <my-timer >
+        <MyTimer >
           123123
-        </my-timer> */}
+        </MyTimer>
       </div>
     )
   }

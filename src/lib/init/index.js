@@ -1,7 +1,7 @@
 // import updateElement from '../vDom'
 import updateElement from '../diff'
 // /creatMutationObserser ,setAttributes,
-import { proxy, _extends } from '../utils'
+import { proxy, _extends, creatMutationObserser, setAttributes } from '../utils'
 import nodeOps from '../utils/nodeOps'
 import lifeCycle from './lifeCycle'
 import { $ComponentSymbol, $vdomSymbol, $componentDataSymbol } from '../symbol'
@@ -22,11 +22,15 @@ function _init () {
       data[v] = this.props ? this.props[v] : this.elm.getAttribute(v)
       // setAttributes(this, v, this.getAttribute(v))
     })
-    // this.mutation = creatMutationObserser(this, (record) => {
-    //   if (record.type === 'attributes') {
-    //     setAttributes(this, record.attributeName, this.getAttribute(record.attributeName))
-    //   }
-    // }, { attributeFilter: this._props })
+    if (!this.props) {
+      this.mutation = creatMutationObserser(this.elm, (record) => {
+        if (record.type === 'attributes') {
+          setAttributes(this, record.attributeName, this.elm.getAttribute(record.attributeName))
+          console.log(this)
+          _update(this)
+        }
+      }, { attributeFilter: this._props })
+    }
   }
   Object.keys(data).forEach(key => {
     proxy(key, Object.defineProperty(this, key, {
@@ -48,7 +52,14 @@ function _init () {
   lifeCycle.mounted(this)
 }
 function _update (context) {
-  update.call(context)
+  if (context.__isWillupdate) {
+    clearTimeout(context.__isWillupdate)
+    context.__isWillupdate = null
+  }
+  context.__isWillupdate = setTimeout(() => {
+    context.__isWillupdate = null
+    update.call(context)
+  }, 300)
 }
 function initRefs () {
   this.$refs = this.$refs || {}
@@ -109,7 +120,7 @@ function bindElmentEvent (context) {
   // 调用组件的方法
   context.elm.emit = (...arg) => { context.emit(...arg) }
   // 调用父组件的方法
-  context.elm.emitProp = (...arg) => { context.emit(...arg) }
+  context.elm.emitProp = (...arg) => { context.emitProp(...arg) }
   // context.elm.emit = (fnName) => {
   //   console.log(context)
   //   return (context[fnName] || function () {

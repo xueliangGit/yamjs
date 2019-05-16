@@ -1,7 +1,7 @@
 import { createElementJson } from '../vDom/createElement'
 // 注解
 // 预留字段
-var reserved = 'constructor __createElement connectedCallback $connectedCallback disconnectedCallback $disconnectedCallback $config $data mutation render'
+var reserved = 'constructor __createElement connectedCallback $connectedCallback disconnectedCallback $disconnectedCallback $config $data mutation render $beforeCreate $created $beforeMount $mounted $beforeDestroyed $destroyed $beforeUpdate $updated renderAt emit emitProp __connectedCallback __disconnectedCallback __beforeDisconnectedCallback _config __isWillupdate'
 // 安装的扩展
 var installed = []
 window.parant = []
@@ -32,7 +32,7 @@ export function Mix () {
           `)
         return false
       }
-      if (installed.includes(name)) {
+      if (installed.includes(name) || Target.prototype[name]) {
         console.info(`已经注册此扩展:${name}`)
       } else {
         installed.push(name)

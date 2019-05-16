@@ -11,11 +11,16 @@
   </script>
 </head>
 <body>
-  <div msg='1111111' id='app'></div>
+  <div onasd='fun' msg='1111111' id='app'></div>
   <go-top msg={a:123123}>
     <div slot='bottom'>456</div>
     <div slot='top'> </div>
   </go-top>
   <my-timer></my-timer>
+  <script>
+  function fun(){
+    console.log(arguments)
+  }
+  </script>
 </body>
 </html>

@@ -26,6 +26,12 @@ class Element {
         // if (typeof v === 'string' || typeof v === 'number' || typeof v === 'function' || typeof v === 'undefined' || typeof v === 'null') {
         if (typeof v !== 'object') {
           v = new Element('textNode', '', v + '', _root, true)
+        } else if (!v.tagName) {
+          try {
+            v = new Element('textNode', '', JSON.stringify(v) + '', _root, true)
+          } catch (e) {
+            v = new Element('textNode', '', '无法识别', _root, true)
+          }
         }
         v.key = key
         return v

@@ -174,6 +174,7 @@ function setProp (obj, el) {
   //   })
   // }
 }
+const toCamelCase = str => str.replace(/-(\w)/g, (x) => { return x.slice(1).toUpperCase() })
 module.exports = {
   def: def,
   protoAugment: protoAugment,
@@ -191,5 +192,6 @@ module.exports = {
   isFalse,
   forEach,
   map,
-  setProp
+  setProp,
+  toCamelCase
 }

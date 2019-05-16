@@ -55,13 +55,13 @@ declare class BaseComponent {
   */ 
 declare function Component(config:{
   //组件名字
-  tagName: 'go-top',
+  tagName: 'tag-name',
   //样式类型
-  style: require('./style.styl'),
+  style: require('./style.stylus'),
   //是否使用影子树来渲染组件内容
   shadow: false,
   //是否使用web自定义组件方式去定义组件 
-  customElements:false,
+  customElements:true,
   // 组件传入的属性监听
   prop:[]
 }):void

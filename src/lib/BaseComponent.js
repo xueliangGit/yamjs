@@ -1,7 +1,7 @@
 import init from './init'
 import lifeCycle from './init/lifeCycle'
 import { Mix } from './init/mix'
-import { getStyleStr } from './utils'
+import { getStyleStr, toCamelCase } from './utils'
 import BaseCustomElements from './BaseCustomElements'
 var comps = window.comps = {}
 @Mix()
@@ -51,6 +51,9 @@ class BaseComponent {
   }
   // 执行方法
   emit (fnName, ...params) {
+    if (!fnName) {
+      return
+    }
     // console.log(fnName, this)
     return (typeof this[fnName] === 'function' ? this[fnName](...params) : (() => {
       console.warn(`该组件【${this._tagName}】没有这个方法:【${fnName}】`)
@@ -58,10 +61,23 @@ class BaseComponent {
   }
   // 触发父级方法
   emitProp (fnName, ...params) {
-    // console.log(fnName, this.props[fnName])
-    return typeof this.props[fnName] === 'function' ? this.props[fnName](...params) : (() => {
-      console.warn(`该组件【${this._tagName}】没有接收到父组件的传值:【${fnName}】`)
-    })(...params)
+    if (!fnName) {
+      return
+    }
+    if (this.props) {
+      if (typeof this.props[fnName] === 'function') {
+        return this.props[fnName](...params)
+      } else {
+        console.warn(`该组件【${this._tagName}】没有接收到父组件的传值:【${fnName}】`)
+        return null
+      }
+    } else {
+      // 根组件
+      let fn = this.elm.getAttribute(fnName)
+      if (fn && typeof window[fn] === 'function') {
+        window[fn](...params)
+      }
+    }
   }
 }
 
@@ -74,7 +90,8 @@ export function Component (Config) {
     Target._shadow = !!shadow
     Target.prototype._config = function () {
       this._tagName = tagName
-      this._shadow = !!shadow
+      this._name = toCamelCase(tagName)
+      this._shadow = !!shadow || false
       this._props = props || []
       this._eid = 'com_' + tagName
       this._style = getStyleStr(this._eid, style)
