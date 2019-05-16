@@ -1,4 +1,3 @@
-
 function createElement$1 (tagName, vnode) {
   var elm = document.createElement(tagName)
   if (tagName !== 'select') {
@@ -24,6 +23,10 @@ function insertBefore (parentNode, newNode, referenceNode) {
   insertCall(newNode)
 }
 function removeChild (node, child) {
+  // 移除事件 触发
+  if (child.beforeDisconnectedCallback) {
+    child.beforeDisconnectedCallback()
+  }
   node.removeChild(child)
   // 移除事件 触发
   if (child.disconnectedCallback && !child.isUnset) {

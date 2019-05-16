@@ -3,11 +3,13 @@ import updateElement from '../diff'
 // /creatMutationObserser ,setAttributes,
 import { proxy, _extends } from '../utils'
 import nodeOps from '../utils/nodeOps'
+import lifeCycle from './lifeCycle'
 import { $ComponentSymbol, $vdomSymbol, $componentDataSymbol } from '../symbol'
 // 初始化 init
 let componenesSize = {}
 let styleIsInstalled = {}
 function _init () {
+  lifeCycle.beforeCreate(this)
   if (this.elm) {
     bindElmentEvent(this)
   } else {
@@ -15,7 +17,6 @@ function _init () {
   }
   _extends(this.$config(), this)
   let data = this[$componentDataSymbol] = this.$data()
-  console.log(this, this.props)
   if (this._props) {
     this._props.forEach(v => {
       data[v] = this.props ? this.props[v] : this.elm.getAttribute(v)
@@ -40,10 +41,11 @@ function _init () {
       }
     }))
   })
-  // console.warn('asdasd', this)
-  // observe(data || {}, this)
+  lifeCycle.created(this)
+  lifeCycle.beforeMount(this)
   createdComponent.call(this)
   initRefs.call(this)
+  lifeCycle.mounted(this)
 }
 function _update (context) {
   update.call(context)
@@ -86,7 +88,6 @@ function createdComponent () {
           document.head.appendChild(style)
         } else {
         // div inner
-          // parent.parentNode.insertBefore(style, parent)
           parent.insertBefore(style, parent.lastChild)
         }
         // nameStyle
@@ -99,7 +100,8 @@ function createdComponent () {
 }
 // 若不是 自定元素仅仅值一个自定义组件需要绑定 相应的到元素上事件
 function bindElmentEvent (context) {
-  context.elm.disconnectedCallback = context.disconnectedCallback
+  context.elm.disconnectedCallback = context.__disconnectedCallback
+  context.elm.beforeDisconnectedCallback = context.__beforeDisconnectedCallback
   // 获取子组件
   context.elm.$refs = (name) => {
     return name ? context.$refs[name] || null : context.$refs
@@ -137,6 +139,7 @@ function getFram (isNeedDiv = false) {
 }
 // 更新dom
 async function update () {
+  lifeCycle.beforeUpdate(this)
   setTimeout(() => {
     if (this[$vdomSymbol]) {
       console.time('------$update')
@@ -146,7 +149,8 @@ async function update () {
       updateElement(this.$div, newNode, oldNode)
       console.timeEnd('------$update')
       // console.log(newNode)
-      this.$updated()
+      // this.$updated()
+      lifeCycle.updated(this)
     }
   })
 }

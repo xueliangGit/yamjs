@@ -75,6 +75,15 @@ module.exports = {
       }, {
         test: /\.styl$/,
         use: [
+          { loader: MiniCssExtractPlugin.loader },
+          'css-loader',
+          'postcss-loader',
+          'stylus-loader'
+        ]
+      },
+      {
+        test: /\.stylus$/,
+        use: [
           // { loader: MiniCssExtractPlugin.loader },
           'css-loader',
           'postcss-loader',

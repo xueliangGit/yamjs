@@ -1,24 +1,44 @@
-import BaseComponent, { Component } from '../lib'
+import BaseComponent, { Component } from '../lib/index'
 // var goTopTem = require('./goTopTem.html')
 // eslint-disable-next-line no-unused-vars
 import MyTimer from './myTimer'
 @Component({
   tagName: 'go-top',
-  style: require('./goTop.styl'),
+  style: require('./goTop.stylus'),
   shadow: true,
   customElements: false,
   props: ['msg']
 })
 class App extends BaseComponent {
-  constructor () {
-    super()
-    console.log('isCustomElements', this)
-  }
   $data () {
     return {
       list: [0, 12, 2, 3],
       index: 1
     }
+  }
+  $beforeCreate () {
+    console.log('-----beforeCreate')
+  }
+  $created () {
+    console.log('-----created')
+  }
+  $beforeMount () {
+    console.log('-----beforeMount')
+  }
+  $mounted () {
+    console.log('-----mounted')
+  }
+  $beforeDestroyed () {
+    console.log('-----beforeMount')
+  }
+  $destroyed () {
+    console.log('-----destroyed')
+  }
+  $beforeUpdate () {
+    console.log('-----beforeUpdate')
+  }
+  $updated () {
+    console.log('-----updated')
   }
   show (v) {
     this.$router.show()
@@ -71,9 +91,6 @@ class App extends BaseComponent {
         </my-timer> */}
       </div>
     )
-  }
-  $updated () {
-    console.log('isGoTopUpdtaeing')
   }
   $connectedCallback () {
     // console.log('$connectedCallback')

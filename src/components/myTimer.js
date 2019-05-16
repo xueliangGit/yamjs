@@ -1,9 +1,9 @@
-import BaseComponent, { Component } from '../lib'
+import BaseComponent, { Component } from '../lib/index'
 // var style = require('./myTimers.styl')
 // console.log('style', style, style.toString())
  @Component({
    tagName: 'my-timer',
-   style: require('./myTimers.styl'),
+   style: require('./myTimers.stylus'),
    shadow: false,
    customElements: false,
    props: ['msgTime']
@@ -19,7 +19,7 @@ class App extends BaseComponent {
    }
    showP (v) {
      console.log('adsasd')
-     console.log(this)
+     //  console.log(this)
    }
    showList () {
      return this.list.map(v => <li>{v}</li>)
@@ -35,7 +35,10 @@ class App extends BaseComponent {
      )
    }
    $updated () {
-     console.log('isMYTIMEUpdtaeing')
+     console.timeEnd('-----updated')
+   }
+   $beforeUpdate () {
+     console.time('-----updated')
    }
    $connectedCallback () {
      setTimeout(() => {

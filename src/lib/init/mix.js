@@ -1,7 +1,7 @@
 import { createElementJson } from '../vDom/createElement'
 // 注解
 // 预留字段
-var reserved = 'constructor __createElement connectedCallback $connectedCallback disconnectedCallback $config $data mutation render'
+var reserved = 'constructor __createElement connectedCallback $connectedCallback disconnectedCallback $disconnectedCallback $config $data mutation render'
 // 安装的扩展
 var installed = []
 window.parant = []

@@ -1,3 +1,4 @@
+
 import BaseComponent, { Component } from './BaseComponent'
 // eslint-disable-next-line no-extend-native
 Array.prototype.flat = Array.prototype.flat || function () {

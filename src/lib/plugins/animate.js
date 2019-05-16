@@ -12,16 +12,17 @@ export default {
   }
 }
 function _animate (keyframes, duration) {
+  console.log(this)
   for (let i in keyframes[0]) {
-    this.style[i] = keyframes[0][i]
+    this.elm.style[i] = keyframes[0][i]
   }
-  this.style.display = 'block'
-  this.style.transition = duration + 'ms'
+  this.elm.style.display = 'block'
+  this.elm.style.transition = duration + 'ms'
   for (let i in keyframes[1]) {
-    this.style[i] = keyframes[1][i]
+    this.elm.style[i] = keyframes[1][i]
   }
   setTimeout(() => {
-    this.style.transition = ''
+    this.elm.style.transition = ''
   }, duration)
   return {}
 }

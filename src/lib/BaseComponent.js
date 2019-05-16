@@ -1,4 +1,5 @@
 import init from './init'
+import lifeCycle from './init/lifeCycle'
 import { Mix } from './init/mix'
 import { getStyleStr } from './utils'
 import BaseCustomElements from './BaseCustomElements'
@@ -11,15 +12,22 @@ class BaseComponent {
     comps[this._id] = this
     // console.log('BaseComponent', isCustomElements)
   }
-  connectedCallback (isRenderIn) {
+  __connectedCallback (isRenderIn) {
     init(this, isRenderIn)
     this.$connectedCallback && this.$connectedCallback()
   }
-  disconnectedCallback () {
+  __disconnectedCallback () {
     console.log('disconnectedCallback')
     // 取消 监听
     // this.mutation.disconnect()
     this.isUnset = true
+    lifeCycle.destroyed(this)
+  }
+  __beforeDisconnectedCallback () {
+    console.log('disconnectedCallback')
+    // 取消 监听
+    // this.mutation.disconnect()
+    lifeCycle.beforeDestroyed(this)
   }
   // 会被覆盖的方法
   $config () {
@@ -29,8 +37,7 @@ class BaseComponent {
   }
   // 会被覆盖的方法
   $data () {
-    return {
-    }
+    return {}
   }
   // 会被覆盖的方法
   $updated () {
@@ -39,19 +46,19 @@ class BaseComponent {
   renderAt (el) {
     if (!this.isCustomElements) {
       this.elm = typeof el === 'string' ? document.querySelector(el) : el
-      this.connectedCallback(true)
+      this.__connectedCallback(true)
     }
   }
   // 执行方法
   emit (fnName, ...params) {
-    console.log(fnName, this)
+    // console.log(fnName, this)
     return (typeof this[fnName] === 'function' ? this[fnName](...params) : (() => {
       console.warn(`该组件【${this._tagName}】没有这个方法:【${fnName}】`)
     })(...params))
   }
   // 触发父级方法
   emitProp (fnName, ...params) {
-    console.log(fnName, this.props[fnName])
+    // console.log(fnName, this.props[fnName])
     return typeof this.props[fnName] === 'function' ? this.props[fnName](...params) : (() => {
       console.warn(`该组件【${this._tagName}】没有接收到父组件的传值:【${fnName}】`)
     })(...params)
