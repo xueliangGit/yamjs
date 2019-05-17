@@ -51,7 +51,7 @@ class App extends BaseComponent {
     // this.emit('ad')
     // console.log(this.$refs.mytim)
     this.$refs.mytim.showP()
-    // this.index = i
+    this.index = i
   }
   childEmit (i) {
     console.log(`子组件传来信息` + i)
@@ -72,7 +72,7 @@ class App extends BaseComponent {
         {this.msg}
         {/* {this.list.map((v, k) => <li key={k} ani='fade'>{v}</li>) } */}
         <div>
-          <span onClick={this.switch.bind(this, 2)}>我的</span>
+          <span className={'class' + this.index} onClick={this.switch.bind(this, 2)}>我的</span>
           <span onClick={this.switch.bind(this, 1)}>nide</span>
         </div>
         {this.getList()}
