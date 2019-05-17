@@ -89,7 +89,7 @@ function createdComponent () {
       while (parent.parentElement || parent._parentElement) {
         parent = parent.parentNode || parent._parentNode
       }
-      let nameStyle = parent.tagName === 'HTML' ? 'HTML' : parent._root ? parent._root : parent.parentNode ? parent.parentNode._root || parent.parentNode.host.tagName : parent.parentNode.tagName
+      let nameStyle = parent.tagName === 'HTML' ? 'HTML' : parent._root ? parent._root : parent.parentNode ? parent.parentNode._root || parent.parentNode.host.tagName : 'HTML'
       if (!styleIsInstalled[nameStyle]) {
         styleIsInstalled[nameStyle] = []
       }
@@ -113,15 +113,17 @@ function createdComponent () {
 function bindElmentEvent (context) {
   context.elm.disconnectedCallback = context.__disconnectedCallback
   context.elm.beforeDisconnectedCallback = context.__beforeDisconnectedCallback
-  // 获取子组件
-  context.elm.$refs = (name) => {
-    return name ? context.$refs[name] || null : context.$refs
+  if (context._canBeCalledExt) {
+    // 获取子组件
+    context.elm.$refs = (name) => {
+      return name ? context.$refs[name] || null : context.$refs
+    }
+    // 调用组件的方法
+    context.elm.emit = (...arg) => { context.emit(...arg) }
+    // 调用父组件的方法
+    context.elm.emitProp = (...arg) => { context.emitProp(...arg) }
+    // context.elm.emit = (fnName) => {
   }
-  // 调用组件的方法
-  context.elm.emit = (...arg) => { context.emit(...arg) }
-  // 调用父组件的方法
-  context.elm.emitProp = (...arg) => { context.emitProp(...arg) }
-  // context.elm.emit = (fnName) => {
   //   console.log(context)
   //   return (context[fnName] || function () {
   //     console.warn(`该组件【${context._tagName}】没有这个方法:【${fnName}】`)

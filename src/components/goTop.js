@@ -5,7 +5,7 @@ import MyTimer from './myTimer'
 @Component({
   tagName: 'go-top',
   style: require('./goTop.stylus'),
-  shadow: true,
+  shadow: false,
   customElements: false,
   props: ['msg']
 })
@@ -87,7 +87,8 @@ class App extends BaseComponent {
         {this.list.map(v => <p key={v} onClick={this.show.bind(this, v)}>{v * -10 }</p>)} */}
         {/* <video /> */}
         <MyTimer >
-          123123
+          <div slot='top'>my123111111111111</div>
+          <div slot='bottom'>--------------</div>
         </MyTimer>
       </div>
     )

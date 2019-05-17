@@ -55,6 +55,7 @@ class Element {
       return this.elm
     }
     let el = null
+    let slot = []
     if (!this.isElement) {
       let cacheDom = document.createElement('div')
       // let cacheDom = document.createDocumentFragment()
@@ -70,12 +71,17 @@ class Element {
       cacheDom.firstChild.disconnectedCallback = () => {
         this[$ComponentSymbol].disconnectedCallback && this[$ComponentSymbol].disconnectedCallback()
       }
+      console.log('getSlot', cacheDom, cacheDom.querySelectorAll('slot'))
       el = cacheDom
     } else {
       el = document.createElement(this.tagType)
+      if (this.tagName === 'slot') {
+        el.setAttribute('tag', 'slot')
+      }
       el._parentNode = parentELm
       el._parentElement = parentELm
     }
+    slot = el.querySelectorAll('[tag=slot]')
     // el.props = this.props
     if (this.props) {
       Object.keys(this.props).forEach(prop => {
@@ -102,12 +108,29 @@ class Element {
       }
     }
     this.childNodes.forEach((child, key) => {
-      nodeOps.appendChild(el, child.render(key, el))
+      nodeOps.appendChild(getRenderElmBySlot(slot, child, el), child.render(key, el))
       // el.appendChild(child.render(key))
     })
     this.elm = el
     return this.elm
   }
+}
+function getRenderElmBySlot (slot, child, el) {
+  console.log('el===', el, slot)
+  if (slot.length) {
+    if (child.props.slot) {
+      // eslint-disable-next-line no-cond-assign
+      for (let i = 0, v; v = slot[i]; i++) {
+        if (v.getAttribute('name') === child.props.slot) {
+          return v
+        }
+      }
+      return slot[slot.length - 1]
+    } else {
+      return slot[slot.length - 1]
+    }
+  }
+  return el
 }
 export function renderElement (dom) {
   return (dom instanceof Element)

@@ -8,7 +8,7 @@ class BaseComponent extends HTMLElement {
   constructor () {
     super()
     this._config()
-    comps[this._id] = this
+    comps[this._eid] = this
     // console.log('BaseComponent', this._style)
   }
   connectedCallback () {

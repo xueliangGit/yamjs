@@ -356,7 +356,12 @@ export const HTML_TAGS = {
       width: 'width'
     }
   },
-  slot: 'slot'
+  slot: {
+    name: 'div',
+    attributes: {
+      'name': 'name'
+    }
+  }
 }
 export const GLOBAL_ATTRIBUTES = {
   accessKey: 'accesskey',

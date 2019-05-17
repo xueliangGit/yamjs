@@ -4,12 +4,13 @@ import { Mix } from './init/mix'
 import { getStyleStr, toCamelCase } from './utils'
 import BaseCustomElements from './BaseCustomElements'
 var comps = window.comps = {}
+let compsIds = 0
 @Mix()
 class BaseComponent {
   constructor () {
     this._config()
     // console.log(new.target)
-    comps[this._id] = this
+    comps[this._eid + ++compsIds] = this
     // console.log('BaseComponent', isCustomElements)
   }
   __connectedCallback (isRenderIn) {
@@ -84,7 +85,7 @@ class BaseComponent {
 export default BaseComponent
 // 注解
 export function Component (Config) {
-  let { tagName, shadow, style, props, customElements } = Config
+  let { tagName, shadow, style, props, customElements, canBeCalledExt } = Config
   return function (Target) {
     Target._tagName = tagName
     Target._shadow = !!shadow
@@ -93,6 +94,7 @@ export function Component (Config) {
       this._name = toCamelCase(tagName)
       this._shadow = !!shadow || false
       this._props = props || []
+      this._canBeCalledExt = typeof canBeCalledExt === 'boolean' ? canBeCalledExt : false
       this._eid = 'com_' + tagName
       this._style = getStyleStr(this._eid, style)
       // if (typeof customElements === 'undefined') {

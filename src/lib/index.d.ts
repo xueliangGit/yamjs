@@ -63,7 +63,9 @@ declare function Component(config:{
   //是否使用web自定义组件方式去定义组件 
   customElements:true,
   // 组件传入的属性监听
-  prop:[]
+  prop:[],
+  // 吃否可以被外部调用组件内部的方法
+  canBeCalledExt:true
 }):void
 export default BaseComponent;
 export { Component}

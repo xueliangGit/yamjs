@@ -6,7 +6,8 @@ import BaseComponent, { Component } from '../lib/index'
    style: require('./myTimers.stylus'),
    shadow: false,
    customElements: false,
-   props: ['msgTime']
+   props: ['msgTime'],
+   canBeCalledExt: false
  })
 class App extends BaseComponent {
    $data () {
@@ -27,10 +28,12 @@ class App extends BaseComponent {
    render () {
      return (
        <div >
+         <slot name='top' />
          <p onClick={this.show.bind(this)} className='red' ref='p' >4341321</p>
           我是myTimer
          <p> {this.msgTime }</p>
          {this.showList()}
+         <slot name='bottom' />
        </div>
      )
    }
