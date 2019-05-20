@@ -1,17 +1,20 @@
 import BaseComponent, { Component } from '../lib/index'
 // var style = require('./myTimers.styl')
-// console.log('style', style, style.toString())
+// eslint-disable-next-line no-unused-vars
+import Hour from './timers/hour'
  @Component({
    tagName: 'my-timer',
    style: require('./myTimers.stylus'),
-   shadow: false,
-   customElements: false,
-   props: ['msgTime'],
-   canBeCalledExt: false
+   shadow: true,
+   canBeCalledExt: false,
+   props: []
  })
 class App extends BaseComponent {
    $data () {
      return {
+       hour: 0,
+       mins: 0,
+       sec: 0,
        list: [1, 2, 3]
      }
    }
@@ -19,7 +22,7 @@ class App extends BaseComponent {
      console.log(this.emitProp('showFn', 'asdasd'))
    }
    showP (v) {
-     console.log('adsasd')
+     console.log('adsasd', v)
      //  console.log(this)
    }
    showList () {
@@ -28,26 +31,33 @@ class App extends BaseComponent {
    render () {
      return (
        <div >
-         <slot name='top' />
-         <p onClick={this.show.bind(this)} className='red' ref='p' >4341321</p>
-          我是myTimer
-         <p> {this.msgTime }</p>
-         {this.showList()}
-         <slot name='bottom' />
+         <div className='all' >
+           <Hour callFn={this.showP.bind(this)} className='hour' hour={this.hour} width='200' />
+           <Hour callFn={this.showP.bind(this)} className='min' hour={this.mins} step='60' width='280' />
+           <Hour callFn={this.showP.bind(this)} className='sce' hour={this.sec} step='60' width='350' />
+         </div>
        </div>
      )
    }
-   $updated () {
-     console.timeEnd('-----updated')
+   $mounted () {
+     setInterval(() => {
+       this.go()
+     }, 1000)
    }
-   $beforeUpdate () {
-     console.time('-----updated')
+   $created () {
+     let date = new Date()
+     this.hour = date.getHours()
+     this.mins = date.getMinutes()
+     this.sec = date.getSeconds()
    }
-   $connectedCallback () {
-     setTimeout(() => {
-       console.log('$connectedCallback')
-       this.list = [1111, 2222, 333]
-     }, 3000)
+   go () {
+     this.sec++
+     if (this.sec % 60 === 0) {
+       this.mins++
+       if (this.mins % 60 === 0) {
+         this.mins++
+       }
+     }
    }
  }
 console.log('GoTop:#config', App._tagName)

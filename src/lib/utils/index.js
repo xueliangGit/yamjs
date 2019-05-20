@@ -116,6 +116,13 @@ function _getStrByStyle (_id, style, isScope) {
     }
     return str.map(v => {
       if (v.includes('{')) {
+        if (v.includes('[root]')) {
+          if (isScope) {
+            v = v.replace('[root]', '')
+          } else {
+            v = v.replace('[root]', '[dom="' + _id + '"] ')
+          }
+        }
         return isScope ? '[dom="' + _id + '"] ' + v : v
       }
       return v
@@ -173,6 +180,7 @@ function setProp (obj, el) {
   //   })
   // }
 }
+const getCallFnName = (context, prop) => `${context.tagType || context._tagName}_${prop}_fn`
 const toCamelCase = str => str.replace(/-(\w)/g, (x) => { return x.slice(1).toUpperCase() })
 module.exports = {
   def: def,
@@ -192,5 +200,6 @@ module.exports = {
   forEach,
   map,
   setProp,
-  toCamelCase
+  toCamelCase,
+  getCallFnName
 }

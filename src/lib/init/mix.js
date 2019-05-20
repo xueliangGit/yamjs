@@ -7,9 +7,8 @@ var installed = []
 window.parant = []
 export function Mix () {
   return function (Target) {
-    Target.__createElement = (tagName, props = {}, ...childNodes) => {
+    Target.__createElement = function (tagName, props = {}, ...childNodes) {
       // childNodes = childNodes.length ? childNodes : undefined
-      window.parant.push(tagName)
       return createElementJson(tagName, props, childNodes)
     }
     Target.use = (Config) => {

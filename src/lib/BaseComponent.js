@@ -1,9 +1,10 @@
 import init from './init'
 import lifeCycle from './init/lifeCycle'
 import { Mix } from './init/mix'
-import { getStyleStr, toCamelCase } from './utils'
+import { getStyleStr, toCamelCase, getCallFnName } from './utils'
 import BaseCustomElements from './BaseCustomElements'
 var comps = window.comps = {}
+// var _runfn_ = window._runfn_ = window._runfn_ || {}
 let compsIds = 0
 @Mix()
 class BaseComponent {
@@ -73,12 +74,14 @@ class BaseComponent {
         return null
       }
     } else {
-      // 根组件
-      let fn = this.elm.getAttribute(fnName)
-      if (fn && typeof window[fn] === 'function') {
-        window[fn](...params)
+      // 根组件 this.elm.getAttribute(fnName)
+      let fn = getCallFnName(this, fnName)
+      let runfn = window[fn] || (this.elm['_runfn_'] ? this.elm['_runfn_'][fn] : null)
+      if (fn && typeof runfn === 'function') {
+        return runfn(...params)
       }
     }
+    return null
   }
 }
 

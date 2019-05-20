@@ -1,6 +1,7 @@
 import nodeOps from '../utils/nodeOps'
 // import { renderElement } from '../vDom/createElement'
 import { isDef } from '../utils'
+import { $ComponentSymbol } from '../symbol/index'
 // import _ from 'lodash'
 /**
 * 核心patch算法，比较新旧node树的差异
@@ -126,15 +127,29 @@ function editProp (a, b) {
   let newProp = Object.keys(Object.assign({}, a.props || {}, b.props || {}))
   // eslint-disable-next-line no-cond-assign
   for (let i = 0, keys; keys = newProp[i]; i++) {
-    if (b.props[keys]) {
-      if (a.props[keys] !== b.props[keys]) {
-        a.props[keys] = b.props[keys]
-        setProp(keys, b.attrs, b.props[keys], a.elm)
-      }
+    if (keys === 'style') {
+      const styles = b.props.style
+      Object.keys(styles).forEach(prop => {
+        const value = styles[prop]
+        if (typeof value === 'number') {
+          a.elm.style[prop] = `${value}px`
+        } else if (typeof value === 'string') {
+          a.elm.style[prop] = value
+        } else {
+          throw new Error(`Expected "number" or "string" but received "${typeof value}"`)
+        }
+      })
     } else {
-      if (a.props[keys]) {
-        delete a.props[keys]
-        a.elm.removeAttribute(a.attrs[keys])
+      if (b.props[keys]) {
+        if (a.props[keys] !== b.props[keys]) {
+          a.props[keys] = b.props[keys]
+          setProp(keys, b.attrs, b.props[keys], a.elm)
+        }
+      } else {
+        if (a.props[keys]) {
+          delete a.props[keys]
+          a.elm.removeAttribute(a.attrs[keys])
+        }
       }
     }
   }
@@ -143,6 +158,11 @@ function editProp (a, b) {
 function setProp (keys, attrs, props, elm) {
   if (keys in attrs) {
     elm.setAttribute(attrs[keys], props)
+  } else if (typeof props !== 'function') {
+    elm.setAttribute(keys, props)
+  }
+  if (elm[$ComponentSymbol]) {
+    elm[$ComponentSymbol][keys] = props
   }
 }
 /**

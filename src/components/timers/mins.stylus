@@ -1,0 +1,19 @@
+[scope]
+ul
+  position relative
+  height 200px
+  width 200px
+  transform: rotate(90deg)
+  padding: 0
+  margin 0
+  display block
+li
+  position absolute
+  transform-origin: center center
+  width 200px
+  top: 50%
+  margin-top -11px
+  list-style: none
+  span 
+    display  inline-block
+    text-align center

@@ -1,7 +1,7 @@
 // import updateElement from '../vDom'
 import updateElement from '../diff'
 // /creatMutationObserser ,setAttributes,
-import { proxy, _extends, creatMutationObserser, setAttributes } from '../utils'
+import { proxy, creatMutationObserser, setAttributes } from '../utils'
 import nodeOps from '../utils/nodeOps'
 import lifeCycle from './lifeCycle'
 import { $ComponentSymbol, $vdomSymbol, $componentDataSymbol } from '../symbol'
@@ -15,17 +15,17 @@ function _init () {
   } else {
     this.elm = this
   }
-  _extends(this.$config(), this)
+  // _extends(this.$config(), this)
   let data = this[$componentDataSymbol] = this.$data()
   if (this._props) {
     this._props.forEach(v => {
-      data[v] = this.props ? this.props[v] : this.elm.getAttribute(v)
+      data[v] = (this.props ? this.props[v] : this.elm.getAttribute(v)) || data[v] || null
       // setAttributes(this, v, this.getAttribute(v))
     })
     if (!this.props) {
       this.mutation = creatMutationObserser(this.elm, (record) => {
         if (record.type === 'attributes') {
-          setAttributes(this, record.attributeName, this.elm.getAttribute(record.attributeName))
+          setAttributes(this, record.attributeName, this.elm.getAttribute(record.attributeName) || data[record.attributeName] || null)
           _update(this)
         }
       }, { attributeFilter: this._props })
@@ -58,7 +58,7 @@ function _update (context) {
   context.__isWillupdate = setTimeout(() => {
     context.__isWillupdate = null
     update.call(context)
-  }, 10)
+  }, 20)
 }
 function initRefs () {
   this.$refs = this.$refs || {}
@@ -124,6 +124,7 @@ function bindElmentEvent (context) {
 }
 // 获取dom片段
 function getFram (isNeedDiv = false) {
+  console.log(this.render.toString())
   if (isNeedDiv) {
     this.$div = document.createElement('div')
   } else {

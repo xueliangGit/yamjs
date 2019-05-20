@@ -2,6 +2,7 @@
 import { HTML_TAGS, GLOBAL_ATTRIBUTES, EVENT_HANDLERS } from './creatConfig'
 import nodeOps from '../utils/nodeOps'
 import { $ComponentSymbol } from '../symbol'
+import { getCallFnName } from '../utils'
 // eslint-disable-next-line no-extend-native
 Array.prototype.flat = Array.prototype.flat || function () {
   return this.reduce((acc, val) => Array.isArray(val) ? acc.concat(val.flat()) : acc.concat(val), [])
@@ -48,7 +49,7 @@ class Element {
     }
     this._root = _root // 带搞根结点
   }
-  render (key, parentELm = null) {
+  render (key = null, parentELm = null) {
     // this.key = key || 0
     if (this.isText) {
       this.elm = document.createTextNode(this.text)
@@ -73,7 +74,10 @@ class Element {
       }
       el = cacheDom
     } else {
+      // el[$ComponentSymbol].props = this.props
       el = document.createElement(this.tagType)
+      // console.log(el[$ComponentSymbol] = {})
+      // el[$ComponentSymbol].props = this.props
       if (this.tagName === 'slot') {
         el.setAttribute('tag', 'slot')
       }
@@ -88,8 +92,13 @@ class Element {
           el.setAttribute(this.attrs[prop], this.props[prop])
         } else if (prop in EVENT_HANDLERS) {
           el.addEventListener(EVENT_HANDLERS[prop], this.props[prop])
-        } else if (typeof this.props[prop] !== 'function') {
-          // el.setAttribute(prop, this.props[prop])
+        } else if (typeof this.props[prop] !== 'function' && this.isElement) {
+          el.setAttribute(prop, this.props[prop])
+        } else if (typeof this.props[prop] === 'function' && this.isElement) {
+          // let fnName = getCallFnName(this, prop) // `${this.tagType}_${prop}_fn`
+          el._runfn_ = el._runfn_ || {}
+          el._runfn_[getCallFnName(this, prop)] = this.props[prop]
+          // el.setAttribute(prop, fnName)
         }
       })
       if ('style' in this.props) {
