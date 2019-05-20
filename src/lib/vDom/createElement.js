@@ -88,8 +88,8 @@ class Element {
           el.setAttribute(this.attrs[prop], this.props[prop])
         } else if (prop in EVENT_HANDLERS) {
           el.addEventListener(EVENT_HANDLERS[prop], this.props[prop])
-        } else {
-          el.setAttribute(prop, this.props[prop])
+        } else if (typeof this.props[prop] !== 'function') {
+          // el.setAttribute(prop, this.props[prop])
         }
       })
       if ('style' in this.props) {

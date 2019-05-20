@@ -58,7 +58,7 @@ function _update (context) {
   context.__isWillupdate = setTimeout(() => {
     context.__isWillupdate = null
     update.call(context)
-  }, 300)
+  }, 10)
 }
 function initRefs () {
   this.$refs = this.$refs || {}

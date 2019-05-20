@@ -6,7 +6,7 @@ import MyTimer from './myTimer'
   tagName: 'go-top',
   style: require('./goTop.stylus'),
   shadow: false,
-  customElements: false,
+  customElements: true,
   props: ['msg']
 })
 class App extends BaseComponent {
@@ -50,7 +50,7 @@ class App extends BaseComponent {
   switch (i) {
     // this.emit('ad')
     // console.log(this.$refs.mytim)
-    this.$refs.mytim.showP()
+    // this.$refs.mytim.showP()
     this.index = i
   }
   childEmit (i) {
@@ -58,13 +58,13 @@ class App extends BaseComponent {
     console.log(this)
   }
   getList () {
-    return <MyTimer msgTime={123 + '' + this.index} ref='mytim' showFn={this.showList.bind(this)} />
-    // if (this.index === 1) {
-    //   return this.list.map((v, k) => <div key={k} ani='fade'>{v}</div>)
-    // } else if (this.index === 2) {
-    //   return <MyTimer msgTime={123 + '' + this.index} ref='mytim' showFn={this.childEmit.bind(this)} />
-    // }
-    // return ''
+    // return <MyTimer msgTime={123 + '' + this.index} ref='mytim' showFn={this.showList.bind(this)} />
+    if (this.index === 1) {
+      return this.list.map((v, k) => <div key={k} ani='fade'>{v}</div>)
+    } else if (this.index === 2) {
+      return <MyTimer msgTime={123 + '' + this.index} ref='mytim' showFn={this.childEmit.bind(this)} />
+    }
+    return ''
   }
   render () {
     return (
@@ -94,42 +94,42 @@ class App extends BaseComponent {
     )
   }
   $connectedCallback () {
-    // console.log('$connectedCallback')
-    // setTimeout(() => {
-    //   // this.list = [5, 6, 7, 78]
-    //   let p = []
-    //   for (let j = 0; j < 500; j++) {
-    //     p.push(j)
-    //   }
-    //   console.time('beginUpdate1')
-    //   this.list = p
-    //   console.timeEnd('beginUpdate1')
-    //   console.log(this.list)
-    // setTimeout(() => {
-    //   let pp = []
-    //   for (let l = 0; l < 8; l++) {
-    //     pp.push(l)
-    //   }
-    //   console.time('beginUpdate2')
-    //   this.list = pp
-    //   console.timeEnd('beginUpdate2')
+    console.log('$connectedCallback')
+    setTimeout(() => {
+      // this.list = [5, 6, 7, 78]
+      let p = []
+      for (let j = 0; j < 500; j++) {
+        p.push(j)
+      }
+      console.time('beginUpdate1')
+      this.list = p
+      console.timeEnd('beginUpdate1')
+      console.log(this.list)
+      setTimeout(() => {
+        let pp = []
+        for (let l = 0; l < 8; l++) {
+          pp.push(l)
+        }
+        console.time('beginUpdate2')
+        this.list = pp
+        console.timeEnd('beginUpdate2')
 
-    //   setTimeout(() => {
-    //     console.time('beginUpdate3')
-    //     this.list = this.list.reverse()
-    //     console.timeEnd('beginUpdate3')
-    //     // console.log(this._config())
-    //     // console.log(this._shadow)
-    //     setTimeout(() => {
-    //       console.time('beginUpdate3')
-    //       this.list = this.list.reverse()
-    //       console.timeEnd('beginUpdate3')
-    //       // console.log(this._config())
-    //       // console.log(this._shadow)
-    //     }, 5000)
-    //   }, 5000)
-    // }, 5000)
-    // }, 5000)
+        setTimeout(() => {
+          console.time('beginUpdate3')
+          this.list = this.list.reverse()
+          console.timeEnd('beginUpdate3')
+          // console.log(this._config())
+          // console.log(this._shadow)
+          setTimeout(() => {
+            console.time('beginUpdate3')
+            this.list = this.list.reverse()
+            console.timeEnd('beginUpdate3')
+          // console.log(this._config())
+          // console.log(this._shadow)
+          }, 5000)
+        }, 5000)
+      }, 5000)
+    }, 5000)
   }
 }
 // console.log(GoTop._style)
