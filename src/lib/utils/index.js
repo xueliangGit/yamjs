@@ -114,7 +114,6 @@ function _getStrByStyle (_id, style, isScope) {
     if (isScope) {
       str.shift()
     }
-    console.log(str)
     return str.map(v => {
       if (v.includes('{')) {
         return isScope ? '[dom="' + _id + '"] ' + v : v

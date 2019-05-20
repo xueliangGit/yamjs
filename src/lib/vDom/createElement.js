@@ -17,7 +17,7 @@ class Element {
       this.isText = true
     } else {
       if (typeof tagName !== 'string') {
-        console.log('tagName', typeof tagName, tagName._tagName)
+        // console.log('tagName', typeof tagName, tagName._tagName)
       }
       this.tagName = tagName
       this.props = props || {}
@@ -67,11 +67,10 @@ class Element {
       this[$ComponentSymbol].props = this.props
       this[$ComponentSymbol].renderAt(cacheDom)
       cacheDom[$ComponentSymbol] = this[$ComponentSymbol]
-      console.log(this[$ComponentSymbol])
+      // console.log(this[$ComponentSymbol])
       cacheDom.firstChild.disconnectedCallback = () => {
         this[$ComponentSymbol].disconnectedCallback && this[$ComponentSymbol].disconnectedCallback()
       }
-      console.log('getSlot', cacheDom, cacheDom.querySelectorAll('slot'))
       el = cacheDom
     } else {
       el = document.createElement(this.tagType)
@@ -116,7 +115,6 @@ class Element {
   }
 }
 function getRenderElmBySlot (slot, child, el) {
-  console.log('el===', el, slot)
   if (slot.length) {
     if (child.props.slot) {
       // eslint-disable-next-line no-cond-assign

@@ -1,4 +1,5 @@
-[scope]
 div
   height 100%
   font-weight bold
+a
+  display inline-block

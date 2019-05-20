@@ -26,7 +26,6 @@ function _init () {
       this.mutation = creatMutationObserser(this.elm, (record) => {
         if (record.type === 'attributes') {
           setAttributes(this, record.attributeName, this.elm.getAttribute(record.attributeName))
-          console.log(this)
           _update(this)
         }
       }, { attributeFilter: this._props })
@@ -77,7 +76,6 @@ function createdComponent () {
     style.innerText = this._style
     if (this._shadow) {
       var shadowRoot = this.__shadowRoot || (this.__shadowRoot = nodeOps.setAttachShadow(this.elm, { mode: 'closed' }))
-      console.log(this)
       componenesSize[this._tagName] = componenesSize[this._tagName] ? componenesSize[this._tagName] + 1 : 1
       shadowRoot._root = this._tagName + '-' + componenesSize[this._tagName]
       nodeOps.appendChild(shadowRoot, style)
@@ -102,7 +100,6 @@ function createdComponent () {
           parent.insertBefore(style, parent.lastChild)
         }
         // nameStyle
-        console.log('parent', parent.parentNode, styleIsInstalled)
         styleIsInstalled[nameStyle].push(this._eid)
       }
     }
@@ -124,11 +121,6 @@ function bindElmentEvent (context) {
     context.elm.emitProp = (...arg) => { context.emitProp(...arg) }
     // context.elm.emit = (fnName) => {
   }
-  //   console.log(context)
-  //   return (context[fnName] || function () {
-  //     console.warn(`该组件【${context._tagName}】没有这个方法:【${fnName}】`)
-  //   })()
-  // }
 }
 // 获取dom片段
 function getFram (isNeedDiv = false) {
@@ -138,7 +130,6 @@ function getFram (isNeedDiv = false) {
     this.$div = document.createElement('div')
   }
   this.$div.setAttribute('dom', this._eid)
-  // console.log(this.render.toString())
   try {
     this[$vdomSymbol] = this.render()
   } catch (e) {
@@ -146,7 +137,6 @@ function getFram (isNeedDiv = false) {
   }
   this.$div._parentElement = this.__shadowRoot
   this.$div._parentNode = this.__shadowRoot
-  // console.log('updateElement', this[$vdomSymbol].render())
   updateElement(this.$div, this[$vdomSymbol])
   return this.$div
 }
@@ -161,8 +151,6 @@ async function update () {
       this[$vdomSymbol] = newNode
       updateElement(this.$div, newNode, oldNode)
       console.timeEnd('------$update')
-      // console.log(newNode)
-      // this.$updated()
       lifeCycle.updated(this)
     }
   })
