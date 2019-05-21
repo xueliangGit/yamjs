@@ -27,7 +27,6 @@ class App extends BaseComponent {
    }
    showList () {
      let listArray = []
-     console.log(this.hour)
      for (let i = this.step - 1; i >= 0; i--) {
        listArray.push(<li className={this.hour % this.step === i ? 'active' : ''} style={this.getStyle(i)}><span>{i}</span></li>)
      }

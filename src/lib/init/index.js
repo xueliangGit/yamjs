@@ -124,7 +124,6 @@ function bindElmentEvent (context) {
 }
 // 获取dom片段
 function getFram (isNeedDiv = false) {
-  console.log(this.render.toString())
   if (isNeedDiv) {
     this.$div = document.createElement('div')
   } else {
