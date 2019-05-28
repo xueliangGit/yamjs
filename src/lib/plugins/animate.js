@@ -1,6 +1,3 @@
-const slideArrow = {
-  'bottom': ''
-}
 export default {
   name: 'animate',
   install: function (terget) {
@@ -16,30 +13,38 @@ export default {
       elm = elm || this.elm
       let begin = {}
       let end = {}
-      begin[direction] = elm.style[direction]
+      elm.style.display = 'block'
+      begin[direction] = elm['left,right'.indexOf(direction) > -1 ? 'clientWidth' : 'clientHeight'] + 'px'
       end[direction] = 0
       const keyframes = [begin, end]
       _animate.call(elm, keyframes, duration)
     })
     terget.addPrototype('slideOut', function (direction = 'bottom', elm = null, duration = 300) {
-      const keyframes = [{ opacity: 0, marginTop: '50px' }, { opacity: 1, marginTop: '0px' }]
-      return _animate.call(elm || this.elm, keyframes, duration).finished
+      elm = elm || this.elm
+      let begin = {}
+      let end = {}
+      begin[direction] = 0
+      end[direction] = -elm['left,right'.indexOf(direction) > -1 ? 'clientWidth' : 'clientHeight'] + 'px'
+      const keyframes = [begin, end]
+      _animate.call(elm, keyframes, duration, () => {
+        elm.style.display = 'none'
+      })
     })
   }
 }
-function _animate (keyframes, duration) {
-  console.log(this)
+function _animate (keyframes, duration, cb) {
+  // console.log(this, keyframes)
   for (let i in keyframes[0]) {
     this.style[i] = keyframes[0][i]
   }
-  this.style.display = 'block'
   this.style.transition = duration + 'ms'
   for (let i in keyframes[1]) {
     this.style[i] = keyframes[1][i]
   }
   setTimeout(() => {
     this.style.transition = ''
-  }, duration)
+    cb && cb()
+  }, duration + 100)
   return {}
 }
 // fadeOut (duration = 300) {

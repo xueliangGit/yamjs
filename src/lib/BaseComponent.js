@@ -65,7 +65,6 @@ class BaseComponent {
       console.warn(`需要传入方法名`)
       return
     }
-    // console.log(fnName, this)
     return (typeof this[fnName] === 'function' ? this[fnName](...params) : (() => {
       console.warn(`该组件【${this._tagName}】没有这个方法:【${fnName}】`)
     })(...params))

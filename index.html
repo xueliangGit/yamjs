@@ -18,7 +18,8 @@
     <div slot='top'> </div>
   </go-top> -->
   <!-- <my-timer ></my-timer> -->
-  <date-picker d='fun' showZg=true></date-picker>
+  <div onclick="datePicker.emit('show')">时间</div>
+  <date-picker id='datePicker' d='fun' showZg=true></date-picker>
   <script>
   function fun(){
     console.log(arguments)

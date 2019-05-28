@@ -31,25 +31,28 @@ export function Mix () {
           `)
         return false
       }
-      if (installed.includes(name) || Target.prototype[name]) {
+      if (installed.includes(name)) {
         console.info(`已经注册此扩展:${name}`)
       } else {
         installed.push(name)
-        install(addPrototype(Target))
+        install(addPrototype(Target, name))
       }
     }
   }
 }
-function addPrototype (Target) {
+function addPrototype (Target, name) {
   return {
     addPrototype (type, fn) {
-      if (reserved.includes(type)) {
+      if (reserved.includes(type) || Target.prototype[type]) {
         console.warn(`
-        方法名：${type} 为预留字段，请修改
+        方法名：${type} 已存在，请修改
+        
+        该方法是出现在 【${Target.prototype[type]['pluginsName'] ? Target.prototype[type]['pluginsName'] + ' 插件' : '框架'}】中，请修改方法再次安装使用
         `)
         return false
       }
       Target.prototype[type] = fn
+      Target.prototype[type]['pluginsName'] = name
     }
   }
 }

@@ -1,9 +1,11 @@
 
 import BaseComponent, { Component } from './BaseComponent'
+import tools from './plugins/tools'
 // eslint-disable-next-line no-extend-native
 Array.prototype.flat = Array.prototype.flat || function () {
   return this.reduce((acc, val) => Array.isArray(val) ? acc.concat(val.flat()) : acc.concat(val), [])
 }
+BaseComponent.use(tools)
 export default BaseComponent
 export { Component }
 // ok1 样式只是加载一次

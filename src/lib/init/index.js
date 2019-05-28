@@ -131,9 +131,9 @@ function bindElmentEvent (context) {
       return name ? context.$refs[name] || null : context.$refs
     }
     // 调用组件的方法
-    context.elm.emit = (...arg) => { context.emit(...arg) }
+    context.elm.emit = (...arg) => context.emit(...arg)
     // 调用父组件的方法
-    context.elm.emitProp = (...arg) => { context.emitProp(...arg) }
+    context.elm.emitProp = (...arg) => context.emitProp(...arg)
     // context.elm.emit = (fnName) => {
   }
 }

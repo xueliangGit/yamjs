@@ -103,7 +103,14 @@ class App extends BaseComponent {
     // this.emitProp('d', data, this.elm.lunar)
   }
   dateSure () {
+    this.hide()
     this.emitProp('d', this.showDate)
+  }
+  hide () {
+    this.slideOut('bottom', this.$div)
+  }
+  show () {
+    this.slideIn('bottom', this.$div)
   }
   onDataChange (type, index) {
     console.log('onDataChange', type + '--->' + index)
@@ -206,7 +213,7 @@ class App extends BaseComponent {
     return (
       <div className='dialog'>
         <div className='buttons'>
-          <span className='button left'>取消</span>
+          <span onClick={this.hide.bind(this)} className='button left'>取消</span>
           <div className='title dib'>{this.showDate}</div>
           <span onClick={this.dateSure.bind(this)} className='button right'>确定</span>
         </div>
@@ -223,31 +230,6 @@ class App extends BaseComponent {
         </div>
       </div>
     )
-  }
-  $beforeCreate () {
-    console.log('-----beforeCreate')
-  }
-  $created () {
-    console.log('-----created')
-  }
-  $beforeDestroyed () {
-    console.log('-----beforeMount')
-  }
-  $destroyed () {
-    console.log('-----destroyed')
-  }
-  $beforeUpdate () {
-    console.log('-----beforeUpdate')
-  }
-  $updated () {
-    console.log('-----updated')
-  }
-  show (v) {
-    this.$router.show()
-  // console.log(v)
-  }
-  showList () {
-    return this.list.map(v => <li>{v}</li>)
   }
 }
 // console.log(GoTop._style)
