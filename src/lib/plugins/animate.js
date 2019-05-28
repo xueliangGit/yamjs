@@ -24,7 +24,7 @@ export default {
       let begin = {}
       let end = {}
       begin[direction] = 0
-      end[direction] = -elm['left,right'.indexOf(direction) > -1 ? 'clientWidth' : 'clientHeight'] + 'px'
+      end[direction] = -elm['left,right'.indexOf(direction) > -1 ? 'clientWidth' : 'clientHeight'] - 10 + 'px'
       const keyframes = [begin, end]
       _animate.call(elm, keyframes, duration, () => {
         elm.style.display = 'none'
