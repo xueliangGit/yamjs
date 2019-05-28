@@ -1,5 +1,5 @@
 import './components/common'
-// import './components/goTop.js'
+import './components/goTop.js'
 import './components/datePicker/datePicker.js'
 // // import './components/mis.js'
 // // eslint-disable-next-line no-new
