@@ -26,7 +26,7 @@ const devWebpackConfig = merge(common, {
     historyApiFallback: true // 开发单页应用时有用，依赖于HTML5 history API，设为true时所有跳转将指向index.html
   },
   plugins: [
-    new CleanWebpackPlugin(),
+    new CleanWebpackPlugin(),  
     new HtmlWebpackPlugin({
       filename: 'index.html',
       template: 'index.html'

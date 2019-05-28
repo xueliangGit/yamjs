@@ -3,6 +3,7 @@ import lifeCycle from './init/lifeCycle'
 import { Mix } from './init/mix'
 import { getStyleStr, toCamelCase, getCallFnName } from './utils'
 import BaseCustomElements from './BaseCustomElements'
+import { HTML_TAGS } from './vDom/creatConfig'
 var comps = window.comps = {}
 // var _runfn_ = window._runfn_ = window._runfn_ || {}
 let compsIds = 0
@@ -13,6 +14,9 @@ class BaseComponent {
     // console.log(new.target)
     comps[this._eid + ++compsIds] = this
     // console.log('BaseComponent', isCustomElements)
+  }
+  __getProps (props) {
+    this.__props = props
   }
   __connectedCallback (isRenderIn) {
     init(this, isRenderIn)
@@ -51,9 +55,14 @@ class BaseComponent {
       this.__connectedCallback(true)
     }
   }
+  // 手动更新方法
+  update () {
+
+  }
   // 执行方法
   emit (fnName, ...params) {
     if (!fnName) {
+      console.warn(`需要传入方法名`)
       return
     }
     // console.log(fnName, this)
@@ -64,6 +73,7 @@ class BaseComponent {
   // 触发父级方法
   emitProp (fnName, ...params) {
     if (!fnName) {
+      console.warn(`需要传入方法名`)
       return
     }
     if (this.props) {
@@ -79,6 +89,8 @@ class BaseComponent {
       let runfn = window[fn] || (this.elm['_runfn_'] ? this.elm['_runfn_'][fn] : null)
       if (fn && typeof runfn === 'function') {
         return runfn(...params)
+      } else {
+        console.warn(`该元素上【${this._tagName}】没有接收到父组件的传值:【${fnName}${fn}】`)
       }
     }
     return null
@@ -104,6 +116,13 @@ export function Component (Config) {
       //   this.isCustomElements = true
       // }
       // console.log('this._style', this._style)
+    }
+    if (!HTML_TAGS[tagName]) {
+      HTML_TAGS[tagName] = {
+        name: tagName,
+        isComponent: true,
+        class: Target
+      }
     }
     if (customElements || typeof customElements === 'undefined') {
       Target.customElements = true

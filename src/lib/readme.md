@@ -100,15 +100,16 @@
 > 注解的配置项有
 
 * `tagName `   组件名/标签名(带链接符)
+  
   * 在webComponent模式下（即默认模式下：`customElements:false`），该名字就是标签名字。组件内外直接写标签就可以渲染出来，组件内也可以写成引入的组件名字。
-  * 在非webComponent模式下（即`customElements:true`），在组件环境外需要使用`renderAt(el)`函数去执行root元素渲染，组件内部需要写引入的组件名字。
-
+* 在非webComponent模式下（即`customElements:true`），在组件环境外需要使用`renderAt(el)`函数去执行root元素渲染，组件内部需要写引入的组件名字。
+  
 * `style `样式
   
 * 暂时支持引入写法，样式暂时使用stylus语法，框架约定了一种规则，在样式文件顶部若是出现`[scope]`关键字，那么这个样式仅仅对该组件生效，若是没有出现`[scope]`关键字，那么该样式在dom根结点下全局有效：例如
   
     * 带有`[scope]`
-  
+    
       ```stylus
       // styl 样式
       [scope]
@@ -118,9 +119,9 @@
       a
         display inline-block
       ```
-  
+    
       编译后是
-  
+    
       ```html
       <style> 
       [dom="com_go-top"] div {  height: 100%;  font-weight: bold;}[dom="com_go-top"] a {  display: inline-block;}
@@ -129,9 +130,9 @@
       	....
       </div>
       ```
-  
+    
     * 若是不带有`[scope]`
-  
+    
       ```stylus
       // styl 样式
       div
@@ -140,9 +141,9 @@
       a
         display inline-block
       ```
-  
+    
       编译后是
-  
+    
       ```html
       <style> 
       div {  height: 100%;  font-weight: bold;}a {  display: inline-block;}
@@ -151,18 +152,22 @@
       	....
       </div>
       ```
-  
+    
       
 
 * `shadow`影子树（`false`）
-  * 是否使用影子树，影子树，参考[MDN的解释](https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/shadow)，简单来说就是隔离开原有的dom环境，新建一个环境，次新环境与外环境样式不相冲突。默认是`false`
-
+  
+* 是否使用影子树，影子树，参考[MDN的解释](https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/shadow)，简单来说就是隔离开原有的dom环境，新建一个环境，次新环境与外环境样式不相冲突。默认是`false`
+  
 * `customElements`使用webcomponent形式（`true`）
-  * 是否使用原生webComponent形式，默认是`true`，将影响组件的写法。为`true`时，直接写`tagName`即可，为`false`时，需要在js里使用`renderAt(el)`来渲染。
-
+  
+* 是否使用原生webComponent形式，默认是`true`，将影响组件的写法。为`true`时，直接写`tagName`即可，为`false`时，需要在js里使用`renderAt(el)`来渲染。
+  
 * `props`父级传值（`[]`）
+  
   * 来自于父级的传值。在组件内部传值随意，**组件环境外部向组件传值时只能是字符串形式**。
 * `canBeCalledExt`是否可以被外部调用(false)
+  
   * 主要是用外组件环境外界调用内部组件内部方法时使用，默认是false
 
 ### 基类的使用
@@ -302,3 +307,10 @@ let plugin ={
 
 * 添加router扩展
 * 添加fetch扩展
+
+> FIX
+
+* prop 传`0,''`时显示异常
+* 组件环境外调用组件内方法调用错误
+* 优化 组件内部统一为组件渲染
+* 

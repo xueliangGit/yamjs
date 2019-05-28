@@ -159,7 +159,7 @@ function setProp (keys, attrs, props, elm) {
   if (keys in attrs) {
     elm.setAttribute(attrs[keys], props)
   } else if (typeof props !== 'function') {
-    elm.setAttribute(keys, props)
+    // elm.setAttribute(keys, props)
   }
   if (elm[$ComponentSymbol]) {
     elm[$ComponentSymbol][keys] = props

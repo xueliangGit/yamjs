@@ -49,6 +49,16 @@ declare class BaseComponent {
     * 销毁之后调用
     */ 
   $destroyed (): void
+  /**
+    * emit
+    */ 
+   emit (): void
+   /**
+    * @summary 调用父级方法
+    * @param fnName 方法名字
+    * @param params 传值[...param]
+    */ 
+   emitProp (fnName,[...params]): void
 }
 /**
   * 定义组件的一些属性类型tagName,style,shadow,customElements,prop
@@ -63,7 +73,7 @@ declare function Component(config:{
   //是否使用web自定义组件方式去定义组件 
   customElements:true,
   // 组件传入的属性监听
-  prop:[],
+  props:[],
   // 吃否可以被外部调用组件内部的方法
   canBeCalledExt:true
 }):void

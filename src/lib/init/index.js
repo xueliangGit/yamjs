@@ -1,7 +1,7 @@
 // import updateElement from '../vDom'
 import updateElement from '../diff'
 // /creatMutationObserser ,setAttributes,
-import { proxy, creatMutationObserser, setAttributes } from '../utils'
+import { creatMutationObserser, setAttributes, forEach, getCallFnName } from '../utils'
 import nodeOps from '../utils/nodeOps'
 import lifeCycle from './lifeCycle'
 import { $ComponentSymbol, $vdomSymbol, $componentDataSymbol } from '../symbol'
@@ -11,6 +11,7 @@ let styleIsInstalled = {}
 function _init () {
   lifeCycle.beforeCreate(this)
   if (this.elm) {
+    // 现在都走这个
     bindElmentEvent(this)
   } else {
     this.elm = this
@@ -19,7 +20,8 @@ function _init () {
   let data = this[$componentDataSymbol] = this.$data()
   if (this._props) {
     this._props.forEach(v => {
-      data[v] = (this.props ? this.props[v] : this.elm.getAttribute(v)) || data[v] || null
+      let propVal = (this.props ? this.props[v] : this.elm.getAttribute(v))
+      data[v] = typeof propVal === 'number' || typeof propVal === 'string' ? propVal : propVal || data[v] || null
       // setAttributes(this, v, this.getAttribute(v))
     })
     if (!this.props) {
@@ -29,10 +31,18 @@ function _init () {
           _update(this)
         }
       }, { attributeFilter: this._props })
+      // 绑定 原声元素上的方法
+      forEach(this.elm.attributes, (v) => {
+        if (typeof window[v.value] === 'function') {
+          this.elm._runfn_ = this.elm._runfn_ || {}
+          this.elm._runfn_[getCallFnName(this, v.name)] = window[v.value]
+          this.elm.removeAttribute(v.name)
+        }
+      })
     }
   }
   Object.keys(data).forEach(key => {
-    proxy(key, Object.defineProperty(this, key, {
+    Object.defineProperty(this, key, {
       configurable: false,
       enumerable: true,
       get: function proxyGetter () {
@@ -42,13 +52,19 @@ function _init () {
         this[$componentDataSymbol][key] = newVal
         _update(this)
       }
-    }))
+    })
+    if (typeof this[$componentDataSymbol][key] === 'object' && !Array.isArray(this[$componentDataSymbol][key])) {
+      // setProxy(this[$componentDataSymbol][key], this)
+    }
   })
   lifeCycle.created(this)
   lifeCycle.beforeMount(this)
   createdComponent.call(this)
   initRefs.call(this)
   lifeCycle.mounted(this)
+  this.update = () => {
+    _update(this)
+  }
 }
 function _update (context) {
   if (context.__isWillupdate) {
@@ -66,7 +82,6 @@ function initRefs () {
     this.$refs[v.getAttribute('ref')] = v[$ComponentSymbol] || v
     v.removeAttribute('ref')
   })
-  // console.log(this.__shadowRoot.querySelectorAll('[ref]'))
 }
 // 创建组件
 function createdComponent () {
@@ -81,8 +96,8 @@ function createdComponent () {
       nodeOps.appendChild(shadowRoot, style)
       nodeOps.appendChild(shadowRoot, getFram.call(this, true))
     } else {
-      nodeOps.appendChild(this.elm, getFram.call(this))
       this.__shadowRoot = this.elm
+      nodeOps.appendChild(this.elm, getFram.call(this))
       let parent = this.elm
       while (parent.parentElement || parent._parentElement) {
         parent = parent.parentNode || parent._parentNode

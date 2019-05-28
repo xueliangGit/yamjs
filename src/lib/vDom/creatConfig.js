@@ -382,7 +382,8 @@ export const GLOBAL_ATTRIBUTES = {
   spellCheck: 'spellcheck',
   tabIndex: 'tabindex',
   title: 'title',
-  translate: 'translate'
+  translate: 'translate',
+  ref: 'ref'
 }
 export const EVENT_HANDLERS = {
   onClick: 'click',

@@ -66,10 +66,10 @@ function proxy (key, setter, self) {
       configurable: false,
       enumerable: true,
       get: function proxyGetter () {
-        return self.$Component[key]
+        return self[key]
       },
       set: function proxySetter (newVal) {
-        self.$Component[key] = newVal
+        self[key] = newVal
       }
     })
 }
@@ -120,7 +120,7 @@ function _getStrByStyle (_id, style, isScope) {
           if (isScope) {
             v = v.replace('[root]', '')
           } else {
-            v = v.replace('[root]', '[dom="' + _id + '"] ')
+            v = v.replace('[root]', '[dom="' + _id + '"]')
           }
         }
         return isScope ? '[dom="' + _id + '"] ' + v : v

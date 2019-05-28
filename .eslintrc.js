@@ -6,7 +6,9 @@ module.exports = {
   parserOptions: {
     parser: 'babel-eslint',
     ecmaFeatures: {
-      legacyDecorators: true
+      legacyDecorators: true,
+      "jsx": true,
+      "experimentalObjectRestSpread": true
     }
   },
   env: {
@@ -30,6 +32,7 @@ module.exports = {
     // allow debugger during development
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     // 'vue/no-parsing-error': [2, { 'x-invalid-end-tag': false }],
-    "space-before-function-paren": ["error", "always"] 
+    "space-before-function-paren": ["error", "always"] ,
+    // "react/jsx-uses-vars": "error"
   }
 }

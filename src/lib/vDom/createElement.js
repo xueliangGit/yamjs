@@ -25,7 +25,7 @@ class Element {
       this.childNodes = Array.isArray(childNodes) ? childNodes.flat(3) : [childNodes]
       this.childNodes = this.childNodes.map((v, key) => {
         // if (typeof v === 'string' || typeof v === 'number' || typeof v === 'function' || typeof v === 'undefined' || typeof v === 'null') {
-        if (typeof v !== 'object') {
+        if (typeof v !== 'object' || v === null) {
           v = new Element('textNode', '', v + '', _root, true)
         } else if (!v.tagName) {
           try {
@@ -45,6 +45,8 @@ class Element {
       const tagType = object ? tag.name : tagClass ? tag._tagName : tag
       this.isElement = tagClass ? tag.customElements : true
       this.tagType = tagType
+      this.needClass = tagClass || (object && tag.isComponent)
+      this.class = this.needClass && (tag.class || tag)
       this.attrs = attrs
     }
     this._root = _root // 带搞根结点
@@ -57,14 +59,16 @@ class Element {
     }
     let el = null
     let slot = []
-    if (!this.isElement) {
+    // 自定义webcomponent
+
+    if (this.needClass) {
       let cacheDom = document.createElement('div')
       // let cacheDom = document.createDocumentFragment()
       // 回调
       cacheDom._parentNode = parentELm
       cacheDom._parentElement = parentELm
       //  eslint-disable-next-line new-cap
-      this[$ComponentSymbol] = new this.tagName()
+      this[$ComponentSymbol] = new this.class()
       this[$ComponentSymbol].props = this.props
       this[$ComponentSymbol].renderAt(cacheDom)
       cacheDom[$ComponentSymbol] = this[$ComponentSymbol]
@@ -92,7 +96,7 @@ class Element {
           el.setAttribute(this.attrs[prop], this.props[prop])
         } else if (prop in EVENT_HANDLERS) {
           el.addEventListener(EVENT_HANDLERS[prop], this.props[prop])
-        } else if (typeof this.props[prop] !== 'function' && this.isElement) {
+        } else if (typeof this.props[prop] !== 'function' && !this.class) {
           el.setAttribute(prop, this.props[prop])
         } else if (typeof this.props[prop] === 'function' && this.isElement) {
           // let fnName = getCallFnName(this, prop) // `${this.tagType}_${prop}_fn`
