@@ -16,7 +16,6 @@ class App extends BaseComponent {
     this.$refs.scroller.scrollTop = lineHeight * this.index
   }
   $mounted () {
-    console.log(this)
     this.distance = lineHeight
     this.$refs.scroller.scrollTop = lineHeight * this.index
     var self = this

@@ -74,7 +74,7 @@ function createdComponent () {
       if (!styleIsInstalled[nameStyle]) {
         styleIsInstalled[nameStyle] = []
       }
-      if (!styleIsInstalled[nameStyle].includes(this._eid)) {
+      if (!styleIsInstalled[nameStyle].includes(this._cid)) {
         if (parent.tagName === 'HTML') {
         // body
           document.head.appendChild(style)
@@ -84,7 +84,7 @@ function createdComponent () {
         }
         // nameStyle
         console.log('parent', parent.parentNode, styleIsInstalled)
-        styleIsInstalled[nameStyle].push(this._eid)
+        styleIsInstalled[nameStyle].push(this._cid)
       }
     }
     //
@@ -93,7 +93,7 @@ function createdComponent () {
 // 获取dom片段
 function getFram () {
   this.$div = document.createElement('div')
-  this.$div.setAttribute('dom', this._eid)
+  this.$div.setAttribute('dom', this._cid)
   // console.log(this.render.toString())
   try {
     this[$vdom] = this.render()

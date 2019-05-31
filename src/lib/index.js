@@ -10,7 +10,9 @@ export default BaseComponent
 export { Component }
 // ok1 样式只是加载一次
 // ok2 完成 基类可有 扩展
+// ok3 完成 setTimeOut ，setInterval 封装
 // BUG 来回切换会出问题 --
+// BUG slot 渲染
 // TODO 0 处理解析出来的父级元素 --
 // TODO 1 完成diff --
 // TODO 1 添加路由

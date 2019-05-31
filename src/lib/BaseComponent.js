@@ -1,7 +1,8 @@
 import init from './init'
 import lifeCycle from './init/lifeCycle'
 import { Mix } from './init/mix'
-import { getStyleStr, toCamelCase, getCallFnName } from './utils'
+import { getStyleStr, toCamelCase, getCallFnName, forEach, guid2 } from './utils'
+import cacheLib from './utils/cacheLib'
 import BaseCustomElements from './BaseCustomElements'
 import { HTML_TAGS } from './vDom/creatConfig'
 var comps = window.comps = {}
@@ -12,7 +13,8 @@ class BaseComponent {
   constructor () {
     this._config()
     // console.log(new.target)
-    comps[this._eid + ++compsIds] = this
+    comps[this._cid + '-' + ++compsIds] = this
+    this._rootId = compsIds
     // console.log('BaseComponent', isCustomElements)
   }
   __getProps (props) {
@@ -33,6 +35,10 @@ class BaseComponent {
     console.log('disconnectedCallback')
     // 取消 监听
     // this.mutation.disconnect()
+    console.log('this.__beforeDestroyedCall', this, this.__beforeDestroyedCall)
+    if (this.__beforeDestroyedCall && this.__beforeDestroyedCall.length) {
+      forEach(this.__beforeDestroyedCall, (v) => v())
+    }
     lifeCycle.beforeDestroyed(this)
   }
   // 会被覆盖的方法
@@ -94,6 +100,22 @@ class BaseComponent {
     }
     return null
   }
+  // 添加销毁事件
+  addDestory (fn) {
+    this.__beforeDestroyedCall = this.__beforeDestroyedCall || []
+    this.__beforeDestroyedCall.push(fn)
+    let guid = guid2()
+    this.__idsMaps[guid] = this.__beforeDestroyedCall.length - 1
+    console.log('add__IdsMaps', this.__idsMaps)
+    return guid
+  }
+  // 移除销毁事件
+  delDestory (eventId) {
+    let index = this.__idsMaps[eventId]
+    delete this.__idsMaps[eventId]
+    console.log('del__IdsMaps', this.__idsMaps)
+    return this.__beforeDestroyedCall.splice(index, 1)
+  }
 }
 
 export default BaseComponent
@@ -109,8 +131,8 @@ export function Component (Config) {
       this._shadow = !!shadow || false
       this._props = props || []
       this._canBeCalledExt = typeof canBeCalledExt === 'boolean' ? canBeCalledExt : false
-      this._eid = 'com_' + tagName
-      this._style = getStyleStr(this._eid, style)
+      this._cid = 'com-' + tagName
+      this._style = getStyleStr(this._cid, style)
       // if (typeof customElements === 'undefined') {
       //   this.isCustomElements = true
       // }
@@ -122,6 +144,9 @@ export function Component (Config) {
         isComponent: true,
         class: Target
       }
+    }
+    if (!cacheLib.get('com-' + tagName)) {
+      cacheLib.set('com-' + tagName, Target)
     }
     if (customElements || typeof customElements === 'undefined') {
       Target.customElements = true

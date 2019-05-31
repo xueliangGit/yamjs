@@ -11,8 +11,8 @@ function oneObject (str) {
   return obj
 }
 var voidTag = oneObject('area,base,basefont,br,col,frame,hr,img,input,link,meta,param,embed,command,keygen,source,track,wbr')
-var specalTag = { xmp: 1, style: 1, script: 1, noscript: 1, textarea: 1 }
-var hiddenTag = { style: 1, script: 1, noscript: 1, template: 1 }
+var specalTag = {xmp: 1, style: 1, script: 1, noscript: 1, textarea: 1}
+var hiddenTag = {style: 1, script: 1, noscript: 1, template: 1}
 
 var JSXParser = function (a, f) {
   if (!(this instanceof JSXParser)) {
@@ -410,7 +410,7 @@ function getAttrs (string) {
 }
 
 function makeJSX (JSXNode) {
-  return JSXNode.length === 1 && JSXNode[0].type === '#jsx' ? JSXNode[0] : { type: '#jsx', nodeValue: JSXNode }
+  return JSXNode.length === 1 && JSXNode[0].type === '#jsx' ? JSXNode[0] : {type: '#jsx', nodeValue: JSXNode}
 }
 
 @Component({
@@ -463,64 +463,28 @@ class App extends BaseComponent {
     // this.emit('ad')
     // console.log(this.$refs.mytim)
     // this.$refs.mytim.showP()
-    this.index = i
+    this.index *= i
   }
-  childEmit (i) {
-    console.log(`子组件传来信息` + i)
-    console.log(this)
-  }
-  getList () {
-    // return <MyTimer msgTime={123 + '' + this.index} ref='mytim' showFn={this.showList.bind(this)} />
-    if (this.index === 1) {
-      return this.list.map((v, k) => <div key={k} ani='fade'>{v}</div>)
-    } else if (this.index === 2) {
-      return <MyTimer msgTime={123 + '' + this.index} ref='mytim' showFn={this.childEmit.bind(this)} />
+  getTimer(){
+    if(this.index==1){
+      return <MyTimer >
+      <p>我是时间-2</p>
+      <p slot='bottom'>我是时间-11112</p>
+    </MyTimer>
     }
     return ''
   }
   render () {
     return (
-      <div className='asd' />
+      <div className='asd' >
+        <div onClick={this.switch.bind(this,-1)}>点击</div>
+        {this.index==1?<slot name='left'></slot>:''}
+        {this.getTimer()}
+
+      </div>
     )
   }
-  $connectedCallback () {
-    // console.log('$connectedCallback')
-    // setTimeout(() => {
-    //   // this.list = [5, 6, 7, 78]
-    //   let p = []
-    //   for (let j = 0; j < 500; j++) {
-    //     p.push(j)
-    //   }
-    //   console.time('beginUpdate1')
-    //   this.list = p
-    //   console.timeEnd('beginUpdate1')
-    //   console.log(this.list)
-    //   setTimeout(() => {
-    //     let pp = []
-    //     for (let l = 0; l < 8; l++) {
-    //       pp.push(l)
-    //     }
-    //     console.time('beginUpdate2')
-    //     this.list = pp
-    //     console.timeEnd('beginUpdate2')
-
-    //     setTimeout(() => {
-    //       console.time('beginUpdate3')
-    //       this.list = this.list.reverse()
-    //       console.timeEnd('beginUpdate3')
-    //       // console.log(this._config())
-    //       // console.log(this._shadow)
-    //       setTimeout(() => {
-    //         console.time('beginUpdate3')
-    //         this.list = this.list.reverse()
-    //         console.timeEnd('beginUpdate3')
-    //       // console.log(this._config())
-    //       // console.log(this._shadow)
-    //       }, 5000)
-    //     }, 5000)
-    //   }, 5000)
-    // }, 5000)
-  }
+  
 }
 // console.log(GoTop._style)
 export default App

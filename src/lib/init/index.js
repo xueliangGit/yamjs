@@ -1,7 +1,7 @@
 // import updateElement from '../vDom'
 import updateElement from '../diff'
 // /creatMutationObserser ,setAttributes,
-import { creatMutationObserser, setAttributes, forEach, getCallFnName } from '../utils'
+import { creatMutationObserser, setAttributes, forEach, getCallFnName, map, syncComponentMark } from '../utils'
 import nodeOps from '../utils/nodeOps'
 import lifeCycle from './lifeCycle'
 import { $ComponentSymbol, $vdomSymbol, $componentDataSymbol } from '../symbol'
@@ -12,6 +12,15 @@ function _init () {
   lifeCycle.beforeCreate(this)
   if (this.elm) {
     // 现在都走这个
+    this._childrenOri = this.elm.children.length ? map(this.elm.children, (v) => v) : undefined
+    this.elm._childrenOri = this._childrenOri
+    if (this._childrenOri) {
+      // 开启把原有的 子集销毁
+      // eslint-disable-next-line no-cond-assign
+      for (let j = 0, child; child = this.elm.children[j];) {
+        this.elm.removeChild(child)
+      }
+    }
     bindElmentEvent(this)
   } else {
     this.elm = this
@@ -106,7 +115,7 @@ function createdComponent () {
       if (!styleIsInstalled[nameStyle]) {
         styleIsInstalled[nameStyle] = []
       }
-      if (!styleIsInstalled[nameStyle].includes(this._eid)) {
+      if (!styleIsInstalled[nameStyle].includes(this._cid)) {
         if (nameStyle === 'HTML') {
         // body
           document.head.appendChild(style)
@@ -115,7 +124,7 @@ function createdComponent () {
           parent.insertBefore(style, parent.lastChild)
         }
         // nameStyle
-        styleIsInstalled[nameStyle].push(this._eid)
+        styleIsInstalled[nameStyle].push(this._cid)
       }
     }
     //
@@ -123,8 +132,9 @@ function createdComponent () {
 }
 // 若不是 自定元素仅仅值一个自定义组件需要绑定 相应的到元素上事件
 function bindElmentEvent (context) {
-  context.elm.disconnectedCallback = context.__disconnectedCallback
-  context.elm.beforeDisconnectedCallback = context.__beforeDisconnectedCallback
+  syncComponentMark(context)
+  context.elm.disconnectedCallback = context.__disconnectedCallback.bind(context)
+  context.elm.beforeDisconnectedCallback = context.__beforeDisconnectedCallback.bind(context)
   if (context._canBeCalledExt) {
     // 获取子组件
     context.elm.$refs = (name) => {
@@ -136,6 +146,15 @@ function bindElmentEvent (context) {
     context.elm.emitProp = (...arg) => context.emitProp(...arg)
     // context.elm.emit = (fnName) => {
   }
+  // delFlag(context, '_canBeCalledExt')
+}
+// 删除标示
+// eslint-disable-next-line no-unused-vars
+function delFlag (context, key) {
+  if (process.env.NODE_ENV === 'development') {
+    return
+  }
+  delete context[key]
 }
 // 获取dom片段
 function getFram (isNeedDiv = false) {
@@ -144,12 +163,14 @@ function getFram (isNeedDiv = false) {
   } else {
     this.$div = document.createElement('div')
   }
-  this.$div.setAttribute('dom', this._eid)
+  this.$div.setAttribute('dom', this._cid)
   try {
     this[$vdomSymbol] = this.render()
+    this[$vdomSymbol]._rootId = this._rootId
   } catch (e) {
     console.log('e', e)
   }
+  // this.$div._childrenOri = this._childrenOri
   this.$div._parentElement = this.__shadowRoot
   this.$div._parentNode = this.__shadowRoot
   updateElement(this.$div, this[$vdomSymbol])
@@ -160,16 +181,24 @@ async function update () {
   lifeCycle.beforeUpdate(this)
   setTimeout(() => {
     if (this[$vdomSymbol]) {
-      console.time('------$update')
+      // console.time('------$update')
       let newNode = this.render()
       let oldNode = this[$vdomSymbol]
       this[$vdomSymbol] = newNode
+      this[$vdomSymbol]._rootId = this._rootId
       updateElement(this.$div, newNode, oldNode)
-      console.timeEnd('------$update')
+      // console.timeEnd('------$update')
       lifeCycle.updated(this)
     }
   })
 }
+// 初始化 参数和数据
+function initConfig () {
+  this.__beforeDestroyedCall = []
+  this.__idsMaps = {}
+}
 export default function init (context) {
+  // 初始化 配置信息
+  initConfig.call(context)
   _init.call(context)
 }

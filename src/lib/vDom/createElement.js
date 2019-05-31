@@ -2,7 +2,8 @@
 import { HTML_TAGS, GLOBAL_ATTRIBUTES, EVENT_HANDLERS } from './creatConfig'
 import nodeOps from '../utils/nodeOps'
 import { $ComponentSymbol } from '../symbol'
-import { getCallFnName } from '../utils'
+import { getCallFnName, forEach, getComponentMark, toCamelCase } from '../utils'
+import cacheLib from '../utils/cacheLib'
 // eslint-disable-next-line no-extend-native
 Array.prototype.flat = Array.prototype.flat || function () {
   return this.reduce((acc, val) => Array.isArray(val) ? acc.concat(val.flat()) : acc.concat(val), [])
@@ -48,6 +49,7 @@ class Element {
       this.needClass = tagClass || (object && tag.isComponent)
       this.class = this.needClass && (tag.class || tag)
       this.attrs = attrs
+      this._name = toCamelCase(tagType)
     }
     this._root = _root // 带搞根结点
   }
@@ -68,13 +70,12 @@ class Element {
       cacheDom._parentNode = parentELm
       cacheDom._parentElement = parentELm
       //  eslint-disable-next-line new-cap
-      this[$ComponentSymbol] = new this.class()
-      this[$ComponentSymbol].props = this.props
-      this[$ComponentSymbol].renderAt(cacheDom)
-      cacheDom[$ComponentSymbol] = this[$ComponentSymbol]
-      // console.log(this[$ComponentSymbol])
+      cacheDom[$ComponentSymbol] = new this.class()
+      cacheDom[$ComponentSymbol].props = this.props
+      cacheDom[$ComponentSymbol].renderAt(cacheDom)
+      // console.log(cacheDom[$ComponentSymbol])
       cacheDom.firstChild.disconnectedCallback = () => {
-        this[$ComponentSymbol].disconnectedCallback && this[$ComponentSymbol].disconnectedCallback()
+        cacheDom[$ComponentSymbol].disconnectedCallback && cacheDom[$ComponentSymbol].disconnectedCallback()
       }
       el = cacheDom
     } else {
@@ -82,13 +83,18 @@ class Element {
       el = document.createElement(this.tagType)
       // console.log(el[$ComponentSymbol] = {})
       // el[$ComponentSymbol].props = this.props
+      // 处理 slot 更新
       if (this.tagName === 'slot') {
         el.setAttribute('tag', 'slot')
+        let mark = getComponentMark(parentELm)
+        el.isBelong = mark._name
+        doAfterSlotUpdate(el, this, mark.elm.rand)
       }
       el._parentNode = parentELm
       el._parentElement = parentELm
     }
     slot = el.querySelectorAll('[tag=slot]')
+    // console.log('slot-1', slot)
     // el.props = this.props
     if (this.props) {
       Object.keys(this.props).forEach(prop => {
@@ -123,23 +129,121 @@ class Element {
       nodeOps.appendChild(getRenderElmBySlot(slot, child, el), child.render(key, el))
       // el.appendChild(child.render(key))
     })
+    // 组件内部使用
+    if (slot.length && this.childNodes) {
+      this.rand = this.rand || Math.random()
+      el.rand = this.rand
+      cacheLib.set(this._name + 'slot-' + this.rand, this.childNodes)
+    }
+    // 处理组件在最顶层时 slot 情况
+    if (parentELm._parentElement && parentELm._parentElement._childrenOri) {
+      slot = el.querySelectorAll('[tag=slot]')
+      let slotBelong = getComponentMark(parentELm)._name
+      console.log('slot-3', slot, slotBelong, parentELm)
+      console.log('parentELm._childrenOri', slot, slotBelong, parentELm._parentElement._childrenOri, parentELm)
+      this.rand = this.rand || Math.random()
+      parentELm._parentElement.rand = this.rand
+      cacheLib.set(parentELm._parentElement[$ComponentSymbol]._name + 'slot-' + this.rand, parentELm._parentElement._childrenOri)
+      forEach(parentELm._parentElement._childrenOri, (child, key) => {
+        nodeOps.appendChild(getRenderElmBySlot(slot, child, el, slotBelong), child)
+        // el.appendChild(child.render(key))
+      })
+    }
     this.elm = el
     return this.elm
   }
 }
-function getRenderElmBySlot (slot, child, el) {
+// do slot 更新后的slot数据渲染
+// 只有
+function doAfterSlotUpdate (el, context, rand) {
+  let childNodes = cacheLib.get(el.isBelong + 'slot-' + rand)
+  console.log(rand, childNodes, el.isBelong + 'slot-' + rand)
+  if (childNodes && childNodes.length) {
+    let name = context.props.name
+    forEach(childNodes, (v, i) => {
+      if (name) {
+        if (v.render && v.props) {
+          if (name === v.props.slot) {
+            nodeOps.appendChild(el, v.render(i, el))
+          }
+        } else {
+          if (name === v.getAttribute('slot')) {
+            nodeOps.appendChild(el, v)
+          }
+        }
+      } else {
+        if (v.render) {
+          nodeOps.appendChild(el, v.render(i, el))
+        } else {
+          nodeOps.appendChild(el, v)
+        }
+      }
+    })
+  }
+}
+// 添加 组件内slot 区分；slot不能越级渲染,越级渲染只是处在顶层组件中
+function getRenderElmBySlot (slot, child, el, slotBelong = null) {
+  // 先获取 slot所属一样的
   if (slot.length) {
-    if (child.props.slot) {
+    let slotName = child.props ? child.props.slot : child.attributes ? child.getAttribute('slot') : false
+    console.log('slotName', slotName, child, slotBelong, slot)
+    if (slotName) {
+      let l = 0
       // eslint-disable-next-line no-cond-assign
       for (let i = 0, v; v = slot[i]; i++) {
-        if (v.getAttribute('name') === child.props.slot) {
+        if (slotBelong && slotBelong !== v.isBelong) {
+          continue
+        }
+        l++
+        if ((!slotBelong || l > 1) && !v.getAttribute('name')) {
+          console.warn(`
+          当 【slot】 多于一个的时候，必须要用name区分开，
+
+          否则将在【slot】出现改动的时候会时【slot】渲染出错
+
+          >> 位于 【${v.isBelong}】 组件内
+          `)
+        }
+        if (v.getAttribute('name') === slotName) {
           return v
         }
       }
-      return slot[slot.length - 1]
+      // 修改成 若指定了 slot 必须渲染到改slot里
+      return null
     } else {
-      return slot[slot.length - 1]
+      let l = []
+      // eslint-disable-next-line no-cond-assign
+      for (let i = 0, v; v = slot[i]; i++) {
+        if (slotBelong && slotBelong !== v.isBelong) {
+          continue
+        }
+        l.push(v)
+        if ((!slotBelong || l.length > 1) && !v.getAttribute('name')) {
+          console.warn(`
+          当 【slot】 多于一个的时候，必须要用name区分开，
+
+          否则将在【slot】出现改动的时候会时【slot】渲染出错
+
+          >> 位于 【${v.isBelong}】 组件内
+          `)
+        }
+      }
+      if (l.length === 1) {
+        return l[l.length - 1]
+      }
+      // 修改为 当有多个slot时 必须要填写 slot
+      // return slot[slot.length - 1]
+      // eslint-disable-next-line no-cond-assign
+      // for (let i = slot.length - 1, v; v = slot[i]; i--) {
+      //   if (slotBelong && slotBelong !== v.isBelong) {
+      //     continue
+      //   }
+      //   return v
+      // }
+
+      // return slot[slot.length - 1]
     }
+    return null
   }
   return el
 }

@@ -34,6 +34,9 @@ function removeChild (node, child) {
   }
 }
 function appendChild (node, child, callBk = false) {
+  if (!node) {
+    return false
+  }
   node.appendChild(child)
   insertCall(child)
   if (callBk) {

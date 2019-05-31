@@ -42,14 +42,31 @@ export function Mix () {
 }
 function addPrototype (Target, name) {
   return {
-    addPrototype (type, fn) {
+    /**
+     * @summary 获取原有的方法
+     * @param {type} 方法名
+     * @return 方法
+     */
+    getPrototype (type) {
+      return Target.prototype[type] || null
+    },
+    addPrototype (type, fn, isCovered = false) {
       if (reserved.includes(type) || Target.prototype[type]) {
-        console.warn(`
-        方法名：${type} 已存在，请修改
-        
-        该方法是出现在 【${Target.prototype[type]['pluginsName'] ? Target.prototype[type]['pluginsName'] + ' 插件' : '框架'}】中，请修改方法再次安装使用
-        `)
-        return false
+        if (isCovered) {
+          console.warn(`
+          ============
+          方法名：${type} 已存在，将被【${name}插件】中的 ${type} 方法覆盖
+          该覆盖方法将影响到【${Target.prototype[type]['pluginsName'] ? Target.prototype[type]['pluginsName'] + ' 插件' : '框架'}】中使用，请谨慎处理
+          ============
+          `)
+        } else {
+          console.warn(`
+          方法名：${type} 已存在，请修改
+          
+          该方法是出现在 【${Target.prototype[type]['pluginsName'] ? Target.prototype[type]['pluginsName'] + ' 插件' : '框架'}】中，请修改方法再次安装使用
+          `)
+          return false
+        }
       }
       Target.prototype[type] = fn
       Target.prototype[type]['pluginsName'] = name

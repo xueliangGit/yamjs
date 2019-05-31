@@ -4,6 +4,8 @@ export default function getCustom (Target) {
   class ElmApp extends HTMLElement {
     connectedCallback () {
       this[$ComponentSymbol] = new Target()
+      console.log('==================')
+      console.log(this)
       this[$ComponentSymbol].renderAt(this)
     }
     disconnectedCallback () {

@@ -1,4 +1,5 @@
 
+let{ $ComponentSymbol } = require('../symbol')
 /**
  * [def 定义对象属性]
  * @param  {Object}  obj        对象
@@ -182,6 +183,36 @@ function setProp (obj, el) {
 }
 const getCallFnName = (context, prop) => `${context.tagType || context._tagName}_${prop}_fn`
 const toCamelCase = str => str.replace(/-(\w)/g, (x) => { return x.slice(1).toUpperCase() })
+// 设置组件标示
+const syncComponentMark = (context) => {
+  context.elm.isComponent = true
+  context.elm.componentName = context._name
+  context.elm.componentId = context._rootId
+}
+// 设置组件名字
+const getComponentMark = (dom) => {
+  let elm = dom
+  while (elm) {
+    if (elm.isComponent) {
+      return elm[$ComponentSymbol]
+    }
+    elm = elm._parentNode
+  }
+  return { _name: 'root', _rootId: -1 }
+}
+/**
+ * @summary 获取guid
+ * @returns [guid]
+ */
+const guid2 = () => {
+  return (S4() + S4() + '-' + S4() + S4())
+}
+const guid = () => {
+  return (S4() + S4() + '-' + S4() + '-' + S4() + '-' + S4() + '-' + S4() + S4() + S4())
+}
+function S4 () {
+  return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1)
+}
 module.exports = {
   def: def,
   protoAugment: protoAugment,
@@ -201,5 +232,9 @@ module.exports = {
   map,
   setProp,
   toCamelCase,
-  getCallFnName
+  getCallFnName,
+  syncComponentMark,
+  getComponentMark,
+  guid,
+  guid2
 }

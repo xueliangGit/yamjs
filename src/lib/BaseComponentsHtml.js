@@ -8,7 +8,7 @@ class BaseComponent extends HTMLElement {
   constructor () {
     super()
     this._config()
-    comps[this._eid] = this
+    comps[this._cid] = this
     // console.log('BaseComponent', this._style)
   }
   connectedCallback () {
@@ -47,8 +47,8 @@ export function Component (Config) {
       this._tagName = tagName
       this._shadow = !!shadow
       this._props = props || []
-      this._eid = 'com_' + tagName
-      this._style = getStyleStr(this._eid, style)
+      this._cid = 'com-' + tagName
+      this._style = getStyleStr(this._cid, style)
       // console.log('this._style', this._style)
     }
     try {
