@@ -39,6 +39,14 @@ class BaseComponent {
     if (this.__beforeDestroyedCall && this.__beforeDestroyedCall.length) {
       forEach(this.__beforeDestroyedCall, (v) => v())
     }
+    // 取消 内部组件的 方法
+    if (this.__childComponents) {
+      forEach(this.__childComponents, (app) => {
+        console.log(app)
+        app.__beforeDisconnectedCallback()
+        app.__disconnectedCallback()
+      })
+    }
     lifeCycle.beforeDestroyed(this)
   }
   // 会被覆盖的方法

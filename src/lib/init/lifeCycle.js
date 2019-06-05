@@ -1,3 +1,5 @@
+import { $ComponentSymbol, $vdomSymbol } from '../symbol/index'
+
 export default {
   // 创建实例之前
   beforeCreate (context) {
@@ -30,6 +32,11 @@ export default {
   // 销毁后
   destroyed (context) {
     _run(context, '$destroyed')
+    context[$ComponentSymbol] = null
+    context[$vdomSymbol] = null
+    context.elm = null
+    context.$div = null
+    context.isDestoryed = true
   }
 }
 function _run (context, name) {

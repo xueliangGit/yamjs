@@ -1,7 +1,7 @@
 // import updateElement from '../vDom'
 import updateElement from '../diff'
 // /creatMutationObserser ,setAttributes,
-import { creatMutationObserser, setAttributes, forEach, getCallFnName, map, syncComponentMark } from '../utils'
+import { creatMutationObserser, setAttributes, forEach, getCallFnName, map, syncComponentMark, guid2 } from '../utils'
 import nodeOps from '../utils/nodeOps'
 import lifeCycle from './lifeCycle'
 import { $ComponentSymbol, $vdomSymbol, $componentDataSymbol } from '../symbol'
@@ -46,6 +46,17 @@ function _init () {
           this.elm._runfn_ = this.elm._runfn_ || {}
           this.elm._runfn_[getCallFnName(this, v.name)] = window[v.value]
           this.elm.removeAttribute(v.name)
+        }
+      })
+      this.elm._eid = guid2()
+      // 绑定 移除事件
+      this.elm.parentNode.addEventListener('DOMNodeRemoved', (e) => {
+        console.log('DOMNodeRemoved', e)
+        if (e.target._eid == this.elm._eid) {
+          if (this.elm.disconnectedCallback) {
+            this.elm.beforeDisconnectedCallback()
+            this.elm.disconnectedCallback()
+          }
         }
       })
     }

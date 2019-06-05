@@ -78,6 +78,12 @@ class Element {
         cacheDom[$ComponentSymbol].disconnectedCallback && cacheDom[$ComponentSymbol].disconnectedCallback()
       }
       el = cacheDom
+      // 自定义组件 挂在在其父级的自定义组件上
+      let parentCom = getparentCom(parentELm)
+      if (!parentCom[$ComponentSymbol]['__childComponents']) {
+        parentCom[$ComponentSymbol]['__childComponents'] = []
+      }
+      parentCom[$ComponentSymbol]['__childComponents'].push(cacheDom[$ComponentSymbol])
     } else {
       // el[$ComponentSymbol].props = this.props
       el = document.createElement(this.tagType)
@@ -246,6 +252,16 @@ function getRenderElmBySlot (slot, child, el, slotBelong = null) {
     return null
   }
   return el
+}
+// 获取上一个自定义组件
+function getparentCom (elm) {
+  let parent = elm
+  while (parent.parentElement || parent._parentElement) {
+    if (parent[$ComponentSymbol]) {
+      return parent
+    }
+    parent = parent.parentNode || parent._parentNode
+  }
 }
 export function renderElement (dom) {
   return (dom instanceof Element)
