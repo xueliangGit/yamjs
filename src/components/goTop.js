@@ -417,6 +417,8 @@ function makeJSX (JSXNode) {
   tagName: 'go-top',
   style: require('./goTop.stylus'),
   shadow: false,
+  canBeCalledExt:true,
+  customElements:false,
   props: ['msg']
 })
 class App extends BaseComponent {

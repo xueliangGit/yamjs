@@ -16,6 +16,7 @@ export default {
   // 挂在数据
   mounted (context) {
     _run(context, '$mounted')
+    context.elm && context.elm.onReady && typeof context.elm.onReady === 'function' && context.elm.onReady()
   },
   // 更新之前
   beforeUpdate (context) {
@@ -37,6 +38,9 @@ export default {
     context.elm = null
     context.$div = null
     context.isDestoryed = true
+    context.mutation = null
+    context.Destory = null
+    context.ChildComponentsManage = null
   }
 }
 function _run (context, name) {

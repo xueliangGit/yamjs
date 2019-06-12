@@ -12,6 +12,7 @@ export default function getCustom (Target) {
       if (!this.isUnset) {
         this.isUnset = true
         console.log('disconnectedCallbackdisconnectedCallbackdisconnectedCallback')
+        this[$ComponentSymbol].__beforeDisconnectedCallback()
         this[$ComponentSymbol].__disconnectedCallback()
       }
     }

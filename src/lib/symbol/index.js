@@ -4,3 +4,4 @@ export const $ComponentSymbol = Symbol('$Component')
 export const $vdomSymbol = Symbol('$vdom')
 // $componentData Symbol
 export const $componentDataSymbol = Symbol('$componentData')
+export const $closestParentSymbol = Symbol('$closestParentSymbol')

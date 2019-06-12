@@ -64,6 +64,7 @@ class App extends BaseComponent {
          this.mins++
        }
      }
+     console.log('mytimer UPdater111', this._rootId)
    }
  }
 console.log('GoTop:#config', App._tagName)

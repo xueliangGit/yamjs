@@ -1,8 +1,9 @@
 /** @jsx createElement */
 import { HTML_TAGS, GLOBAL_ATTRIBUTES, EVENT_HANDLERS } from './creatConfig'
 import nodeOps from '../utils/nodeOps'
-import { $ComponentSymbol } from '../symbol'
-import { getCallFnName, forEach, getComponentMark, toCamelCase } from '../utils'
+import { forEach, toCamelCase } from '../utils'
+import { getCallFnName, getComponentMark, setComponentForElm, getComponentByElm, getparentCom } from '../utils/componentUtil'
+
 import cacheLib from '../utils/cacheLib'
 // eslint-disable-next-line no-extend-native
 Array.prototype.flat = Array.prototype.flat || function () {
@@ -69,21 +70,24 @@ class Element {
       // 回调
       cacheDom._parentNode = parentELm
       cacheDom._parentElement = parentELm
+      // fix 隐藏 component 使用方法调用
       //  eslint-disable-next-line new-cap
-      cacheDom[$ComponentSymbol] = new this.class()
-      cacheDom[$ComponentSymbol].props = this.props
-      cacheDom[$ComponentSymbol].renderAt(cacheDom)
+      let component = new this.class()
+      component.props = this.props
+      component.renderAt(cacheDom)
       // console.log(cacheDom[$ComponentSymbol])
-      cacheDom.firstChild.disconnectedCallback = () => {
-        cacheDom[$ComponentSymbol].disconnectedCallback && cacheDom[$ComponentSymbol].disconnectedCallback()
-      }
+      // cacheDom.firstChild.disconnectedCallback = () => {
+      //   cacheDom[$ComponentSymbol].disconnectedCallback && cacheDom[$ComponentSymbol].disconnectedCallback()
+      // }
+      setComponentForElm(cacheDom, component)
       el = cacheDom
       // 自定义组件 挂在在其父级的自定义组件上
       let parentCom = getparentCom(parentELm)
-      if (!parentCom[$ComponentSymbol]['__childComponents']) {
-        parentCom[$ComponentSymbol]['__childComponents'] = []
+      if (parentCom && parentCom.ChildComponentsManage) {
+        parentCom.ChildComponentsManage.add(component)
+        parentCom = null
       }
-      parentCom[$ComponentSymbol]['__childComponents'].push(cacheDom[$ComponentSymbol])
+      component = null
     } else {
       // el[$ComponentSymbol].props = this.props
       el = document.createElement(this.tagType)
@@ -140,6 +144,14 @@ class Element {
       this.rand = this.rand || Math.random()
       el.rand = this.rand
       cacheLib.set(this._name + 'slot-' + this.rand, this.childNodes)
+      console.log('el', el)
+      if (el.beforeDisconnectedCallback) {
+        let coms = getComponentByElm(el)
+        coms.addDestory(() => {
+          cacheLib.del(this._name + 'slot-' + this.rand)
+        })
+        coms = null
+      }
     }
     // 处理组件在最顶层时 slot 情况
     if (parentELm._parentElement && parentELm._parentElement._childrenOri) {
@@ -149,7 +161,15 @@ class Element {
       console.log('parentELm._childrenOri', slot, slotBelong, parentELm._parentElement._childrenOri, parentELm)
       this.rand = this.rand || Math.random()
       parentELm._parentElement.rand = this.rand
-      cacheLib.set(parentELm._parentElement[$ComponentSymbol]._name + 'slot-' + this.rand, parentELm._parentElement._childrenOri)
+      // 获取组件信息
+      let coms = getComponentByElm(parentELm._parentElement)
+      let _names = coms._name
+      cacheLib.set(_names + 'slot-' + this.rand, parentELm._parentElement._childrenOri)
+      coms.addDestory(() => {
+        cacheLib.del(_names + 'slot-' + this.rand)
+      })
+      coms = null
+      // 组件使用结束-销毁
       forEach(parentELm._parentElement._childrenOri, (child, key) => {
         nodeOps.appendChild(getRenderElmBySlot(slot, child, el, slotBelong), child)
         // el.appendChild(child.render(key))
@@ -253,16 +273,7 @@ function getRenderElmBySlot (slot, child, el, slotBelong = null) {
   }
   return el
 }
-// 获取上一个自定义组件
-function getparentCom (elm) {
-  let parent = elm
-  while (parent.parentElement || parent._parentElement) {
-    if (parent[$ComponentSymbol]) {
-      return parent
-    }
-    parent = parent.parentNode || parent._parentNode
-  }
-}
+
 export function renderElement (dom) {
   return (dom instanceof Element)
     ? dom.render() // 如果子节点也是虚拟DOM，递归构建DOM节点

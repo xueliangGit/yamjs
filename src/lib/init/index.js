@@ -1,15 +1,30 @@
 // import updateElement from '../vDom'
 import updateElement from '../diff'
 // /creatMutationObserser ,setAttributes,
-import { creatMutationObserser, setAttributes, forEach, getCallFnName, map, syncComponentMark, guid2 } from '../utils'
+import { creatMutationObserser, setAttributes, forEach, map, guid2 } from '../utils'
+import { getCallFnName, syncComponentMark, setComponentForElm, getComponentByElm, setClosetParentCom } from '../utils/componentUtil'
 import nodeOps from '../utils/nodeOps'
 import lifeCycle from './lifeCycle'
-import { $ComponentSymbol, $vdomSymbol, $componentDataSymbol } from '../symbol'
+import Destory from './destory'
+import ChildComponentsManage from './ChildComponentsManage'
+import { $vdomSymbol, $componentDataSymbol } from '../symbol'
 // 初始化 init
 let componenesSize = {}
 let styleIsInstalled = {}
 function _init () {
   lifeCycle.beforeCreate(this)
+  create.call(this)
+  lifeCycle.created(this)
+  lifeCycle.beforeMount(this)
+  createdComponent.call(this)
+  setClosetParentCom(this)
+  initRefs.call(this)
+  lifeCycle.mounted(this)
+  this.update = () => {
+    _update(this)
+  }
+}
+function create () {
   if (this.elm) {
     // 现在都走这个
     this._childrenOri = this.elm.children.length ? map(this.elm.children, (v) => v) : undefined
@@ -22,9 +37,13 @@ function _init () {
       }
     }
     bindElmentEvent(this)
+    setComponentForElm(this.elm, this)
+    this.elm.isInited = true
   } else {
     this.elm = this
   }
+  // 设置元素信息
+  this.elm._eid = this._eid
   // _extends(this.$config(), this)
   let data = this[$componentDataSymbol] = this.$data()
   if (this._props) {
@@ -48,17 +67,18 @@ function _init () {
           this.elm.removeAttribute(v.name)
         }
       })
-      this.elm._eid = guid2()
-      // 绑定 移除事件
-      this.elm.parentNode.addEventListener('DOMNodeRemoved', (e) => {
-        console.log('DOMNodeRemoved', e)
-        if (e.target._eid == this.elm._eid) {
+      let handle = (e) => {
+        // console.log('DOMNodeRemoved', e)
+        if (e.target._eid && e.target._eid === this.elm._eid) {
           if (this.elm.disconnectedCallback) {
             this.elm.beforeDisconnectedCallback()
             this.elm.disconnectedCallback()
           }
+          this.elm.parentNode.removeEventListener('DOMNodeRemoved', handle, false)
         }
-      })
+      }
+      // 绑定 移除事件
+      this.elm.parentNode.addEventListener('DOMNodeRemoved', handle, false)
     }
   }
   Object.keys(data).forEach(key => {
@@ -77,14 +97,6 @@ function _init () {
       // setProxy(this[$componentDataSymbol][key], this)
     }
   })
-  lifeCycle.created(this)
-  lifeCycle.beforeMount(this)
-  createdComponent.call(this)
-  initRefs.call(this)
-  lifeCycle.mounted(this)
-  this.update = () => {
-    _update(this)
-  }
 }
 function _update (context) {
   if (context.__isWillupdate) {
@@ -99,7 +111,7 @@ function _update (context) {
 function initRefs () {
   this.$refs = this.$refs || {}
   this.__shadowRoot.querySelectorAll('[ref]').forEach(v => {
-    this.$refs[v.getAttribute('ref')] = v[$ComponentSymbol] || v
+    this.$refs[v.getAttribute('ref')] = v.isComponent ? getComponentByElm(v) : v
     v.removeAttribute('ref')
   })
 }
@@ -113,13 +125,16 @@ function createdComponent () {
       var shadowRoot = this.__shadowRoot || (this.__shadowRoot = nodeOps.setAttachShadow(this.elm, { mode: 'closed' }))
       componenesSize[this._tagName] = componenesSize[this._tagName] ? componenesSize[this._tagName] + 1 : 1
       shadowRoot._root = this._tagName + '-' + componenesSize[this._tagName]
+      shadowRoot._parentElement = this.elm
+      shadowRoot._parentNode = this.elm
       nodeOps.appendChild(shadowRoot, style)
       nodeOps.appendChild(shadowRoot, getFram.call(this, true))
+      console.log('shadowRoot', shadowRoot)
     } else {
       this.__shadowRoot = this.elm
       nodeOps.appendChild(this.elm, getFram.call(this))
       let parent = this.elm
-      while (parent.parentElement || parent._parentElement) {
+      while ((parent.parentElement || parent._parentElement) && parent.nodeType !== 11) {
         parent = parent.parentNode || parent._parentNode
       }
       let nameStyle = parent.tagName === 'HTML' ? 'HTML' : parent._root ? parent._root : parent.parentNode ? parent.parentNode._root || parent.parentNode.host.tagName : 'HTML'
@@ -205,8 +220,9 @@ async function update () {
 }
 // 初始化 参数和数据
 function initConfig () {
-  this.__beforeDestroyedCall = []
-  this.__idsMaps = {}
+  this._eid = guid2()
+  this.Destory = new Destory(this)
+  this.ChildComponentsManage = new ChildComponentsManage(this)
 }
 export default function init (context) {
   // 初始化 配置信息

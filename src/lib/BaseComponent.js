@@ -1,10 +1,13 @@
 import init from './init'
+import { canUseCustomElements } from './init/bolConf'
 import lifeCycle from './init/lifeCycle'
 import { Mix } from './init/mix'
-import { getStyleStr, toCamelCase, getCallFnName, forEach, guid2 } from './utils'
+import { getStyleStr, toCamelCase, forEach } from './utils'
+import { getCallFnName, getClosetParentCom } from './utils/componentUtil'
 import cacheLib from './utils/cacheLib'
 import BaseCustomElements from './BaseCustomElements'
 import { HTML_TAGS } from './vDom/creatConfig'
+import domOnLoad from './utils/domLoad'
 var comps = window.comps = {}
 // var _runfn_ = window._runfn_ = window._runfn_ || {}
 let compsIds = 0
@@ -25,29 +28,26 @@ class BaseComponent {
     this.$connectedCallback && this.$connectedCallback()
   }
   __disconnectedCallback () {
-    console.log('disconnectedCallback')
+    if (this.isDestoryed) return
+    // console.log('disconnectedCallback')
     // 取消 监听
     // this.mutation.disconnect()
-    this.isUnset = true
     lifeCycle.destroyed(this)
+    this.isUnset = true
   }
   __beforeDisconnectedCallback () {
-    console.log('disconnectedCallback')
-    // 取消 监听
-    // this.mutation.disconnect()
-    console.log('this.__beforeDestroyedCall', this, this.__beforeDestroyedCall)
-    if (this.__beforeDestroyedCall && this.__beforeDestroyedCall.length) {
-      forEach(this.__beforeDestroyedCall, (v) => v())
-    }
-    // 取消 内部组件的 方法
-    if (this.__childComponents) {
-      forEach(this.__childComponents, (app) => {
-        console.log(app)
-        app.__beforeDisconnectedCallback()
-        app.__disconnectedCallback()
-      })
-    }
+    if (this.isDestoryed) return
     lifeCycle.beforeDestroyed(this)
+    // console.log('disconnectedCallback')
+    // 取消 监听
+    this.mutation && this.mutation.disconnect()
+    this.Destory && this.Destory.run()
+    // 取消 内部组件的 方法
+    this.ChildComponentsManage && this.ChildComponentsManage.destory()
+    //
+    if (getClosetParentCom(this)) {
+      getClosetParentCom(this).ChildComponentsManage && getClosetParentCom(this).ChildComponentsManage.del(this._eid)
+    }
   }
   // 会被覆盖的方法
   $config () {
@@ -66,6 +66,7 @@ class BaseComponent {
   renderAt (el) {
     if (!this.isCustomElements) {
       this.elm = typeof el === 'string' ? document.querySelector(el) : el
+      if (!this.elm || this.elm.isInited) return
       this.__connectedCallback(true)
     }
   }
@@ -110,19 +111,16 @@ class BaseComponent {
   }
   // 添加销毁事件
   addDestory (fn) {
-    this.__beforeDestroyedCall = this.__beforeDestroyedCall || []
-    this.__beforeDestroyedCall.push(fn)
-    let guid = guid2()
-    this.__idsMaps[guid] = this.__beforeDestroyedCall.length - 1
-    console.log('add__IdsMaps', this.__idsMaps)
-    return guid
+    // this.__beforeDestroyedCall = this.__beforeDestroyedCall || []
+    // this.__beforeDestroyedCall.push(fn)
+    // let guid = guid2()
+    // this.__idsMaps[guid] = this.__beforeDestroyedCall.length - 1
+    // // console.log('add__IdsMaps', this.__idsMaps)
+    return this.Destory && this.Destory.add(fn)
   }
   // 移除销毁事件
   delDestory (eventId) {
-    let index = this.__idsMaps[eventId]
-    delete this.__idsMaps[eventId]
-    console.log('del__IdsMaps', this.__idsMaps)
-    return this.__beforeDestroyedCall.splice(index, 1)
+    return this.Destory && this.Destory.del(eventId)
   }
 }
 
@@ -156,7 +154,7 @@ export function Component (Config) {
     if (!cacheLib.get('com-' + tagName)) {
       cacheLib.set('com-' + tagName, Target)
     }
-    if (customElements || typeof customElements === 'undefined') {
+    if ((customElements || typeof customElements === 'undefined') && canUseCustomElements) {
       Target.customElements = true
       try {
         window.customElements.define(tagName, BaseCustomElements(Target))
@@ -165,6 +163,14 @@ export function Component (Config) {
       }
     } else {
       Target.customElements = false
+      domOnLoad(() => {
+        let doms = document.querySelectorAll(tagName)
+        forEach(doms, (node) => {
+          if (!node.isInited) {
+            (new Target()).renderAt(node)
+          }
+        })
+      })
     }
   }
 }

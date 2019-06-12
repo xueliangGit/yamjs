@@ -1,7 +1,8 @@
 import nodeOps from '../utils/nodeOps'
 // import { renderElement } from '../vDom/createElement'
 import { isDef } from '../utils'
-import { $ComponentSymbol } from '../symbol/index'
+import { getComponentByElm } from '../utils/componentUtil'
+// import { $ComponentSymbol } from '../symbol/index'
 // import _ from 'lodash'
 /**
 * 核心patch算法，比较新旧node树的差异
@@ -161,8 +162,10 @@ function setProp (keys, attrs, props, elm) {
   } else if (typeof props !== 'function') {
     // elm.setAttribute(keys, props)
   }
-  if (elm[$ComponentSymbol]) {
-    elm[$ComponentSymbol][keys] = props
+  if (elm.isComponent) {
+    let elmCom = getComponentByElm(elm)
+    elmCom[keys] = props
+    elmCom = null
   }
 }
 /**
