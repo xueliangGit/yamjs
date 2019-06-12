@@ -333,5 +333,12 @@ let plugin ={
 * 组件外使用slot渲染问题
   * 优化slot渲染，禁止跨组件渲染
   * 优化组件内部渲染过程
-
 * 与VUE结合使用，销毁组件时没有调用销毁方法，导致方法还在继续
+* 与react 混合使用，销毁组件周期问题。
+* 组件统一设置为自动渲染，添加dom变化监测；
+
+> 兼容性
+
+支持主流浏览器
+
+![image-20190612140407922](/Users/xuxueliang/mywork/test/UI/webpackD/src/lib/image-20190612140407922.png)

@@ -42,6 +42,7 @@ function setComponentForElm (elm, context) {
 }
 // 获取上一个自定义组件
 function getparentCom (elm) {
+  if (!elm) return null
   let coms = getComponentMark(elm)
   if (coms._rootId >= 0) {
     return coms

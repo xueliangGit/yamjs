@@ -1,19 +1,19 @@
-import { $ComponentSymbol } from './symbol'
+import { getComponentByElm, setComponentForElm } from './utils/componentUtil'
 export default function getCustom (Target) {
   // eslint-disable-next-line
   class ElmApp extends HTMLElement {
     connectedCallback () {
-      this[$ComponentSymbol] = new Target()
-      console.log('==================')
-      console.log(this)
-      this[$ComponentSymbol].renderAt(this)
+      let comps = new Target()
+      comps.renderAt(this)
+      setComponentForElm(this, comps)
+      comps = null
     }
     disconnectedCallback () {
       if (!this.isUnset) {
         this.isUnset = true
-        console.log('disconnectedCallbackdisconnectedCallbackdisconnectedCallback')
-        this[$ComponentSymbol].__beforeDisconnectedCallback()
-        this[$ComponentSymbol].__disconnectedCallback()
+        let comps = getComponentByElm(this)
+        comps.__beforeDisconnectedCallback()
+        comps.__disconnectedCallback()
       }
     }
   }

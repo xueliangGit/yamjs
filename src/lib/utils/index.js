@@ -196,6 +196,22 @@ const guid = () => {
 function S4 () {
   return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1)
 }
+function getStackTrace () {
+  var obj = {}
+  Error.captureStackTrace(obj, getStackTrace)
+  return obj.stack
+}
+const log = function (...arg) {
+  if (process.env.NODE_ENV !== 'development') {
+    return null
+  }
+  var stack = getStackTrace() || ''
+  var matchResult = stack.match(/\(.*?\)/g) || []
+  var line = matchResult[1] || ''
+  arg[arg.length] = '=>from ' + line.replace('(', '').replace(')', '')
+  console.log.apply(console, arg)
+}
+
 module.exports = {
   def: def,
   protoAugment: protoAugment,
@@ -216,5 +232,6 @@ module.exports = {
   setProp,
   toCamelCase,
   guid,
-  guid2
+  guid2,
+  log
 }

@@ -416,9 +416,8 @@ function makeJSX (JSXNode) {
 @Component({
   tagName: 'go-top',
   style: require('./goTop.stylus'),
-  shadow: false,
+  shadow: true,
   canBeCalledExt:true,
-  customElements:false,
   props: ['msg']
 })
 class App extends BaseComponent {
@@ -482,7 +481,7 @@ class App extends BaseComponent {
         <div onClick={this.switch.bind(this,-1)}>点击</div>
         {this.index==1?<slot name='left'></slot>:''}
         {this.getTimer()}
-
+        <slot name='bottom'></slot>
       </div>
     )
   }

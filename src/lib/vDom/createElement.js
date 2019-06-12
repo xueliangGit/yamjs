@@ -144,7 +144,6 @@ class Element {
       this.rand = this.rand || Math.random()
       el.rand = this.rand
       cacheLib.set(this._name + 'slot-' + this.rand, this.childNodes)
-      console.log('el', el)
       if (el.beforeDisconnectedCallback) {
         let coms = getComponentByElm(el)
         coms.addDestory(() => {
@@ -154,26 +153,27 @@ class Element {
       }
     }
     // 处理组件在最顶层时 slot 情况
-    if (parentELm._parentElement && parentELm._parentElement._childrenOri) {
+    let comsOri = getparentCom(parentELm._parentElement)
+    if (comsOri && comsOri._childrenOri) {
       slot = el.querySelectorAll('[tag=slot]')
-      let slotBelong = getComponentMark(parentELm)._name
-      console.log('slot-3', slot, slotBelong, parentELm)
-      console.log('parentELm._childrenOri', slot, slotBelong, parentELm._parentElement._childrenOri, parentELm)
-      this.rand = this.rand || Math.random()
-      parentELm._parentElement.rand = this.rand
+      // let slotBelong = getComponentMark(parentELm)._name
+      // console.log('slot-3', slot, slotBelong, parentELm)
+      // console.log('parentELm._childrenOri', slot, slotBelong, comsOri._childrenOri, parentELm)
+      comsOri.elm.rand = comsOri.elm.rand || Math.random()
+      this.rand = comsOri.elm.rand
       // 获取组件信息
-      let coms = getComponentByElm(parentELm._parentElement)
-      let _names = coms._name
-      cacheLib.set(_names + 'slot-' + this.rand, parentELm._parentElement._childrenOri)
-      coms.addDestory(() => {
+      // let coms = getComponentByElm(parentELm._parentElement)
+      let _names = comsOri._name
+      cacheLib.set(_names + 'slot-' + this.rand, comsOri._childrenOri)
+      comsOri.addDestory(() => {
         cacheLib.del(_names + 'slot-' + this.rand)
       })
-      coms = null
       // 组件使用结束-销毁
-      forEach(parentELm._parentElement._childrenOri, (child, key) => {
-        nodeOps.appendChild(getRenderElmBySlot(slot, child, el, slotBelong), child)
-        // el.appendChild(child.render(key))
-      })
+      // forEach(comsOri._childrenOri, (child, key) => {
+      //   // nodeOps.appendChild(getRenderElmBySlot(slot, child, el, slotBelong), child)
+      //   // el.appendChild(child.render(key))
+      // })
+      comsOri = null
     }
     this.elm = el
     return this.elm
@@ -183,7 +183,7 @@ class Element {
 // 只有
 function doAfterSlotUpdate (el, context, rand) {
   let childNodes = cacheLib.get(el.isBelong + 'slot-' + rand)
-  console.log(rand, childNodes, el.isBelong + 'slot-' + rand)
+  // console.log('doAfterSlotUpdate', rand, childNodes, el, context, el.isBelong + 'slot-' + rand)
   if (childNodes && childNodes.length) {
     let name = context.props.name
     forEach(childNodes, (v, i) => {
@@ -212,7 +212,7 @@ function getRenderElmBySlot (slot, child, el, slotBelong = null) {
   // 先获取 slot所属一样的
   if (slot.length) {
     let slotName = child.props ? child.props.slot : child.attributes ? child.getAttribute('slot') : false
-    console.log('slotName', slotName, child, slotBelong, slot)
+    // console.log('slotName', slotName, child, slotBelong, slot)
     if (slotName) {
       let l = 0
       // eslint-disable-next-line no-cond-assign

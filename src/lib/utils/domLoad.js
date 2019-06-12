@@ -5,8 +5,7 @@ let { creatMutationObserser } = require('./index')
 function addObserse () {
 // 在dom变化时需要从新渲染
   let isRun = null
-  let mutation = creatMutationObserser(document, (option) => {
-    console.log(option)
+  creatMutationObserser(document, (option) => {
     if (option.type === 'childList') {
       if (option.addedNodes.length) {
         if (isRun) {
@@ -23,7 +22,7 @@ function addObserse () {
     'childList': true,
     'subtree': true
   })
-  console.log('creatMutationObserser', mutation)
+  // console.log('creatMutationObserser', mutation)
 }
 function domOnLoad (fn) {
   if (typeof fn !== 'function') return
@@ -44,7 +43,6 @@ document.onreadystatechange = function () {
   }
 }
 function runDomfn (i = 0, all = true) {
-  console.log(i)
   if (domFnCache[i]) {
     domFnCache[i]()
     if (all) {

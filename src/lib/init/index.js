@@ -1,7 +1,7 @@
 // import updateElement from '../vDom'
 import updateElement from '../diff'
 // /creatMutationObserser ,setAttributes,
-import { creatMutationObserser, setAttributes, forEach, map, guid2 } from '../utils'
+import { creatMutationObserser, setAttributes, forEach, map, guid2, log } from '../utils'
 import { getCallFnName, syncComponentMark, setComponentForElm, getComponentByElm, setClosetParentCom } from '../utils/componentUtil'
 import nodeOps from '../utils/nodeOps'
 import lifeCycle from './lifeCycle'
@@ -129,7 +129,7 @@ function createdComponent () {
       shadowRoot._parentNode = this.elm
       nodeOps.appendChild(shadowRoot, style)
       nodeOps.appendChild(shadowRoot, getFram.call(this, true))
-      console.log('shadowRoot', shadowRoot)
+      // console.log('shadowRoot', shadowRoot)
     } else {
       this.__shadowRoot = this.elm
       nodeOps.appendChild(this.elm, getFram.call(this))
@@ -194,7 +194,7 @@ function getFram (isNeedDiv = false) {
     this[$vdomSymbol] = this.render()
     this[$vdomSymbol]._rootId = this._rootId
   } catch (e) {
-    console.log('e', e)
+    log('e', e)
   }
   // this.$div._childrenOri = this._childrenOri
   this.$div._parentElement = this.__shadowRoot

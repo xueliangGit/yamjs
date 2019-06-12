@@ -1,7 +1,7 @@
 let cacheData = {}
 export default {
   get (key) {
-    console.log('cacheData', cacheData)
+    // console.log('cacheData', cacheData)
     return cacheData[key] || null
   },
   set (key, value) {
