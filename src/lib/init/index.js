@@ -67,6 +67,12 @@ function create () {
           this.elm.removeAttribute(v.name)
         }
       })
+      // 添加 监听事件， 适配三方框架
+      this.addWatcher = (names, fn = () => {}) => {
+        // 添加监听方法
+        this.elm._runfn_ = this.elm._runfn_ || {}
+        this.elm._runfn_[getCallFnName(this, names)] = fn
+      }
       let handle = (e) => {
         // console.log('DOMNodeRemoved', e)
         if (e.target._eid && e.target._eid === this.elm._eid) {

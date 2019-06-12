@@ -1,5 +1,6 @@
 export default {
   name: 'animate',
+  needs: ['tools'],
   install: function (terget) {
     terget.addPrototype('fadeOut', function (duration = 300) {
       const keyframes = [{ opacity: 1, marginTop: '0' }, { opacity: 0, marginTop: '50px' }]

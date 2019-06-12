@@ -149,7 +149,11 @@ function forEach (array, v = () => {}, get = false) {
   let getArr = []
   // eslint-disable-next-line no-cond-assign
   for (let i = 0, item; item = array[i]; i++) {
-    get ? getArr.push(v(item, i)) : v(item, i)
+    let runResult = v(item, i)
+    get && getArr.push(runResult)
+    if (typeof runResult === 'boolean' && !runResult && !get) {
+      return false
+    }
   }
   return get ? getArr : null
 }
@@ -157,28 +161,6 @@ function map (array, v = () => {}) {
   return forEach(array, v, true)
 }
 function setProp (obj, el) {
-  // Object.keys(obj.props).forEach(prop => {
-  //   if (prop in attrs) {
-  //     el.setAttribute(attrs[prop], obj.props[prop])
-  //   } else if (prop in EVENT_HANDLERS) {
-  //     el.addEventListener(EVENT_HANDLERS[prop], obj.props[prop])
-  //   } else {
-  //     el.setAttribute(prop, obj.props[prop])
-  //   }
-  // })
-  // if ('style' in obj.props) {
-  //   const styles = obj.props.style
-  //   Object.keys(styles).forEach(prop => {
-  //     const value = styles[prop]
-  //     if (typeof value === 'number') {
-  //       el.style[prop] = `${value}px`
-  //     } else if (typeof value === 'string') {
-  //       el.style[prop] = value
-  //     } else {
-  //       throw new Error(`Expected "number" or "string" but received "${typeof value}"`)
-  //     }
-  //   })
-  // }
 }
 
 const toCamelCase = str => str.replace(/-(\w)/g, (x) => { return x.slice(1).toUpperCase() })
@@ -211,7 +193,11 @@ const log = function (...arg) {
   arg[arg.length] = '=>from ' + line.replace('(', '').replace(')', '')
   console.log.apply(console, arg)
 }
-
+const info = function (...arg) {
+  arg[0] = '%c ' + arg[0]
+  arg[arg.length] = 'background:#ff0'
+  console.log.apply(console, arg)
+}
 module.exports = {
   def: def,
   protoAugment: protoAugment,
@@ -233,5 +219,6 @@ module.exports = {
   toCamelCase,
   guid,
   guid2,
-  log
+  log,
+  info
 }

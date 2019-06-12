@@ -9,7 +9,6 @@ import BaseCustomElements from './BaseCustomElements'
 import { HTML_TAGS } from './vDom/creatConfig'
 import domOnLoad from './utils/domLoad'
 var comps = window.comps = {}
-// var _runfn_ = window._runfn_ = window._runfn_ || {}
 let compsIds = 0
 @Mix()
 class BaseComponent {
@@ -18,7 +17,6 @@ class BaseComponent {
     // console.log(new.target)
     comps[this._cid + '-' + ++compsIds] = this
     this._rootId = compsIds
-    // console.log('BaseComponent', isCustomElements)
   }
   __getProps (props) {
     this.__props = props
@@ -29,16 +27,12 @@ class BaseComponent {
   }
   __disconnectedCallback () {
     if (this.isDestoryed) return
-    // console.log('disconnectedCallback')
-    // 取消 监听
-    // this.mutation.disconnect()
     lifeCycle.destroyed(this)
     this.isUnset = true
   }
   __beforeDisconnectedCallback () {
     if (this.isDestoryed) return
     lifeCycle.beforeDestroyed(this)
-    // console.log('disconnectedCallback')
     // 取消 监听
     this.mutation && this.mutation.disconnect()
     this.Destory && this.Destory.run()
@@ -52,7 +46,6 @@ class BaseComponent {
   // 会被覆盖的方法
   $config () {
     return {
-
     }
   }
   // 会被覆盖的方法
@@ -94,7 +87,7 @@ class BaseComponent {
       if (typeof this.props[fnName] === 'function') {
         return this.props[fnName](...params)
       } else {
-        console.warn(`该组件【${this._tagName}】没有接收到父组件的传值:【${fnName}】`)
+        // console.warn(`该组件【${this._tagName}】没有接收到父组件的传值:【${fnName}】`)
         return null
       }
     } else {
@@ -104,18 +97,13 @@ class BaseComponent {
       if (fn && typeof runfn === 'function') {
         return runfn(...params)
       } else {
-        console.warn(`该元素上【${this._tagName}】没有接收到父组件的传值:【${fnName}${fn}】`)
+        // console.warn(`该元素上【${this._tagName}】没有接收到父组件的传值:【${fnName}${fn}】`)
       }
     }
     return null
   }
   // 添加销毁事件
   addDestory (fn) {
-    // this.__beforeDestroyedCall = this.__beforeDestroyedCall || []
-    // this.__beforeDestroyedCall.push(fn)
-    // let guid = guid2()
-    // this.__idsMaps[guid] = this.__beforeDestroyedCall.length - 1
-    // // console.log('add__IdsMaps', this.__idsMaps)
     return this.Destory && this.Destory.add(fn)
   }
   // 移除销毁事件
@@ -139,10 +127,6 @@ export function Component (Config) {
       this._canBeCalledExt = typeof canBeCalledExt === 'boolean' ? canBeCalledExt : false
       this._cid = 'com-' + tagName
       this._style = getStyleStr(this._cid, style)
-      // if (typeof customElements === 'undefined') {
-      //   this.isCustomElements = true
-      // }
-      // console.log('this._style', this._style)
     }
     if (!HTML_TAGS[tagName]) {
       HTML_TAGS[tagName] = {

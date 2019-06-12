@@ -1,5 +1,6 @@
 [root]
   position fixed
+  background: #fff
   bottom -236px
   right 0
   left 0

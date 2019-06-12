@@ -1,5 +1,5 @@
 import { $ComponentSymbol, $vdomSymbol } from '../symbol/index'
-
+// import { runOnReadyElmFn } from '../utils/componentUtil'
 export default {
   // 创建实例之前
   beforeCreate (context) {
@@ -16,6 +16,7 @@ export default {
   // 挂在数据
   mounted (context) {
     _run(context, '$mounted')
+    // runOnReadyElmFn(context.elm)
     context.elm && context.elm.onReady && typeof context.elm.onReady === 'function' && context.elm.onReady()
   },
   // 更新之前

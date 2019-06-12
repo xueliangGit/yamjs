@@ -57,6 +57,23 @@ function setClosetParentCom (context) {
 function getClosetParentCom (context) {
   return context[$closestParentSymbol]
 }
+function onReadyElmFn (elm) {
+  elm._readyCall = []
+  elm.onReady = function (fn) {
+    if (elm.isInited) {
+      fn()
+    } else {
+      elm._readyCall.push(fn)
+    }
+  }
+}
+function runOnReadyElmFn (elm) {
+  if (elm._readyCall) {
+    for (let i = 0; i < elm._readyCall.length; i++) {
+      elm._readyCall[i]()
+    }
+  }
+}
 module.exports = {
   getCallFnName,
   syncComponentMark,
@@ -65,5 +82,7 @@ module.exports = {
   setComponentForElm,
   getparentCom,
   setClosetParentCom,
-  getClosetParentCom
+  getClosetParentCom,
+  runOnReadyElmFn,
+  onReadyElmFn
 }

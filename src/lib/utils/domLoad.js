@@ -22,7 +22,6 @@ function addObserse () {
     'childList': true,
     'subtree': true
   })
-  // console.log('creatMutationObserser', mutation)
 }
 function domOnLoad (fn) {
   if (typeof fn !== 'function') return
@@ -38,9 +37,9 @@ document.onreadystatechange = function () {
     runDomfn()
     addObserse()
   }
-  if (document.readyState === 'interactive') { // DOM构建了就会执行，先与complete执行
-    // console.log('document is interactive ,so DOM obj is ' + document.getElementById('img1'))
-  }
+  // if (document.readyState === 'interactive') { // DOM构建了就会执行，先与complete执行
+  //   // console.log('document is interactive ,so DOM obj is ' + document.getElementById('img1'))
+  // }
 }
 function runDomfn (i = 0, all = true) {
   if (domFnCache[i]) {

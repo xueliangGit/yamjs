@@ -16,14 +16,14 @@
   <go-top msg={a:123123}>
      <div slot='left'>456</div> 
     <div slot='bottom'> TTTTOP</div>
-  </go-top> 
+  </go-top>
   <!-- <my-timer >
     <p slot='bottom'>我的时间</p>
   </my-timer> -->
 
   <div onclick="datePicker.emit('show')">时间</div>
   <p id="showinfo"></p>
-  <date-picker id='datePicker' d='fun' showZg=true></date-picker>
+  <date-picker id='datePicker' change='fun' showZg=true></date-picker>
   <script>
   function fun(){
     console.log(arguments)

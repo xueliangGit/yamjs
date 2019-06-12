@@ -55,7 +55,6 @@ class Element {
     this._root = _root // 带搞根结点
   }
   render (key = null, parentELm = null) {
-    // this.key = key || 0
     if (this.isText) {
       this.elm = document.createTextNode(this.text)
       return this.elm
@@ -66,7 +65,6 @@ class Element {
 
     if (this.needClass) {
       let cacheDom = document.createElement('div')
-      // let cacheDom = document.createDocumentFragment()
       // 回调
       cacheDom._parentNode = parentELm
       cacheDom._parentElement = parentELm
@@ -75,10 +73,6 @@ class Element {
       let component = new this.class()
       component.props = this.props
       component.renderAt(cacheDom)
-      // console.log(cacheDom[$ComponentSymbol])
-      // cacheDom.firstChild.disconnectedCallback = () => {
-      //   cacheDom[$ComponentSymbol].disconnectedCallback && cacheDom[$ComponentSymbol].disconnectedCallback()
-      // }
       setComponentForElm(cacheDom, component)
       el = cacheDom
       // 自定义组件 挂在在其父级的自定义组件上
@@ -89,10 +83,7 @@ class Element {
       }
       component = null
     } else {
-      // el[$ComponentSymbol].props = this.props
       el = document.createElement(this.tagType)
-      // console.log(el[$ComponentSymbol] = {})
-      // el[$ComponentSymbol].props = this.props
       // 处理 slot 更新
       if (this.tagName === 'slot') {
         el.setAttribute('tag', 'slot')
@@ -104,7 +95,6 @@ class Element {
       el._parentElement = parentELm
     }
     slot = el.querySelectorAll('[tag=slot]')
-    // console.log('slot-1', slot)
     // el.props = this.props
     if (this.props) {
       Object.keys(this.props).forEach(prop => {
@@ -137,7 +127,6 @@ class Element {
     }
     this.childNodes.forEach((child, key) => {
       nodeOps.appendChild(getRenderElmBySlot(slot, child, el), child.render(key, el))
-      // el.appendChild(child.render(key))
     })
     // 组件内部使用
     if (slot.length && this.childNodes) {
@@ -156,23 +145,14 @@ class Element {
     let comsOri = getparentCom(parentELm._parentElement)
     if (comsOri && comsOri._childrenOri) {
       slot = el.querySelectorAll('[tag=slot]')
-      // let slotBelong = getComponentMark(parentELm)._name
-      // console.log('slot-3', slot, slotBelong, parentELm)
-      // console.log('parentELm._childrenOri', slot, slotBelong, comsOri._childrenOri, parentELm)
       comsOri.elm.rand = comsOri.elm.rand || Math.random()
       this.rand = comsOri.elm.rand
-      // 获取组件信息
-      // let coms = getComponentByElm(parentELm._parentElement)
       let _names = comsOri._name
       cacheLib.set(_names + 'slot-' + this.rand, comsOri._childrenOri)
+      // 组件使用结束-销毁
       comsOri.addDestory(() => {
         cacheLib.del(_names + 'slot-' + this.rand)
       })
-      // 组件使用结束-销毁
-      // forEach(comsOri._childrenOri, (child, key) => {
-      //   // nodeOps.appendChild(getRenderElmBySlot(slot, child, el, slotBelong), child)
-      //   // el.appendChild(child.render(key))
-      // })
       comsOri = null
     }
     this.elm = el
@@ -212,7 +192,6 @@ function getRenderElmBySlot (slot, child, el, slotBelong = null) {
   // 先获取 slot所属一样的
   if (slot.length) {
     let slotName = child.props ? child.props.slot : child.attributes ? child.getAttribute('slot') : false
-    // console.log('slotName', slotName, child, slotBelong, slot)
     if (slotName) {
       let l = 0
       // eslint-disable-next-line no-cond-assign
@@ -257,17 +236,6 @@ function getRenderElmBySlot (slot, child, el, slotBelong = null) {
       if (l.length === 1) {
         return l[l.length - 1]
       }
-      // 修改为 当有多个slot时 必须要填写 slot
-      // return slot[slot.length - 1]
-      // eslint-disable-next-line no-cond-assign
-      // for (let i = slot.length - 1, v; v = slot[i]; i--) {
-      //   if (slotBelong && slotBelong !== v.isBelong) {
-      //     continue
-      //   }
-      //   return v
-      // }
-
-      // return slot[slot.length - 1]
     }
     return null
   }

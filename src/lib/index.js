@@ -6,6 +6,7 @@ Array.prototype.flat = Array.prototype.flat || function () {
   return this.reduce((acc, val) => Array.isArray(val) ? acc.concat(val.flat()) : acc.concat(val), [])
 }
 BaseComponent.use(tools)
+console.log(BaseComponent.prototype)
 export default BaseComponent
 export { Component }
 // ok1 样式只是加载一次

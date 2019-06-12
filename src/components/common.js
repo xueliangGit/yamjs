@@ -1,4 +1,4 @@
-import BaseComponent from '../lib/BaseComponent'
+import BaseComponent from '../lib/index'
 import animate from '../lib/plugins/animate'
 import router from '../lib/plugins/router'
 import reactAdapter from '../lib/plugins/reactAdapter'

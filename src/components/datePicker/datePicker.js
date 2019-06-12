@@ -104,7 +104,7 @@ class App extends BaseComponent {
   }
   dateSure () {
     this.hide()
-    this.emitProp('d', this.showDate)
+    this.emitProp('change', this.showDate)
   }
   hide () {
     this.slideOut('bottom', this.$div)
