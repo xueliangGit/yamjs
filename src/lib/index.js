@@ -1,13 +1,13 @@
 
-import BaseComponent, { Component } from './BaseComponent'
+import Owl, { Component } from './Owl'
 import tools from './plugins/tools'
 // eslint-disable-next-line no-extend-native
 Array.prototype.flat = Array.prototype.flat || function () {
   return this.reduce((acc, val) => Array.isArray(val) ? acc.concat(val.flat()) : acc.concat(val), [])
 }
-BaseComponent.use(tools)
-console.log(BaseComponent.prototype)
-export default BaseComponent
+Owl.use(tools)
+console.log(Owl.prototype)
+export default Owl
 export { Component }
 // ok1 样式只是加载一次
 // ok2 完成 基类可有 扩展

@@ -14,7 +14,7 @@
     "@babel/plugin-proposal-numeric-separator",
     "@babel/plugin-proposal-throw-expressions",
     "@babel/plugin-proposal-export-default-from",
-    ["@babel/plugin-transform-react-jsx",{"pragma": "BaseComponent.__createElement","pragmaFrag":"c"}]
+    ["@babel/plugin-transform-react-jsx",{"pragma": "Owl.__createElement","pragmaFrag":"c"}]
     ]
   //"transform-vue-jsx", 
 }

@@ -1,4 +1,4 @@
-import BaseComponent, { Component } from '../../lib/index'
+import Owl, { Component } from '../../lib/index'
 // eslint-disable-next-line no-unused-vars
 import WheelView from './WheelView'
 import calendar from './daytool'
@@ -8,7 +8,7 @@ import calendar from './daytool'
   props: ['startTime', 'showzg'],
   canBeCalledExt: true
 })
-class App extends BaseComponent {
+class App extends Owl {
   /**
  * 弹窗组件
  */

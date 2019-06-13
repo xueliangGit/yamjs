@@ -4,12 +4,12 @@ import { getStyleStr } from './utils'
 var comps = window.comps = {}
 @Mix()
 // eslint-disable-next-line
-class BaseComponent extends HTMLElement {
+class Owl extends HTMLElement {
   constructor () {
     super()
     this._config()
     comps[this._cid] = this
-    // console.log('BaseComponent', this._style)
+    // console.log('Owl', this._style)
   }
   connectedCallback () {
     init(this)
@@ -36,7 +36,7 @@ class BaseComponent extends HTMLElement {
   $updated () {
   }
 }
-export default BaseComponent
+export default Owl
 // 注解
 export function Component (Config) {
   let { tagName, shadow, style, props } = Config

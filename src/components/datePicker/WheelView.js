@@ -1,4 +1,4 @@
-import BaseComponent, { Component } from '../../lib/index'
+import Owl, { Component } from '../../lib/index'
 const lineHeight = 40
 @Component({
   tagName: 'wheel-view',
@@ -6,7 +6,7 @@ const lineHeight = 40
   shadow: false,
   props: ['data', 'index', 'type', 'gzName']
 })
-class App extends BaseComponent {
+class App extends Owl {
   $data () {
     return {
       data: []

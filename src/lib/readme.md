@@ -1,6 +1,6 @@
-# BaseComponent
+# Owl - a Owl from html
 
-一个webComponent的渲染函数组件;兼容非webComponent渲染
+OWL 一个webComponent的渲染函数组件;兼容非webComponent渲染
 
 ## 背景
 
@@ -14,12 +14,12 @@
 * 可以控制外部是否可以和组件交互
 * 框架只包含最基本的内容，
 
-## 组件基类--BaseComponent
+## 组件基类--Owl
 
 一个简单的组件构成
 
 ```js
- import BaseComponent, { Component } from '../lib/index'
+ import Owl, { Component } from '../lib/index'
  import MyTimer from './myTimer'
  @Component({
    tagName: 'go-top',
@@ -28,7 +28,7 @@
    customElements: true,
    props: ['msg']
  })
- class App extends BaseComponent {
+ class App extends Owl {
    $data () {
      return {
        list: [0, 12, 2, 3],
@@ -99,7 +99,7 @@
  
 ```
 
-引入基类`BaseComponent` 和注解`Component`
+引入基类`Owl` 和注解`Component`
 
 ### 组件注解使用@Component
 
@@ -240,11 +240,11 @@ dom数据更新是仅仅在`$data`设定以及注解里`prop`设定的值改变�
     </script>
     <script>
       // 组件内部
-     import BaseComponent, { Component } from '../lib/index'
+     import Owl, { Component } from '../lib/index'
      @Component({
        tagName: 'date-picker'
      })
-     class App extends BaseComponent {
+     class App extends Owl {
     	update(){
        this.emitProp('change')
       }
@@ -283,11 +283,11 @@ dom数据更新是仅仅在`$data`设定以及注解里`prop`设定的值改变�
     </script>
     <script>
       // 组件内部
-     import BaseComponent, { Component } from '../lib/index'
+     import Owl, { Component } from '../lib/index'
      @Component({
        tagName: 'date-picker'
      })
-     class App extends BaseComponent {
+     class App extends Owl {
     	update(){
        this.emitProp('change')
       }
@@ -307,8 +307,12 @@ dom数据更新是仅仅在`$data`设定以及注解里`prop`设定的值改变�
 渲染规则：
 
 * 组件内只有一个slot时，会默认渲染到这个slot里，不管是否设定name值
+
 * 组件内有多个slot时，**需要设定name值来区分**，相应在组件外部写的时候需要设定slot属性，将根据slot和name匹配来渲染内容
+
 * 组件内没有slot时，会默认把内容渲染到组件内容的尾部。
+
+  *__注意，在使用slot时 shadow不要是设为True，否则，样式将不生效__*
 
 ---
 
@@ -316,12 +320,12 @@ dom数据更新是仅仅在`$data`设定以及注解里`prop`设定的值改变�
 
 有时候框架一些方法不满足业务的需要，需要正对业务或者功能进行扩展一些常用的方法，例如router，http等，让整个项目都用上。
 
-框架一个静态方法`BaseComponent.use`用来安装扩展，用法如下
+框架一个静态方法`Owl.use`用来安装扩展，用法如下
 
 ```js
-import BaseComponent from '../lib/BaseComponent'
+import Owl from '../lib/Owl'
 import animate from '../lib/plugins/animate'
-BaseComponent.use(animate)
+Owl.use(animate)
 ```
 
 ```js

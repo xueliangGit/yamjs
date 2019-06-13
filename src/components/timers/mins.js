@@ -1,4 +1,4 @@
-import BaseComponent, { Component } from '../../lib/index'
+import Owl, { Component } from '../../lib/index'
 // import { Transform } from 'stream'
 // var style = require('./myTimers.styl')
 // console.log('style', style, style.toString())
@@ -7,7 +7,7 @@ import BaseComponent, { Component } from '../../lib/index'
    style: require('./mins.stylus'),
    props: ['mins']
  })
-class App extends BaseComponent {
+class App extends Owl {
    $data () {
      return {
      }
