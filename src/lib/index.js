@@ -6,7 +6,6 @@ Array.prototype.flat = Array.prototype.flat || function () {
   return this.reduce((acc, val) => Array.isArray(val) ? acc.concat(val.flat()) : acc.concat(val), [])
 }
 Owl.use(tools)
-console.log(Owl.prototype)
 export default Owl
 export { Component }
 // ok1 样式只是加载一次
