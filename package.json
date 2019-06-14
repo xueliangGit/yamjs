@@ -1,6 +1,6 @@
 {
-  "name": "yam",
-  "version": "0.0.6",
+  "name": "yamjs",
+  "version": "0.0.10",
   "description": "yamjs is a basecomponents for html,it can make your can write a components and run any where such as html,vue,react eg.",
   "main": "./src/lib/index.js",
   "scripts": {
@@ -9,7 +9,17 @@
     "start": "webpack-dev-server --open --config build/webpack.dev.js",
     "build": "node build/build.js"
   },
-  "keywords": ["yam","yamjs","vue","react","webcomponents","web","components","html-components","custom"],
+  "keywords": [
+    "yam",
+    "yamjs",
+    "vue",
+    "react",
+    "webcomponents",
+    "web",
+    "components",
+    "html-components",
+    "custom"
+  ],
   "author": "xu_xueliang@sina.cn",
   "license": "MIT",
   "devDependencies": {
@@ -80,5 +90,9 @@
     "> 1%",
     "last 2 versions",
     "not ie <= 8"
-  ]
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://git.dev.tencent.com/Supermen/yam.git"
+  }
 }
