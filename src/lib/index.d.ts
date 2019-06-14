@@ -1,7 +1,11 @@
 
 declare class Yam {
   constructor(name: string, age: number)  //构造函数
-  use(plugins: object): void
+  /**
+    * 添加扩展.
+    * @return {props} 组件传值
+    */
+  static use(plugins: object): void
   /**
     * 组件配置信息.
     * @return {props} 组件传值

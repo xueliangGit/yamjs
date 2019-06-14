@@ -4,6 +4,8 @@ Yam 一个webComponent的渲染函数组件;兼容非webComponent渲染
 
 YamJS 是一个针对html的开发的一个组件基类，让你开发一个组件，可以运行在原生HTML/vue/react等环境。
 
+脚手架在这里 https://github.com/xueliangGit/yam-cli.git
+
 ## 背景
 
 在这个各种组件化的漫天飞的阶段，需要一种综合的组件来去结合所有的框架，那就是webComponent。
