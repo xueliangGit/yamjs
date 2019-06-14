@@ -111,8 +111,8 @@ YamJS 是一个针对html的开发的一个组件基类，让你开发一个组�
 
 * `tagName `   组件名/标签名(带链接符)
   
-  * 在webComponent模式下（即默认模式下：`customElements:false`），该名字就是标签名字。组件内外直接写标签就可以渲染出来，组件内也可以写成引入的组件名字。
-* 在非webComponent模式下（即`customElements:true`），在组件环境外需要使用`renderAt(el)`函数去执行root元素渲染，组件内部需要写引入的组件名字。
+  * 在webComponent模式下（即默认模式下：`customElements:true`），该名字就是标签名字。组件内外直接写标签就可以渲染出来，组件内也可以写成引入的组件名字。
+  * 在非webComponent模式下（即`customElements:false`），在组件环境外需要使用`renderAt(el)`函数去执行root元素渲染，组件内部需要写引入的组件名字。
   
 * `style `样式
   
@@ -163,7 +163,7 @@ YamJS 是一个针对html的开发的一个组件基类，让你开发一个组�
       </div>
       ```
     
-      
+      [root]根结点
 
 * `shadow`影子树（`false`）
   
@@ -426,4 +426,4 @@ let plugin ={
 
 支持主流浏览器
 
-![image-20190612140407922](./image-20190612140407922.png)
+![image-20190612140407922](https://dev.tencent.com/u/Supermen/p/yam/git/blob/master/src/lib/image-20190612140407922.png)
