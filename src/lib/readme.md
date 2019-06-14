@@ -1,6 +1,6 @@
-# Owl - a Owl from html
+# Yam - a baseComponents for html
 
-OWL 一个webComponent的渲染函数组件;兼容非webComponent渲染
+Yam 一个webComponent的渲染函数组件;兼容非webComponent渲染
 
 ## 背景
 
@@ -14,12 +14,12 @@ OWL 一个webComponent的渲染函数组件;兼容非webComponent渲染
 * 可以控制外部是否可以和组件交互
 * 框架只包含最基本的内容，
 
-## 组件基类--Owl
+## 组件基类--Yam
 
 一个简单的组件构成
 
 ```js
- import Owl, { Component } from '../lib/index'
+ import Yam, { Component } from '../lib/index'
  import MyTimer from './myTimer'
  @Component({
    tagName: 'go-top',
@@ -28,7 +28,7 @@ OWL 一个webComponent的渲染函数组件;兼容非webComponent渲染
    customElements: true,
    props: ['msg']
  })
- class App extends Owl {
+ class App extends Yam {
    $data () {
      return {
        list: [0, 12, 2, 3],
@@ -99,7 +99,7 @@ OWL 一个webComponent的渲染函数组件;兼容非webComponent渲染
  
 ```
 
-引入基类`Owl` 和注解`Component`
+引入基类`Yam` 和注解`Component`
 
 ### 组件注解使用@Component
 
@@ -240,11 +240,11 @@ dom数据更新是仅仅在`$data`设定以及注解里`prop`设定的值改变�
     </script>
     <script>
       // 组件内部
-     import Owl, { Component } from '../lib/index'
+     import Yam, { Component } from '../lib/index'
      @Component({
        tagName: 'date-picker'
      })
-     class App extends Owl {
+     class App extends Yam {
     	update(){
        this.emitProp('change')
       }
@@ -283,11 +283,11 @@ dom数据更新是仅仅在`$data`设定以及注解里`prop`设定的值改变�
     </script>
     <script>
       // 组件内部
-     import Owl, { Component } from '../lib/index'
+     import Yam, { Component } from '../lib/index'
      @Component({
        tagName: 'date-picker'
      })
-     class App extends Owl {
+     class App extends Yam {
     	update(){
        this.emitProp('change')
       }
@@ -320,12 +320,12 @@ dom数据更新是仅仅在`$data`设定以及注解里`prop`设定的值改变�
 
 有时候框架一些方法不满足业务的需要，需要正对业务或者功能进行扩展一些常用的方法，例如router，http等，让整个项目都用上。
 
-框架一个静态方法`Owl.use`用来安装扩展，用法如下
+框架一个静态方法`Yam.use`用来安装扩展，用法如下
 
 ```js
-import Owl from '../lib/Owl'
+import Yam from '../lib/Yam'
 import animate from '../lib/plugins/animate'
-Owl.use(animate)
+Yam.use(animate)
 ```
 
 ```js
@@ -422,4 +422,4 @@ let plugin ={
 
 支持主流浏览器
 
-![image-20190612140407922](/Users/xuxueliang/mywork/test/UI/webpackD/src/lib/image-20190612140407922.png)
+![image-20190612140407922](./image-20190612140407922.png)

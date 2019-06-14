@@ -1,12 +1,12 @@
 
-import Owl, { Component } from './Owl'
+import Yam, { Component } from './Yam'
 import tools from './plugins/tools'
 // eslint-disable-next-line no-extend-native
 Array.prototype.flat = Array.prototype.flat || function () {
   return this.reduce((acc, val) => Array.isArray(val) ? acc.concat(val.flat()) : acc.concat(val), [])
 }
-Owl.use(tools)
-export default Owl
+Yam.use(tools)
+export default Yam
 export { Component }
 // ok1 样式只是加载一次
 // ok2 完成 基类可有 扩展

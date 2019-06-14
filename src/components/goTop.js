@@ -1,4 +1,4 @@
-import Owl, { Component } from '../lib/index'
+import Yam, { Component } from '../lib/index'
 // import jsxp from 'jsx-parser'
 // var goTopTem = require('./goTopTem.html')
 // eslint-disable-next-line no-unused-vars
@@ -420,7 +420,7 @@ function makeJSX (JSXNode) {
   canBeCalledExt:true,
   props: ['msg']
 })
-class App extends Owl {
+class App extends Yam {
   $data () {
     return {
       list: [0, 12, 2, 3],

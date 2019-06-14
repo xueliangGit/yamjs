@@ -1,4 +1,4 @@
-import Owl, { Component } from '../../lib/index'
+import Yam, { Component } from '../../lib/index'
 const lineHeight = 40
 @Component({
   tagName: 'wheel-view',
@@ -6,7 +6,7 @@ const lineHeight = 40
   shadow: false,
   props: ['data', 'index', 'type', 'gzName']
 })
-class App extends Owl {
+class App extends Yam {
   $data () {
     return {
       data: []

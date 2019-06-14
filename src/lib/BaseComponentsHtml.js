@@ -4,12 +4,12 @@ import { getStyleStr } from './utils'
 var comps = window.comps = {}
 @Mix()
 // eslint-disable-next-line
-class Owl extends HTMLElement {
+class Yam extends HTMLElement {
   constructor () {
     super()
     this._config()
     comps[this._cid] = this
-    // console.log('Owl', this._style)
+    // console.log('Yam', this._style)
   }
   connectedCallback () {
     init(this)
@@ -36,7 +36,7 @@ class Owl extends HTMLElement {
   $updated () {
   }
 }
-export default Owl
+export default Yam
 // 注解
 export function Component (Config) {
   let { tagName, shadow, style, props } = Config

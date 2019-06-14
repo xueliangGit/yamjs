@@ -1,17 +1,17 @@
 {
-  "name": "webpackD",
-  "version": "0.0.5",
-  "description": "",
-  "main": "index.js",
+  "name": "yam",
+  "version": "0.0.6",
+  "description": "yamjs is a basecomponents for html,it can make your can write a components and run any where such as html,vue,react eg.",
+  "main": "./src/lib/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "npm run start",
     "start": "webpack-dev-server --open --config build/webpack.dev.js",
     "build": "node build/build.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": ["yam","yamjs","vue","react","webcomponents","web","components","html-components","custom"],
+  "author": "xu_xueliang@sina.cn",
+  "license": "MIT",
   "devDependencies": {
     "@babel/core": "^7.4.3",
     "@babel/plugin-proposal-decorators": "^7.4.0",

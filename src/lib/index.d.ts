@@ -1,5 +1,5 @@
 
-declare class Owl {
+declare class Yam {
   constructor(name: string, age: number)  //构造函数
   use(plugins: object): void
   /**
@@ -77,5 +77,5 @@ declare function Component(config:{
   // 吃否可以被外部调用组件内部的方法
   canBeCalledExt:true
 }):void
-export default Owl;
+export default Yam;
 export { Component}

@@ -1,4 +1,4 @@
-import Owl, { Component } from '../lib/index'
+import Yam, { Component } from '../lib/index'
 // var style = require('./myTimers.styl')
 // eslint-disable-next-line no-unused-vars
 import Hour from './timers/hour'
@@ -8,7 +8,7 @@ import Hour from './timers/hour'
    canBeCalledExt: false,
    props: []
  })
-class App extends Owl {
+class App extends Yam {
    $data () {
      return {
        hour: 0,

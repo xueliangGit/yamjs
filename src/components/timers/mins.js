@@ -1,4 +1,4 @@
-import Owl, { Component } from '../../lib/index'
+import Yam, { Component } from '../../lib/index'
 // import { Transform } from 'stream'
 // var style = require('./myTimers.styl')
 // console.log('style', style, style.toString())
@@ -7,7 +7,7 @@ import Owl, { Component } from '../../lib/index'
    style: require('./mins.stylus'),
    props: ['mins']
  })
-class App extends Owl {
+class App extends Yam {
    $data () {
      return {
      }

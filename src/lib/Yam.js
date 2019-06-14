@@ -11,7 +11,7 @@ import domOnLoad from './utils/domLoad'
 var comps = window.comps = {}
 let compsIds = 0
 @Mix()
-class Owl {
+class Yam {
   constructor () {
     this._config()
     // console.log(new.target)
@@ -112,7 +112,7 @@ class Owl {
   }
 }
 
-export default Owl
+export default Yam
 // 注解
 export function Component (Config) {
   let { tagName, shadow, style, props, customElements, canBeCalledExt } = Config

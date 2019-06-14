@@ -19,11 +19,11 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/?*/+([^.-])': {
-        target: 'https://ey.myhug.cn',
+        target: 'https://0.0.0.0',
         changeOrigin: true
       },
       '/?*/?*/+([^.-])': {
-        target: 'https://ey.myhug.cn',
+        target: 'https://0.0.0.0',
         changeOrigin: true
       }
     },
@@ -66,12 +66,7 @@ module.exports = {
     // Paths
     assetsRoot: path.resolve(__dirname, '../dist'),
     assetsSubDirectory: 'static',
-    assetsPublicPath: '/static/ey/wap/a/cms/',
-
-    // svn
-    svnPath: 'http://svn.i.myhug.cn:88/svn/baobao/static/ey/wap/a/cms',
-    svnUserName: svnConf.svnUserName || 'bikuili',
-    svnPassword: svnConf.svnPassword || 'bkl900311',
+    assetsPublicPath: '.',
 
     /**
      * Source Maps
