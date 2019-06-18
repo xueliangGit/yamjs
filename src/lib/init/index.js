@@ -38,7 +38,6 @@ function create () {
     }
     bindElmentEvent(this)
     setComponentForElm(this.elm, this)
-    this.elm.isInited = true
   } else {
     this.elm = this
   }

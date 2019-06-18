@@ -60,6 +60,7 @@ class Yam {
     if (!this.isCustomElements) {
       this.elm = typeof el === 'string' ? document.querySelector(el) : el
       if (!this.elm || this.elm.isInited) return
+      this.elm.isInited = true
       this.__connectedCallback(true)
     }
   }
