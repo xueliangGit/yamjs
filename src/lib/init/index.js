@@ -27,7 +27,7 @@ function _init () {
 function create () {
   if (this.elm) {
     // 现在都走这个
-    this._childrenOri = this.elm.children.length ? map(this.elm.children, (v) => v) : undefined
+    this._childrenOri = this.elm.children.length ? map(this.elm.children, (v) => delChildrenOriThatFromYam(v, this)) : undefined
     this.elm._childrenOri = this._childrenOri
     if (this._childrenOri) {
       // 开启把原有的 子集销毁
@@ -205,6 +205,7 @@ function getFram (isNeedDiv = false) {
   this.$dom._parentElement = this.__shadowRoot
   this.$dom._parentNode = this.__shadowRoot
   updateElement(this.$dom, this[$vdomSymbol])
+  this.$dom._eid = this._eid
   return this.$dom
 }
 // 更新dom
@@ -228,6 +229,14 @@ function initConfig () {
   this._eid = guid2()
   this.Destory = new Destory(this)
   this.ChildComponentsManage = new ChildComponentsManage(this)
+}
+// 处理  已经初始化的组件，再次初始化问题 -- vue 非编译版本出现问题
+function delChildrenOriThatFromYam (child, context) {
+  if (!child) return child
+  if (child.getAttribute('dom') === 'com-' + context._tagName) {
+    return null
+  }
+  return child
 }
 export default function init (context) {
   // 初始化 配置信息
