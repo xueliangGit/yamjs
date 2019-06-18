@@ -158,3 +158,10 @@ export function Component (Config) {
     }
   }
 }
+console.log(`
+    
+    Bate-0.0.7 for this version of yamjs, 
+    
+    that is a baseComponet for html and can run in html or Vue or reactjs
+    
+    `)
