@@ -111,18 +111,23 @@ class Element {
           // el.setAttribute(prop, fnName)
         }
       })
+      // 兼容 style 是字符串形式
       if ('style' in this.props) {
         const styles = this.props.style
-        Object.keys(styles).forEach(prop => {
-          const value = styles[prop]
-          if (typeof value === 'number') {
-            el.style[prop] = `${value}px`
-          } else if (typeof value === 'string') {
-            el.style[prop] = value
-          } else {
-            throw new Error(`Expected "number" or "string" but received "${typeof value}"`)
-          }
-        })
+        if (typeof styles === 'object') {
+          Object.keys(styles).forEach(prop => {
+            const value = styles[prop]
+            if (typeof value === 'number') {
+              el.style[prop] = `${value}px`
+            } else if (typeof value === 'string') {
+              el.style[prop] = value
+            } else {
+              throw new Error(`Expected "number" or "string" but received "${typeof value}"`)
+            }
+          })
+        } else {
+          el.setAttribute('style', styles)
+        }
       }
     }
     this.childNodes.forEach((child, key) => {

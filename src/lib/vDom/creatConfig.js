@@ -361,6 +361,19 @@ export const HTML_TAGS = {
     attributes: {
       'name': 'name'
     }
+  },
+  iframe: {
+    name: 'iframe',
+    attributes: {
+      frameborder: 'frameborder',
+      allowtransparency: 'allowtransparency',
+      allowfullscreen: 'allowfullscreen',
+      scrolling: 'scrolling',
+      height: 'height',
+      title: 'title',
+      src: 'src',
+      width: 'width'
+    }
   }
 }
 export const GLOBAL_ATTRIBUTES = {
