@@ -17,7 +17,20 @@ export default {
   mounted (context) {
     _run(context, '$mounted')
     // runOnReadyElmFn(context.elm)
-    context.elm && context.elm.onReady && typeof context.elm.onReady === 'function' && context.elm.onReady()
+    if (context.elm && context.elm.onReady) {
+      typeof context.elm.onReady === 'function' && context.elm.onReady()
+    } else {
+      Object.defineProperty(context.elm, 'onReady', {
+        configurable: false,
+        enumerable: true,
+        get: function proxyGetter () {
+          return function () {}
+        },
+        set: function proxySetter (newVal) {
+          typeof newVal === 'function' && newVal()
+        }
+      })
+    }
   },
   // 更新之前
   beforeUpdate (context) {
