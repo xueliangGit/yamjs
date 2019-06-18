@@ -116,7 +116,7 @@ YamJS 是一个针对html的开发的一个组件基类，让你开发一个组�
   
 * `style `样式
   
-* 暂时支持引入写法，样式暂时使用stylus语法，框架约定了一种规则，在样式文件顶部若是出现`[scope]`关键字，那么这个样式仅仅对该组件生效，若是没有出现`[scope]`关键字，那么该样式在dom根结点下全局有效：例如
+  * 暂时支持引入写法，样式暂时使用stylus语法，框架约定了一种规则，在样式文件顶部若是出现`[scope]`关键字，那么这个样式仅仅对该组件生效，若是没有出现`[scope]`关键字，那么该样式在dom根结点下全局有效：例如
   
     * 带有`[scope]`
     
@@ -163,8 +163,10 @@ YamJS 是一个针对html的开发的一个组件基类，让你开发一个组�
       </div>
       ```
     
-      [root]根结点
-
+      * [root]根结点 是$dom 元素
+  
+  * 支持使用@import引入外部样式文件
+  
 * `shadow`影子树（`false`）
   
 * 是否使用影子树，影子树，参考[MDN的解释](https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/shadow)，简单来说就是隔离开原有的dom环境，新建一个环境，次新环境与外环境样式不相冲突。默认是`false`
@@ -390,7 +392,7 @@ let plugin ={
 > ##### 组件内一些写扩展时可能用到的值值的说明
 
 * `this.elm` 该组件的最外层`dom`，主要是用来包裹组件
-* `this.$div` 该组件的内容`dom`，若是样式中使用了`[root] `属性，那就是应用到这个dom上
+* `this.$dom` 该组件的内容`dom`，若是样式中使用了`[root]`属性，那就是应用到这个dom上
 * `this.prop` 是组件内部属性传值的缓存值，虽然你可以直接从这里取到来自父级元素的值或者方法，但是建议不要做，当你的组件运营在外部环境中时，是没有`this.prop`,所以用这样取值会报错的。建议使用`this.emitProp`来触发父级传递的方法，去`prop`值，直接用`this.`取值就行
 * `this.addDestory`添加组件消除时要销毁的方法，例如setTimeout
 
@@ -426,4 +428,4 @@ let plugin ={
 
 支持主流浏览器
 
-![image-20190612140407922](https://dev.tencent.com/u/Supermen/p/yam/git/blob/master/src/lib/image-20190612140407922.png)
+![image-20190612140407922](https://dev.tencent.com/u/Supermen/p/yam/git/raw/master/src/lib/image-20190612140407922.png)
