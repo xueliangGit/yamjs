@@ -27,7 +27,7 @@ export default {
           return function () {}
         },
         set: function proxySetter (newVal) {
-          typeof newVal === 'function' && newVal()
+          typeof newVal === 'function' && newVal.call(context.elm)
         }
       })
     }

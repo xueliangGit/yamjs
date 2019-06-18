@@ -1,6 +1,6 @@
 {
   "name": "yamjs",
-  "version": "0.0.17",
+  "version": "0.0.18",
   "description": "yamjs is a basecomponents for html,it can make your can write a components and run any where such as html,vue,react eg.",
   "main": "./src/lib/index.js",
   "scripts": {
