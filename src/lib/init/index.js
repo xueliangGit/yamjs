@@ -68,7 +68,7 @@ function create () {
         }
       })
       // 添加 监听事件， 适配三方框架
-      this.addWatcher = (names, fn = () => {}) => {
+      this.addWatcher = this.elm.addWatcher = (names, fn = () => {}) => {
         // 添加监听方法
         this.elm._runfn_ = this.elm._runfn_ || {}
         this.elm._runfn_[getCallFnName(this, names)] = fn
