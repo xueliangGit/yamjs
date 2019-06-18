@@ -37,7 +37,7 @@ export default {
     context[$ComponentSymbol] = null
     context[$vdomSymbol] = null
     context.elm = null
-    context.$div = null
+    context.$dom = null
     context.isDestoryed = true
     context.mutation = null
     context.Destory = null

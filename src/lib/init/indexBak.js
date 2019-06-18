@@ -92,16 +92,16 @@ function createdComponent () {
 }
 // 获取dom片段
 function getFram () {
-  this.$div = document.createElement('div')
-  this.$div.setAttribute('dom', this._cid)
+  this.$dom = document.createElement('div')
+  this.$dom.setAttribute('dom', this._cid)
   // console.log(this.render.toString())
   try {
     this[$vdom] = this.render()
   } catch (e) {
     console.log('e', e)
   }
-  updateElement(this.$div, this[$vdom])
-  return this.$div
+  updateElement(this.$dom, this[$vdom])
+  return this.$dom
 }
 // 更新dom
 async function update () {
@@ -111,7 +111,7 @@ async function update () {
       let newNode = this.render()
       let oldNode = this[$vdom]
       this[$vdom] = newNode
-      updateElement(this.$div, newNode, oldNode)
+      updateElement(this.$dom, newNode, oldNode)
       console.timeEnd('------$update')
       console.log(newNode)
       this.$updated()

@@ -191,22 +191,22 @@ function delFlag (context, key) {
 // 获取dom片段
 function getFram (isNeedDiv = false) {
   if (isNeedDiv) {
-    this.$div = document.createElement('div')
+    this.$dom = document.createElement('div')
   } else {
-    this.$div = document.createElement('div')
+    this.$dom = document.createElement('div')
   }
-  this.$div.setAttribute('dom', this._cid)
+  this.$dom.setAttribute('dom', this._cid)
   try {
     this[$vdomSymbol] = this.render()
     this[$vdomSymbol]._rootId = this._rootId
   } catch (e) {
     log('e', e)
   }
-  // this.$div._childrenOri = this._childrenOri
-  this.$div._parentElement = this.__shadowRoot
-  this.$div._parentNode = this.__shadowRoot
-  updateElement(this.$div, this[$vdomSymbol])
-  return this.$div
+  // this.$dom._childrenOri = this._childrenOri
+  this.$dom._parentElement = this.__shadowRoot
+  this.$dom._parentNode = this.__shadowRoot
+  updateElement(this.$dom, this[$vdomSymbol])
+  return this.$dom
 }
 // 更新dom
 async function update () {
@@ -218,7 +218,7 @@ async function update () {
       let oldNode = this[$vdomSymbol]
       this[$vdomSymbol] = newNode
       this[$vdomSymbol]._rootId = this._rootId
-      updateElement(this.$div, newNode, oldNode)
+      updateElement(this.$dom, newNode, oldNode)
       // console.timeEnd('------$update')
       lifeCycle.updated(this)
     }

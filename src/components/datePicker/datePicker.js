@@ -107,10 +107,10 @@ class App extends Yam {
     this.emitProp('change', this.showDate)
   }
   hide () {
-    this.slideOut('bottom', this.$div)
+    this.slideOut('bottom', this.$dom)
   }
   show () {
-    this.slideIn('bottom', this.$div)
+    this.slideIn('bottom', this.$dom)
   }
   onDataChange (type, index) {
     console.log('onDataChange', type + '--->' + index)
