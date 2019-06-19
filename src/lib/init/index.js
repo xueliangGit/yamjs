@@ -75,11 +75,11 @@ function create () {
       let handle = (e) => {
         // console.log('DOMNodeRemoved', e)
         if (e.target._eid && e.target._eid === this.elm._eid) {
+          this.elm.parentNode.removeEventListener('DOMNodeRemoved', handle, false)
           if (this.elm.disconnectedCallback) {
             this.elm.beforeDisconnectedCallback()
             this.elm.disconnectedCallback()
           }
-          this.elm.parentNode.removeEventListener('DOMNodeRemoved', handle, false)
         }
       }
       // 绑定 移除事件
