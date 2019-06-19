@@ -5,15 +5,19 @@ const path = require('path')
 const common = require('./webpack.common.js')
 const config = require('../config')
 const utils = require('./utils')
+const package = require('../package.json')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
+
 module.exports = merge(common, {
   mode: 'production',
   output: {
-    filename: 'js/[name].[chunkhash].bundle.js',
+    // filename: 'js/[name].[chunkhash].bundle.js',
+    filename: 'js/yam.min.js',
     path: path.resolve(__dirname, '../dist') // 定义输出文件夹dist路径
   },
   plugins: [
@@ -21,6 +25,7 @@ module.exports = merge(common, {
     new webpack.DefinePlugin({
       'process.env': 'production'
     }),
+    
     new UglifyJsPlugin({
       uglifyOptions: {
         compress: {
@@ -30,6 +35,14 @@ module.exports = merge(common, {
       sourceMap: config.build.productionSourceMap,
       parallel: true
     }),
+    new webpack.BannerPlugin(
+      {
+        banner: `Yam.js v${package.version}
+(c) 2019-${(new Date()).getFullYear()} xuxueliang
+Released under the MIT License.
+lastTime:${new Date()}`, // 要输出的注释内容
+        entryOnly: !0 // 即是否只在入口 模块 文件中添加注释；
+      }),
     // extract css into its own file
     new ExtractTextPlugin({
       filename: utils.assetsPath('css/[name].[contenthash].css'),
@@ -104,7 +117,8 @@ module.exports = merge(common, {
         to: config.build.assetsSubDirectory,
         ignore: ['.*']
       }
-    ])
+    ]),
+    process.env.analyz?new BundleAnalyzerPlugin():function(){}
   ],
   optimization: {
     splitChunks: {

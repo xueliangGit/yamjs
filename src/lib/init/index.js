@@ -209,7 +209,7 @@ function getFram (isNeedDiv = false) {
   return this.$dom
 }
 // 更新dom
-async function update () {
+function update () {
   lifeCycle.beforeUpdate(this)
   setTimeout(() => {
     if (this[$vdomSymbol]) {
