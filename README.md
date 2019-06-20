@@ -196,7 +196,7 @@ dom数据更新是仅仅在`$data`设定以及注解里`prop`设定的值改变�
 * `$beforeMount(){}`组件实例数据渲染之前
 * `$mounted(){}`组件实例数据渲染之后（这个时候基本上已经渲染完了dom）
 * `$beforeUpdate(){}`组件内部数据后dom更新之前调用
-* `$updated(){}`组件内部数据更新后dom更新后调用
+* `$updated(){}`组件内部数据更新后dom更新后调用（*注意：在此回调里进行给数据赋值，可能会导致死循环，ruturn false 可以避免*)
 * `$beforeDestroyed(){}`组件销毁之前调用
 * `$destroyed(){}`组件销毁之后调用
 
@@ -426,3 +426,15 @@ let plugin ={
 支持主流浏览器
 
 ![image-20190612140407922](https://dev.tencent.com/u/Supermen/p/yam/git/raw/master/src/lib/image-20190612140407922.png)
+
+> 更新
+
+* 0.1.4
+  * 修复  `$updated` 回调里进行赋值（是被监听的值时），有时会进入死循环。在结尾加入 `return false` 可以避免。（原理时在一定时间（500ms）内不更新，谨慎使用）
+  * 优化 属性变化时，值属性是 `function` 不再更新。
+
+* 0.1.3
+
+  * 修复属性变化时，值为false或者0时不变的话的问题
+
+    

@@ -1,14 +1,15 @@
-import Yam, { Component } from '../../lib/index'
+import Yam, { Component } from 'yamjs'
 // eslint-disable-next-line no-unused-vars
-import WheelView from './WheelView'
+import WheelView from '../wheelView/WheelView'
 import calendar from './daytool'
 @Component({
   tagName: 'date-picker',
   style: require('./datePicker.stylus'),
   props: ['startTime', 'showzg'],
+  shadow: true,
   canBeCalledExt: true
 })
-class App extends Yam {
+class datePicker extends Yam {
   /**
  * 弹窗组件
  */
@@ -92,14 +93,15 @@ class App extends Yam {
   onDataSelect (data) {
     this.elm.value = data
     this.showDate = data
+    this.elm.lunar = ''
     if (this.showzg) {
       let lunar = calendar.solar2lunar(...data.split('-'))
       this.gzYear = lunar.gzYear
       this.gzMonth = lunar.gzMonth
       this.gzDay = lunar.gzDay
       this.showDate = `${data}(${lunar.gzYear}${lunar.gzMonth}${lunar.gzDay})`
+      this.elm.lunar = this.gzYear + this.gzMonth + this.gzDay
     }
-    this.elm.lunar = this.gzYear + this.gzMonth + this.gzDay
     // this.emitProp('d', data, this.elm.lunar)
   }
   dateSure () {
@@ -214,17 +216,17 @@ class App extends Yam {
       <div className='dialog'>
         <div className='buttons'>
           <span onClick={this.hide.bind(this)} className='button left'>取消</span>
-          <div className='title dib'>{this.showDate}</div>
+          <div className='title '>{this.showDate}</div>
           <span onClick={this.dateSure.bind(this)} className='button right'>确定</span>
         </div>
         <div className='box' >
-          <wheel-view className='year dib' type='year' gzName={this.gzYear} data={this.state.year}
+          <wheel-view className='year dib' type='year' gzName={this.showzg && this.gzYear} data={this.state.year}
             index={this.state.yIndex}
             onDataChange={this.onDataChange.bind(this)} />
-          <WheelView className='month dib' type='month' gzName={this.gzMonth} data={this.state.month}
+          <WheelView className='month dib' type='month' gzName={this.showzg && this.gzMonth} data={this.state.month}
             index={this.state.mIndex}
             onDataChange={this.onDataChange.bind(this)} />
-          <WheelView className='day dib' type='day' gzName={this.gzDay} data={this.state.day}
+          <WheelView className='day dib' type='day' gzName={this.showzg && this.gzDay} data={this.state.day}
             index={this.state.dIndex}
             onDataChange={this.onDataChange.bind(this)} />
         </div>
@@ -233,4 +235,4 @@ class App extends Yam {
   }
 }
 // console.log(GoTop._style)
-export default App
+export default datePicker

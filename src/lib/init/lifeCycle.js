@@ -38,7 +38,7 @@ export default {
   },
   // 更新之后
   updated (context) {
-    _run(context, '$updated')
+    return _run(context, '$updated') || false
   },
   // 即将销毁
   beforeDestroyed (context) {
@@ -58,5 +58,5 @@ export default {
   }
 }
 function _run (context, name) {
-  context[name] && typeof context[name] === 'function' && context[name]()
+  return context[name] && typeof context[name] === 'function' ? context[name]() : undefined
 }

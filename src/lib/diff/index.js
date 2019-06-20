@@ -130,24 +130,34 @@ function editProp (a, b) {
   for (let i = 0, keys; keys = newProp[i]; i++) {
     if (keys === 'style') {
       const styles = b.props.style
-      Object.keys(styles).forEach(prop => {
-        const value = styles[prop]
-        if (typeof value === 'number') {
-          a.elm.style[prop] = `${value}px`
-        } else if (typeof value === 'string') {
-          a.elm.style[prop] = value
-        } else {
-          throw new Error(`Expected "number" or "string" but received "${typeof value}"`)
+      if (typeof styles === 'object') {
+        Object.keys(styles).forEach(prop => {
+          const value = styles[prop]
+          if (typeof value === 'number') {
+            if (prop !== 'zIndex') {
+              a.elm.style[prop] = `${value}px`
+            } else {
+              a.elm.style[prop] = `${value}`
+            }
+          } else if (typeof value === 'string') {
+            a.elm.style[prop] = value
+          } else {
+            throw new Error(`Expected "number" or "string" but received "${typeof value}"`)
+          }
+        })
+      } else {
+        if (a.elm.getAttribute('style') !== styles) {
+          a.elm.setAttribute('style', styles)
         }
-      })
+      }
     } else {
-      if (b.props[keys]) {
+      if (isDef(b.props[keys])) {
         if (a.props[keys] !== b.props[keys]) {
           a.props[keys] = b.props[keys]
           setProp(keys, b.attrs, b.props[keys], a.elm)
         }
       } else {
-        if (a.props[keys]) {
+        if (isDef(a.props[keys])) {
           delete a.props[keys]
           a.elm.removeAttribute(a.attrs[keys])
         }
@@ -162,9 +172,12 @@ function setProp (keys, attrs, props, elm) {
   } else if (typeof props !== 'function') {
     // elm.setAttribute(keys, props)
   }
+  if (typeof props === 'function') return
   if (elm.isComponent) {
     let elmCom = getComponentByElm(elm)
-    elmCom[keys] = props
+    if (elmCom[keys] !== props) {
+      elmCom[keys] = props
+    }
     elmCom = null
   }
 }

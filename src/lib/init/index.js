@@ -1,7 +1,7 @@
 // import updateElement from '../vDom'
 import updateElement from '../diff'
 // /creatMutationObserser ,setAttributes,
-import { creatMutationObserser, setAttributes, forEach, map, guid2, log } from '../utils'
+import { creatMutationObserser, setAttributes, forEach, map, guid2, log, isFalse } from '../utils'
 import { getCallFnName, syncComponentMark, setComponentForElm, getComponentByElm, setClosetParentCom } from '../utils/componentUtil'
 import nodeOps from '../utils/nodeOps'
 import lifeCycle from './lifeCycle'
@@ -210,6 +210,8 @@ function getFram (isNeedDiv = false) {
 }
 // 更新dom
 function update () {
+  // 优化 update 默认在¥updated内方法 只是数据更新不是dom更新
+  if (this.__stopUpdata) return
   lifeCycle.beforeUpdate(this)
   setTimeout(() => {
     if (this[$vdomSymbol]) {
@@ -220,7 +222,13 @@ function update () {
       this[$vdomSymbol]._rootId = this._rootId
       updateElement(this.$dom, newNode, oldNode)
       // console.timeEnd('------$update')
-      lifeCycle.updated(this)
+      // lifeCycle.updated(this)
+      if (isFalse(lifeCycle.updated(this))) {
+        this.__stopUpdata = true
+        setTimeout(() => {
+          this.__stopUpdata = false
+        }, 500)
+      }
     }
   })
 }

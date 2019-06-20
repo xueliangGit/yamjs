@@ -118,7 +118,11 @@ class Element {
           Object.keys(styles).forEach(prop => {
             const value = styles[prop]
             if (typeof value === 'number') {
-              el.style[prop] = `${value}px`
+              if (prop !== 'zIndex') {
+                el.style[prop] = `${value}px`
+              } else {
+                el.style[prop] = `${value}`
+              }
             } else if (typeof value === 'string') {
               el.style[prop] = value
             } else {
