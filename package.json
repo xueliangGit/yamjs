@@ -1,6 +1,6 @@
 {
   "name": "yamjs",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "yamjs is a basecomponents for html,it can make your can write a components and run any where such as html,vue,react eg.",
   "main": "./src/lib/index.js",
   "scripts": {
@@ -8,7 +8,7 @@
     "dev": "npm run start",
     "start": "webpack-dev-server --open --config build/webpack.dev.js",
     "build": "node build/build.js",
-    "analyz": "analyz=true npm run build"
+    "analyz": "cross-env analyz=true npm run build"
   },
   "keywords": [
     "yam",
@@ -41,6 +41,7 @@
     "babel-loader": "^8.0.5",
     "clean-webpack-plugin": "^2.0.1",
     "copy-webpack-plugin": "^5.0.2",
+    "cross-env": "^5.2.0",
     "css-loader": "^2.1.1",
     "eslint": "^5.16.0",
     "eslint-config-standard": "^12.0.0",

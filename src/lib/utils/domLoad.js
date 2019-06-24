@@ -34,8 +34,10 @@ document.onreadystatechange = function () {
   if (document.readyState === 'complete') { // 当页面加载状态为完全结束时进入
     console.log('document is onload')
     domIsLoaded = true
-    runDomfn()
-    addObserse()
+    if (domFnCache.length) {
+      runDomfn()
+      addObserse()
+    }
   }
   // if (document.readyState === 'interactive') { // DOM构建了就会执行，先与complete执行
   //   // console.log('document is interactive ,so DOM obj is ' + document.getElementById('img1'))

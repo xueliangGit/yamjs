@@ -1,16 +1,16 @@
 export default {
   name: 'animate',
   needs: ['tools'],
-  install: function (terget) {
-    terget.addPrototype('fadeOut', function (duration = 300) {
+  install: function (target) {
+    target.addPrototype('fadeOut', function (duration = 300) {
       const keyframes = [{ opacity: 1, marginTop: '0' }, { opacity: 0, marginTop: '50px' }]
       return _animate.call(this, keyframes, duration).finished
     })
-    terget.addPrototype('fadeIn', function (duration = 300) {
+    target.addPrototype('fadeIn', function (duration = 300) {
       const keyframes = [{ opacity: 0, marginTop: '50px' }, { opacity: 1, marginTop: '0px' }]
       return _animate.call(this, keyframes, duration).finished
     })
-    terget.addPrototype('slideIn', function (direction = 'bottom', elm = null, duration = 300) {
+    target.addPrototype('slideIn', function (direction = 'bottom', elm = null, duration = 300) {
       elm = elm || this.elm
       let begin = {}
       let end = {}
@@ -20,7 +20,7 @@ export default {
       const keyframes = [begin, end]
       _animate.call(elm, keyframes, duration)
     })
-    terget.addPrototype('slideOut', function (direction = 'bottom', elm = null, duration = 300) {
+    target.addPrototype('slideOut', function (direction = 'bottom', elm = null, duration = 300) {
       elm = elm || this.elm
       let begin = {}
       let end = {}

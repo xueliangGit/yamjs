@@ -1,15 +1,15 @@
 // 兼容react
 export default {
   name: 'reactAdapter',
-  install: function (terget) {
-    terget.addPrototype('setState', function (obj) {
+  install: function (target) {
+    target.addPrototype('setState', function (obj) {
       if (!this.state) {
         this.state = {}
       }
       Object.assign(this.state, obj)
       this.update()
     })
-    terget.addPrototype('initReact', function (context) {
+    target.addPrototype('initReact', function (context) {
       // 添加 卸载时触发的方法
       var that = this
       if (context.componentWillUnmount) {
