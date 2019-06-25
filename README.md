@@ -1,5 +1,5 @@
 # Yam - a baseComponents for html
-
+> *本组件基类将在0.5.0版本开源，现在阶段只是内部使用，修复一些bug，以及一些优化*
 Yam 一个webComponent的渲染函数组件;兼容非webComponent渲染
 
 YamJS 是一个针对html的开发的一个组件基类，让你开发一个组件，可以运行在原生HTML/vue/react等环境。
