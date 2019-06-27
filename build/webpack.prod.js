@@ -37,7 +37,7 @@ module.exports = merge(common, {
     }),
     new webpack.BannerPlugin(
       {
-        banner: `Yam.js v${package.version}
+        banner: `Yamjs v${package.version}
 (c) 2019-${(new Date()).getFullYear()} xuxueliang
 Released under the MIT License.
 lastTime:${new Date()}`, // 要输出的注释内容
