@@ -89,7 +89,12 @@ class Element {
         el.setAttribute('tag', 'slot')
         let mark = getComponentMark(parentELm)
         el.isBelong = mark._name
-        doAfterSlotUpdate(el, this, mark.elm.rand)
+
+        doAfterSlotUpdate(el, this, mark.elm.rand, mark)
+        // 添加 移除时的事件
+        el.disconnectedCallback = () => {
+          setSlotState(mark, this.props.name, false)
+        }
       }
       el._parentNode = parentELm
       el._parentElement = parentELm
@@ -134,6 +139,11 @@ class Element {
         }
       }
     }
+    if (slot.length) {
+      forEach(slot, (v) => {
+        setSlotState(getComponentByElm(el), v.getAttribute('name'), false)
+      })
+    }
     this.childNodes.forEach((child, key) => {
       nodeOps.appendChild(getRenderElmBySlot(slot, child, el), child.render(key, el))
     })
@@ -142,13 +152,15 @@ class Element {
       this.rand = this.rand || Math.random()
       el.rand = this.rand
       cacheLib.set(this._name + 'slot-' + this.rand, this.childNodes)
+      let coms = getComponentByElm(el)
       if (el.beforeDisconnectedCallback) {
-        let coms = getComponentByElm(el)
         coms.addDestory(() => {
           cacheLib.del(this._name + 'slot-' + this.rand)
         })
-        coms = null
       }
+
+      // 检测插槽 是否有内容填充
+      coms = null
     }
     // 处理组件在最顶层时 slot 情况
     let comsOri = getparentCom(parentELm._parentElement)
@@ -170,30 +182,47 @@ class Element {
 }
 // do slot 更新后的slot数据渲染
 // 只有
-function doAfterSlotUpdate (el, context, rand) {
+function doAfterSlotUpdate (el, context, rand, parentCom) {
   let childNodes = cacheLib.get(el.isBelong + 'slot-' + rand)
   // console.log('doAfterSlotUpdate', rand, childNodes, el, context, el.isBelong + 'slot-' + rand)
   if (childNodes && childNodes.length) {
     let name = context.props.name
+    let hasSlothContent = false
     forEach(childNodes, (v, i) => {
       if (name) {
         if (v.render && v.props) {
           if (name === v.props.slot) {
             nodeOps.appendChild(el, v.render(i, el))
+            hasSlothContent = !0
           }
         } else {
           if (name === v.getAttribute('slot')) {
             nodeOps.appendChild(el, v)
+            hasSlothContent = !0
           }
         }
       } else {
         if (v.render) {
           nodeOps.appendChild(el, v.render(i, el))
+          hasSlothContent = !0
         } else {
           nodeOps.appendChild(el, v)
+          hasSlothContent = !0
         }
       }
     })
+    console.log(parentCom, name, hasSlothContent)
+    setSlotState(parentCom, name, hasSlothContent)
+  }
+}
+// 修改 slot状态
+function setSlotState (coms, name, hasSlothContent) {
+  // 标注slot是否有东西
+  coms.$slot = coms.$slot || {}
+  if (name) {
+    coms.$slot[name] = hasSlothContent
+  } else {
+    coms.$slot[0] = hasSlothContent
   }
 }
 // 添加 组件内slot 区分；slot不能越级渲染,越级渲染只是处在顶层组件中
@@ -219,6 +248,7 @@ function getRenderElmBySlot (slot, child, el, slotBelong = null) {
           `)
         }
         if (v.getAttribute('name') === slotName) {
+          setSlotState(getComponentByElm(el), slotName, true)
           return v
         }
       }

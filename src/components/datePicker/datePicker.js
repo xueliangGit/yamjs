@@ -1,6 +1,6 @@
-import Yam, { Component } from 'yamjs'
+import Yam, { Component } from '../../lib/index'
 // eslint-disable-next-line no-unused-vars
-import WheelView from '../wheelView/WheelView'
+import WheelView from './WheelView'
 import calendar from './daytool'
 @Component({
   tagName: 'date-picker',

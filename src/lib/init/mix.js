@@ -61,6 +61,10 @@ function addPrototype (Target, name) {
     getPrototype (type) {
       return Target.prototype[type] || null
     },
+    /**
+     * @summary 设置的方法
+     * @param {type} 方法名
+     */
     addPrototype (type, fn, isCovered = false) {
       if (reserved.includes(type) || Target.prototype[type]) {
         if (isCovered) {
@@ -81,6 +85,22 @@ function addPrototype (Target, name) {
       }
       Target.prototype[type] = fn
       Target.prototype[type]['pluginsName'] = name
+    },
+    /**
+     * @summary 添加自动执行方法,将在mounted时
+     * @param {type} 方法名
+     */
+    addAuto (name, fn) {
+      if (typeof fn === 'function') {
+        Target.prototype._autoDo = Target.prototype._autoDo || {}
+        if (!Target.prototype._autoDo[name]) {
+          Target.prototype._autoDo[name] = fn
+        } else {
+          console.info(`
+          自动执行的方法名：${name} 已存在，请查看是否重复注册该方法
+          `)
+        }
+      }
     }
   }
 }

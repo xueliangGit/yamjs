@@ -10,6 +10,7 @@ import { HTML_TAGS } from './vDom/creatConfig'
 import domOnLoad from './utils/domLoad'
 var comps = window.comps = {}
 let compsIds = 0
+let lifeCycleArray = Object.keys(lifeCycle)
 @Mix()
 class Yam {
   constructor () {
@@ -17,6 +18,15 @@ class Yam {
     // console.log(new.target)
     comps[this._cid + '-' + ++compsIds] = this
     this._rootId = compsIds
+    // 自动启动函数
+    console.log(this._autoDo)
+    if (this._autoDo) {
+      for (const key in this._autoDo) {
+        if (this._autoDo.hasOwnProperty(key)) {
+          this._autoDo[key](this)
+        }
+      }
+    }
   }
   __getProps (props) {
     this.__props = props
@@ -111,10 +121,27 @@ class Yam {
   delDestory (eventId) {
     return this.Destory && this.Destory.del(eventId)
   }
+  // 添加声明周期回调函数
+  addLifeCycleCallFn (lifeCycle, fn) {
+    if (~lifeCycleArray.indexOf(lifeCycle)) {
+      if (typeof fn === 'function') {
+        this.lifeCycleCall = this.lifeCycleCall || {};
+        (this.lifeCycleCall[lifeCycle + '_callfn'] = this.lifeCycleCall[lifeCycle + '_callfn'] || []).push(fn)
+      } else {
+        console.warn(`
+        要添加的组件周期回调必须是函数
+        `)
+      }
+    } else {
+      console.warn(`
+      要添加的组件周期回调的参数，只能是${lifeCycle.join(',')}，请检查
+      `)
+    }
+  }
 }
 
 export default Yam
-// 注解
+// 注解 适配器
 export function Component (Config) {
   let { tagName, shadow, style, props, customElements, canBeCalledExt } = Config
   return function (Target) {
@@ -157,6 +184,11 @@ export function Component (Config) {
         })
       })
     }
+  }
+}
+// 适配器 store
+export function store (Config) {
+  return function (Target) {
   }
 }
 let conf = require('../../package.json')

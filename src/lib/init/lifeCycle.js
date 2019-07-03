@@ -1,4 +1,5 @@
 import { $ComponentSymbol, $vdomSymbol } from '../symbol/index'
+import { forEach } from '../utils'
 // import { runOnReadyElmFn } from '../utils/componentUtil'
 export default {
   // 创建实例之前
@@ -58,5 +59,13 @@ export default {
   }
 }
 function _run (context, name) {
+  try {
+    console.log('this', name.substr(1, name.length))
+    if (context['lifeCycleCall'] && context.lifeCycleCall[name.substr(1, name.length) + '_callfn']) {
+      forEach(context.lifeCycleCall[name.substr(1, name.length) + '_callfn'], (v) => v())
+    }
+  } catch (e) {
+
+  }
   return context[name] && typeof context[name] === 'function' ? context[name]() : undefined
 }
