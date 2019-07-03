@@ -1,7 +1,7 @@
 // import updateElement from '../vDom'
 import updateElement from '../diff'
 // /creatMutationObserser ,setAttributes,
-import { creatMutationObserser, setAttributes, forEach, map, guid2, log, isFalse } from '../utils'
+import { creatMutationObserser, setAttributes, forEach, map, log, isFalse } from '../utils'
 import { getCallFnName, syncComponentMark, setComponentForElm, getComponentByElm, setClosetParentCom } from '../utils/componentUtil'
 import nodeOps from '../utils/nodeOps'
 import lifeCycle from './lifeCycle'
@@ -22,6 +22,10 @@ function _init () {
   lifeCycle.mounted(this)
   this.update = () => {
     _update(this)
+  }
+  if (this.isbyUsedByuser) {
+    _update(this)
+    delete this.isbyUsedByuser
   }
 }
 function create () {
@@ -104,6 +108,7 @@ function create () {
   })
 }
 function _update (context) {
+  // console.log('_update', context, context.__isWillupdate, context.__stopUpdata)
   if (context.__isWillupdate) {
     clearTimeout(context.__isWillupdate)
     context.__isWillupdate = null
@@ -222,7 +227,6 @@ function update () {
       this[$vdomSymbol]._rootId = this._rootId
       updateElement(this.$dom, newNode, oldNode)
       // console.timeEnd('------$update')
-      // lifeCycle.updated(this)
       if (isFalse(lifeCycle.updated(this))) {
         this.__stopUpdata = true
         setTimeout(() => {
@@ -232,12 +236,7 @@ function update () {
     }
   })
 }
-// 初始化 参数和数据
-function initConfig () {
-  this._eid = guid2()
-  this.Destory = new Destory(this)
-  this.ChildComponentsManage = new ChildComponentsManage(this)
-}
+
 // 处理  已经初始化的组件，再次初始化问题 -- vue 非编译版本出现问题
 function delChildrenOriThatFromYam (child, context) {
   if (!child) return child
@@ -248,6 +247,10 @@ function delChildrenOriThatFromYam (child, context) {
 }
 export default function init (context) {
   // 初始化 配置信息
-  initConfig.call(context)
   _init.call(context)
+}
+// 初始化 参数和数据
+export function initConfig () {
+  this.Destory = new Destory(this)
+  this.ChildComponentsManage = new ChildComponentsManage(this)
 }

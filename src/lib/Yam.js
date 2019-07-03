@@ -1,8 +1,8 @@
-import init from './init'
+import init, { initConfig } from './init'
 import { canUseCustomElements } from './init/bolConf'
 import lifeCycle from './init/lifeCycle'
 import { Mix } from './init/mix'
-import { getStyleStr, toCamelCase, forEach } from './utils'
+import { getStyleStr, guid2, toCamelCase, forEach } from './utils'
 import { getCallFnName, getClosetParentCom } from './utils/componentUtil'
 import cacheLib from './utils/cacheLib'
 import BaseCustomElements from './BaseCustomElements'
@@ -14,6 +14,8 @@ let lifeCycleArray = Object.keys(lifeCycle)
 @Mix()
 class Yam {
   constructor () {
+    this._eid = guid2()
+    initConfig.call(this)
     this._config()
     // console.log(new.target)
     comps[this._cid + '-' + ++compsIds] = this
@@ -76,7 +78,8 @@ class Yam {
   }
   // 手动更新方法
   update () {
-
+    // 鉴定是否应被掉过
+    this.isbyUsedByuser = true
   }
   // 执行方法
   emit (fnName, ...params) {
@@ -143,7 +146,7 @@ class Yam {
 export default Yam
 // 注解 适配器
 export function Component (Config) {
-  let { tagName, shadow, style, props, customElements, canBeCalledExt } = Config
+  let { tagName, shadow, style, props, customElements, canBeCalledExt, store } = Config
   return function (Target) {
     Target._tagName = tagName
     Target._shadow = !!shadow
@@ -155,6 +158,10 @@ export function Component (Config) {
       this._canBeCalledExt = typeof canBeCalledExt === 'boolean' ? canBeCalledExt : false
       this._cid = 'com-' + tagName
       this._style = getStyleStr(this._cid, style)
+      // store
+      if (store && store.add) {
+        this.$store = store.add(this)
+      }
     }
     if (!HTML_TAGS[tagName]) {
       HTML_TAGS[tagName] = {

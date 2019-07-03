@@ -3,7 +3,7 @@ import Yam, { Component } from '../lib/index'
 // var goTopTem = require('./goTopTem.html')
 // eslint-disable-next-line no-unused-vars
 import MyTimer from './myTimer'
-
+import store from './store2'
 /*eslint-disable */
 function oneObject (str) {
   var obj = {}
@@ -418,6 +418,7 @@ function makeJSX (JSXNode) {
   style: require('./goTop.stylus'),
   shadow: true,
   canBeCalledExt:true,
+  store,
   props: ['msg']
 })
 class App extends Yam {
@@ -451,7 +452,7 @@ class App extends Yam {
     console.log('-----beforeUpdate')
   }
   $updated () {
-    console.log('-----updated')
+    console.log('go-top-----updated')
   }
   show (v) {
     this.$router.show()
@@ -478,7 +479,7 @@ class App extends Yam {
   render () {
     return (
       <div className='asd' >
-        <div onClick={this.switch.bind(this,-1)}>点击</div>
+        <div onClick={this.switch.bind(this,-1)}>点击{this.$store.width}</div>
         {this.index==1?<slot name='left'></slot>:''}
         {this.getTimer()}
         <slot name='bottom'></slot>

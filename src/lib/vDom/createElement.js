@@ -211,7 +211,7 @@ function doAfterSlotUpdate (el, context, rand, parentCom) {
         }
       }
     })
-    console.log(parentCom, name, hasSlothContent)
+    // console.log(parentCom, name, hasSlothContent)
     setSlotState(parentCom, name, hasSlothContent)
   }
 }

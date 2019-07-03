@@ -39,7 +39,7 @@ export default {
   },
   // 更新之后
   updated (context) {
-    return _run(context, '$updated') || false
+    return _run(context, '$updated') || void 0
   },
   // 即将销毁
   beforeDestroyed (context) {
@@ -60,7 +60,6 @@ export default {
 }
 function _run (context, name) {
   try {
-    console.log('this', name.substr(1, name.length))
     if (context['lifeCycleCall'] && context.lifeCycleCall[name.substr(1, name.length) + '_callfn']) {
       forEach(context.lifeCycleCall[name.substr(1, name.length) + '_callfn'], (v) => v())
     }

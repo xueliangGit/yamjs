@@ -1,11 +1,14 @@
 import Yam, { Component } from '../lib/index'
 // var style = require('./myTimers.styl')
+import store from './store'
 // eslint-disable-next-line no-unused-vars
 import Hour from './timers/hour'
+console.log(store)
  @Component({
    tagName: 'my-timer',
    style: require('./myTimers.stylus'),
    canBeCalledExt: false,
+   store: store,
    props: []
  })
 class App extends Yam {
@@ -18,7 +21,8 @@ class App extends Yam {
      }
    }
    show (v) {
-     console.log(this.emitProp('showFn', 'asdasd'))
+     this.$store.commit('width', this.$store.width + 1)
+     //  console.log(this.emitProp('showFn', 'asdasd'))
    }
    showP (v) {
      console.log('adsasd', v)
@@ -30,7 +34,7 @@ class App extends Yam {
    render () {
      return (
        <div >
-         <p>----------</p>
+         <p onClick={this.show.bind(this)}>----------{this.$store.width}</p>
          <div>{this.sec % 60 > 30 ? '' : <slot />}</div>
          <div className='all' >
            <Hour callFn={this.showP.bind(this)} className='hour' hour={this.hour} width='200' />
@@ -43,9 +47,10 @@ class App extends Yam {
    }
    $mounted () {
      this.go()
+     this.show()
      this.setTimeout(() => {
        this.$mounted()
-     }, 500)
+     }, 1000)
    }
    $updated () {
      console.log('mytimer UPdater', this._rootId)

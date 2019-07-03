@@ -7,6 +7,11 @@ declare class Yam {
     */
   static use(plugins: object): void
   /**
+    * 组件状态信息，需要在component里添加配置.
+    * @return {props} 组件传值
+    */
+   $store:{}
+  /**
     * 组件配置信息.
     * @return {props} 组件传值
     */

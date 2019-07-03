@@ -1,7 +1,7 @@
 
 import Yam, { Component } from './Yam'
 import tools from './plugins/tools'
-import state from './plugins/state'
+import state from './plugins/store'
 // eslint-disable-next-line no-extend-native
 Array.prototype.flat = Array.prototype.flat || function () {
   return this.reduce((acc, val) => Array.isArray(val) ? acc.concat(val.flat()) : acc.concat(val), [])
