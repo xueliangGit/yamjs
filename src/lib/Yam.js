@@ -17,6 +17,7 @@ class Yam {
     this._eid = guid2()
     initConfig.call(this)
     this._config()
+    lifeCycle.beforeInit(this)
     // console.log(new.target)
     comps[this._cid + '-' + ++compsIds] = this
     this._rootId = compsIds

@@ -12,21 +12,21 @@ export function Mix () {
       // childNodes = childNodes.length ? childNodes : undefined
       return createElementJson(tagName, props, childNodes)
     }
-    Target.use = (Config) => {
+    Target.use = (Config = {}) => {
       /**
        * obj={
        *  name:'',
        * install:function(baseConpoment){}
        * }
        *  */
-      let { name, install, needs } = Config
+      let { name, needs } = Config
       if (!name) {
         console.warn(`
             必须填写name
           `)
         return false
       }
-      if (typeof install !== 'function') {
+      if (typeof Config.install !== 'function') {
         console.warn(`
             install 必须是个方法
           `)
@@ -46,7 +46,7 @@ export function Mix () {
         console.info(`已经注册此扩展:${name}`)
       } else {
         installed.push(name)
-        install(addPrototype(Target, name))
+        Config.install(addPrototype(Target, name))
       }
     }
   }

@@ -3,7 +3,7 @@ import Yam, { Component } from '../lib/index'
 // var goTopTem = require('./goTopTem.html')
 // eslint-disable-next-line no-unused-vars
 import MyTimer from './myTimer'
-import store from './store2'
+// import store from './store2'
 /*eslint-disable */
 function oneObject (str) {
   var obj = {}
@@ -418,7 +418,7 @@ function makeJSX (JSXNode) {
   style: require('./goTop.stylus'),
   shadow: true,
   canBeCalledExt:true,
-  store,
+  // store,
   props: ['msg']
 })
 class App extends Yam {

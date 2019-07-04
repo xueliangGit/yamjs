@@ -83,7 +83,9 @@ declare function Component(config:{
   customElements:true,
   // 组件传入的属性监听
   props:[],
-  // 吃否可以被外部调用组件内部的方法
+  // 状态管理中心
+  stroe:Stroe,
+  // 是否可以被外部调用组件内部的方法
   canBeCalledExt:true
 }):void
 export default Yam;

@@ -2,6 +2,10 @@ import { $ComponentSymbol, $vdomSymbol } from '../symbol/index'
 import { forEach } from '../utils'
 // import { runOnReadyElmFn } from '../utils/componentUtil'
 export default {
+  // 初始化前
+  beforeInit (context) {
+    _run(context, '$beforeInit')
+  },
   // 创建实例之前
   beforeCreate (context) {
     _run(context, '$beforeCreate')

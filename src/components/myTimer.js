@@ -1,14 +1,11 @@
 import Yam, { Component } from '../lib/index'
 // var style = require('./myTimers.styl')
-import store from './store'
 // eslint-disable-next-line no-unused-vars
 import Hour from './timers/hour'
-console.log(store)
  @Component({
    tagName: 'my-timer',
    style: require('./myTimers.stylus'),
    canBeCalledExt: false,
-   store: store,
    props: []
  })
 class App extends Yam {

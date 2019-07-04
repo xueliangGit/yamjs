@@ -1,4 +1,4 @@
-const StoreFactory = function (conf) {
+export default function StoreFactory (conf) {
   // 一个状态管理工具
   let storeData = {
     isBelone: 'yamjs',
@@ -14,7 +14,7 @@ const StoreFactory = function (conf) {
         return storeData.state[key]
       },
       set: function proxySetter (newVal) {
-
+        // 不进行赋值
       }
     })
   }
@@ -25,6 +25,7 @@ const StoreFactory = function (conf) {
   class Store {
     constructor (conf) {
       this.do = storeData.isBelone
+      this.name = 'store'
       this.mix(conf)
     }
     mix (conf) {
@@ -44,11 +45,15 @@ const StoreFactory = function (conf) {
     }
     commit (fnNameOrstate, ...params) {
       if (storeData.methods[fnNameOrstate]) {
-        storeData.methods[fnNameOrstate](storeData.state, ...params)
+        if (storeData.methods[fnNameOrstate](storeData.state, ...params) !== false) {
+          Store.update()
+        }
       } else if (storeData.state[fnNameOrstate]) {
-        storeData.state[fnNameOrstate] = params[0]
+        if (storeData.state[fnNameOrstate] !== params[0]) {
+          storeData.state[fnNameOrstate] = params[0]
+          Store.update()
+        }
       }
-      Store.update()
     }
     add (target) {
       storeData.isAdded[target._eid] = target
@@ -61,12 +66,12 @@ const StoreFactory = function (conf) {
       Object.keys(storeData.isAdded).forEach(v => {
         storeData.isAdded[v].update()
       })
-    // this.target.update()
+    }
+    install (target) {
+      target.addAuto('store', (context) => {
+        context.$store = this.add(context)
+      })
     }
   }
   return new Store(conf)
-}
-
-export default function (obj) {
-  return new StoreFactory(obj)
 }
