@@ -1,34 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>webComponents</title>
-  <script src="http://192.168.2.154:5006/test/lib/plugins/vconsole.min.js"></script>
-  <script>
-    // new VConsole() 
-  </script>
-</head>
-<body>
-  <!-- <mis-list></mis-list>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>webComponents</title>
+    <script src="http://192.168.2.154:5006/test/lib/plugins/vconsole.min.js"></script>
+    <script>
+      // new VConsole()
+    </script>
+  </head>
+
+  <body>
+    <!-- <mis-list></mis-list>
   <div onasd='fun' msg='1111111' id='app'></div>-->
-  <go-top msg={a:123123}>
-     <div slot='left'>456</div> 
-    <div slot='bottom'> TTTTOP</div>
-  </go-top>
-  <!-- <my-timer >
+    <router-view></router-view>
+    <!-- <go-top msg="{a:123123}">
+    <div slot="left">456</div>
+    <div slot="bottom">TTTTOP</div>
+  </go-top> -->
+    <!-- <my-timer >
     <p slot='bottom'>我的时间</p>
   </my-timer> -->
 
-  <div onclick="datePicker.emit('show')">时间</div>
-  <p id="showinfo"></p>
-  <date-picker id='datePicker' change='fun' showZg=true></date-picker>
-  <script>
-  function fun(){
-    console.log(arguments)
-    showinfo.innerText=arguments[0]
-  }
-  </script>
-</body>
+    <div onclick="datePicker.emit('show')">时间</div>
+    <p id="showinfo"></p>
+    <date-picker id="datePicker" change="fun" showZg="true"></date-picker>
+    <script>
+      function fun() {
+        console.log(arguments);
+        showinfo.innerText = arguments[0];
+      }
+    </script>
+  </body>
 </html>

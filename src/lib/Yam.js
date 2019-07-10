@@ -147,7 +147,7 @@ class Yam {
 export default Yam
 // 注解 适配器
 export function Component (Config) {
-  let { tagName, shadow, style, props, customElements, canBeCalledExt, store } = Config
+  let { tagName, shadow, style, props, customElements, canBeCalledExt, store, router } = Config
   return function (Target) {
     Target._tagName = tagName
     Target._shadow = !!shadow
@@ -160,8 +160,14 @@ export function Component (Config) {
       this._cid = 'com-' + tagName
       this._style = getStyleStr(this._cid, style)
       // store
+      this.$store = {}
       if (store && store.add) {
-        this.$store = store.add(this)
+        store.add(this)
+      }
+      // router
+      this.$router = {}
+      if (router) {
+        router.add(this)
       }
     }
     if (!HTML_TAGS[tagName]) {

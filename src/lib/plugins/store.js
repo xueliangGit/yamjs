@@ -60,6 +60,7 @@ export default function StoreFactory (conf) {
       target.addDestory(function () {
         delete storeData.isAdded[target._eid]
       })
+      target.$store = this
       return this
     }
     static update () {

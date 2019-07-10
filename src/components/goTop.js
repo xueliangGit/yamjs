@@ -1,4 +1,4 @@
-import Yam, { Component } from '../lib/index'
+import Yam, {Component} from '../lib/index'
 // import jsxp from 'jsx-parser'
 // var goTopTem = require('./goTopTem.html')
 // eslint-disable-next-line no-unused-vars
@@ -417,7 +417,7 @@ function makeJSX (JSXNode) {
   tagName: 'go-top',
   style: require('./goTop.stylus'),
   shadow: true,
-  canBeCalledExt:true,
+  canBeCalledExt: true,
   // store,
   props: ['msg']
 })
@@ -467,26 +467,33 @@ class App extends Yam {
     // this.$refs.mytim.showP()
     this.index *= i
   }
-  getTimer(){
-    if(this.index==1){
+  goT () {
+    this.$router.push({
+      name: 'myTimer',
+      query: {a: 1, b: 2}
+    })
+  }
+  getTimer () {
+    if (this.index == 1) {
       return <MyTimer >
-      <p>我是时间-2</p>
-      <p slot='bottom'>我是时间-11112</p>
-    </MyTimer>
+        <p>我是时间-2</p>
+        <p slot='bottom'>我是时间-11112</p>
+      </MyTimer>
     }
     return ''
   }
   render () {
     return (
       <div className='asd' >
-        <div onClick={this.switch.bind(this,-1)}>点击{this.$store.width}</div>
-        {this.index==1?<slot name='left'></slot>:''}
+        <div onClick={this.goT.bind(this)}>去timer</div>
+        <div onClick={this.switch.bind(this, -1)}>点击{this.$store.width}</div>
+        {this.index == 1 ? <slot name='left'></slot> : ''}
         {this.getTimer()}
         <slot name='bottom'></slot>
       </div>
     )
   }
-  
+
 }
 // console.log(GoTop._style)
 export default App

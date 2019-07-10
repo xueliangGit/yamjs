@@ -47,10 +47,12 @@ export default {
   },
   // 即将销毁
   beforeDestroyed (context) {
+    if (context.$router && context.$router.keepLive) return
     _run(context, '$beforeDestroyed')
   },
   // 销毁后
   destroyed (context) {
+    if (context.$router && context.$router.keepLive) return
     _run(context, '$destroyed')
     context[$ComponentSymbol] = null
     context[$vdomSymbol] = null

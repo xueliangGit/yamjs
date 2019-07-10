@@ -1,5 +1,6 @@
 
 import './components/common'
+import './lib/plugins/router/routerView'
 import './components/goTop.js'
 import './components/datePicker/datePicker.js'
 // // // import './components/mis.js'
