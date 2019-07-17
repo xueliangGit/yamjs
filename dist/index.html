@@ -1,0 +1,4 @@
+<!DOCTYPE html><html lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><meta http-equiv=X-UA-Compatible content="ie=edge"><title>webComponents</title><script src=http://192.168.2.154:5006/test/lib/plugins/vconsole.min.js></script><script>// new VConsole()</script></head><body><router-view></router-view><div onclick="datePicker.emit('show')">时间</div><p id=showinfo></p><date-picker id=datePicker change=fun showzg=true></date-picker><script>function fun() {
+        console.log(arguments);
+        showinfo.innerText = arguments[0];
+      }</script><script type=text/javascript src=js/yam.min.js></script></body></html>

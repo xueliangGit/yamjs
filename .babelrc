@@ -1,20 +1,27 @@
 {
   "presets": [
-    ["@babel/env", {
-      "modules": false,
-      "targets": {
-        "browsers": ["> 1%", "last 2 versions", "not ie <= 8"]
+    [
+      "@babel/env",
+      {
+        "modules": "auto",
+        "targets": {
+          "browsers": ["> 1%", "last 2 versions", "not ie <= 8"]
+        }
       }
-    }]
+    ]
   ],
-  "plugins": ["@babel/plugin-transform-runtime",
+  "plugins": [
+    "@babel/plugin-transform-runtime",
     ["@babel/plugin-proposal-decorators", { "legacy": true }],
     "@babel/plugin-proposal-function-sent",
     "@babel/plugin-proposal-export-namespace-from",
     "@babel/plugin-proposal-numeric-separator",
     "@babel/plugin-proposal-throw-expressions",
     "@babel/plugin-proposal-export-default-from",
-    ["@babel/plugin-transform-react-jsx",{"pragma": "Yam.__createElement","pragmaFrag":"c"}]
+    [
+      "@babel/plugin-transform-react-jsx",
+      { "pragma": "Yam.__createElement", "pragmaFrag": "c" }
     ]
-  //"transform-vue-jsx", 
+  ]
+  //"transform-vue-jsx",
 }
