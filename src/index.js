@@ -9,7 +9,7 @@
 // import Yam, { Component } from './lib/index'
 // window.Yam = Yam
 // window.Component = Component
-import Yam, { Component } from './lib'
+import Yam, { component } from './lib'
 
 export default Yam
-export { Component }
+export const Component = component

@@ -3,7 +3,7 @@ let domFnCache = []
 let { creatMutationObserser } = require('./index')
 
 function addObserse () {
-// 在dom变化时需要从新渲染
+  // 在dom变化时需要从新渲染
   let isRun = null
   creatMutationObserser(document, (option) => {
     if (option.type === 'childList') {
@@ -35,8 +35,10 @@ document.onreadystatechange = function () {
     console.log('document is onload')
     domIsLoaded = true
     if (domFnCache.length) {
-      runDomfn()
-      addObserse()
+      setTimeout(function () {
+        runDomfn()
+        addObserse()
+      }, 50)
     }
   }
   // if (document.readyState === 'interactive') { // DOM构建了就会执行，先与complete执行
