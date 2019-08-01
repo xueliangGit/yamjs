@@ -18,7 +18,7 @@ export default function RouterFactory (conf) {
       let routerView = document.getElementsByTagName('router-view')[0]
       changeFnCache.push((e) => {
         let current = getCurrent()
-        this.current = Object.assign({}, this.pathConf[current.path], current)
+        this.current = Object.assign({}, this.pathConf[current.path] || {}, current)
         routerView && routerView.updateView && routerView.updateView(e)
       })
     }
@@ -32,6 +32,13 @@ export default function RouterFactory (conf) {
     }
     push (routeObj) {
       if (routeObj.name) {
+        // 修复传入参数错误的情况
+        if (!this.config[routeObj.name]) {
+          console.warn(`
+          ${routeObj} 没有对应的页面，请检查
+          `)
+          return
+        }
         let _url = this.config[routeObj.name].path
         if (routeObj.query) {
           _url += '?' + memgerQuery(routeObj.query)
@@ -90,24 +97,25 @@ function memgerQuery (obj) {
 }
 function getAbsPath (path) {
   if (~path.indexOf('?')) {
-    path = path.split('?')[0]
+    path = path.split('?')[0] || ''
   }
-  if (path && path.length) {
-    if (path.length < 2) {
-      return '/'
-    } else if (path.charAt(path.length - 1) === '/') {
-      return path.substr(0, path.length - 1)
-    }
+  if (path.charAt(0) !== '/') {
+    path = '/' + path
+  }
+  if (path.length < 2) {
     return path
+  } else if (path.charAt(path.length - 1) === '/') {
+    return path.substr(0, path.length - 1)
   }
-  return '/'
+  return path
 }
 function setCurrent (context, obj) {
   context.current = obj
 }
 function init (context, option) {
   // 获取本页页面名字
-  var current = getCurrent()
+  let current = context.current = getCurrent()
+  console.log(current)
   /* 写入页面简单路由配置到缓存 */
   option.forEach(v => {
     if (v.name) {
@@ -128,6 +136,17 @@ function init (context, option) {
       `)
     }
   })
+  if (!context.current) {
+    warnInfo(current)
+  }
+}
+function warnInfo (current) {
+  console.warn(`
+  router:
+    请检查传入的参数
+    ${JSON.stringify(current)}
+    ，没有找到匹配的组件
+  `)
 }
 function _hashChangFun (e) {
   changeFnCache.forEach(v => v(e))

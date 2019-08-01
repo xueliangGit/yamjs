@@ -1,4 +1,4 @@
-import Yam, {Component} from '../lib/index'
+import Yam, { Component } from '../lib/index'
 // import jsxp from 'jsx-parser'
 // var goTopTem = require('./goTopTem.html')
 // eslint-disable-next-line no-unused-vars
@@ -475,10 +475,10 @@ class App extends Yam {
   }
   getTimer () {
     if (this.index == 1) {
-      return <MyTimer >
+      return <my-timer >
         <p>我是时间-2</p>
         <p slot='bottom'>我是时间-11112</p>
-      </MyTimer>
+      </my-timer>
     }
     return ''
   }

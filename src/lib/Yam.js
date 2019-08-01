@@ -9,6 +9,7 @@ import BaseCustomElements from './BaseCustomElements'
 import { HTML_TAGS } from './vDom/creatConfig'
 import domOnLoad from './utils/domLoad'
 var comps = window.comps = {}
+let hasCompsName = []
 let compsIds = 0
 let lifeCycleArray = Object.keys(lifeCycle)
 @Mix()
@@ -143,11 +144,12 @@ class Yam {
     }
   }
 }
-
+Yam.getComsName = () => hasCompsName
 export default Yam
 // 注解 适配器
 export function Component (Config) {
   let { tagName, shadow, style, props, customElements, canBeCalledExt, store, router } = Config
+  hasCompsName.push(tagName)
   return function (Target) {
     Target._tagName = tagName
     Target._shadow = !!shadow

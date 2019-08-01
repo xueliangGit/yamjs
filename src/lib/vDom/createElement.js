@@ -145,7 +145,11 @@ class Element {
       })
     }
     this.childNodes.forEach((child, key) => {
-      nodeOps.appendChild(getRenderElmBySlot(slot, child, el), child.render(key, el))
+      // 优化若是null 就不进行下一步操作了
+      let newParents = getRenderElmBySlot(slot, child, el)
+      if (newParents) {
+        nodeOps.appendChild(newParents, child.render(key, el))
+      }
     })
     // 组件内部使用
     if (slot.length && this.childNodes) {
@@ -158,7 +162,6 @@ class Element {
           cacheLib.del(this._name + 'slot-' + this.rand)
         })
       }
-
       // 检测插槽 是否有内容填充
       coms = null
     }
@@ -272,13 +275,15 @@ function getRenderElmBySlot (slot, child, el, slotBelong = null) {
           `)
         }
       }
-      if (l.length === 1) {
+      // 修复 只有一个slot且存在name时没有指定slot值不再渲染
+      if (l.length === 1 && !l[0].getAttribute('name')) {
         return l[l.length - 1]
       }
     }
     return null
   }
-  return el
+  // 优化 若是组件没有slot将不渲染
+  return el.isComponent ? null : el
 }
 
 export function renderElement (dom) {

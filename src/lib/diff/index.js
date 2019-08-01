@@ -8,6 +8,9 @@ import { getComponentByElm } from '../utils/componentUtil'
 * 核心patch算法，比较新旧node树的差异
 */
 export default function patch (parentElm, vnode, oldVnode) {
+  if (!vnode && !oldVnode) {
+    return
+  }
   if (!oldVnode) {
     /* 当旧节点不存在，直接批量插入新节点树 */
     addVnodes(parentElm, null, vnode, -1)
@@ -160,6 +163,8 @@ function editProp (a, b) {
         if (isDef(a.props[keys])) {
           delete a.props[keys]
           a.elm.removeAttribute(a.attrs[keys])
+          // 更新null
+          setProp(keys, b.attrs, null, a.elm)
         }
       }
     }
@@ -196,8 +201,16 @@ function sameInputType (a, b) {
     * 深度比较两个节点，当节点的孩子节点不等时，调用 updateChildren 操作孩子节点
     */
 function patchVnode (oldVnode, vnode) {
+  // 如果这个是个组件，那么跳过该组件的patch
+  if (oldVnode.elm.isComponent) {
+    vnode.elm = oldVnode.elm
+    vnode.componentInstance = oldVnode.componentInstance
+    // console.log(vnode)
+    return
+  }
   /* 两个节点全等，不做改变，直接 return  */
   // 如果新老 vnode 相等
+  //
   if (oldVnode === vnode) {
     return
   }
@@ -326,7 +339,7 @@ function updateChildren (parentElm, oldCh, newCh) {
     refElm = (newCh[newEndIdx + 1]) ? newCh[newEndIdx + 1].elm : null
     addVnodes(parentElm, refElm, newCh, newStartIdx, newEndIdx)
   } else if (newStartIdx > newEndIdx) {
-  /* 终止条件， newStartIdx > newEndIdx 说明 oldCh 中还有剩余节点，直接批量删除 */
+    /* 终止条件， newStartIdx > newEndIdx 说明 oldCh 中还有剩余节点，直接批量删除 */
     removeVnodes(parentElm, oldCh, oldStartIdx, oldEndIdx)
   }
 }

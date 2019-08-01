@@ -153,10 +153,10 @@ function createdComponent () {
       }
       if (!styleIsInstalled[nameStyle].includes(this._cid)) {
         if (nameStyle === 'HTML') {
-        // body
+          // body
           document.head.appendChild(style)
         } else {
-        // div inner
+          // div inner
           parent.insertBefore(style, parent.lastChild)
         }
         // nameStyle
@@ -202,6 +202,7 @@ function getFram (isNeedDiv = false) {
   this.$dom.setAttribute('dom', this._cid)
   try {
     this[$vdomSymbol] = this.render()
+    // console.log(this[$vdomSymbol])
     this[$vdomSymbol]._rootId = this._rootId
   } catch (e) {
     log('e', e)

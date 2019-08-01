@@ -20,6 +20,10 @@ class App extends Yam {
   show (v) {
     // this.$store.commit('width', this.$store.width + 1)
     //  console.log(this.emitProp('showFn', 'asdasd'))
+    console.log(this)
+    this.$router.push({
+      name: 'gotop'
+    })
   }
   showP (v) {
     console.log('adsasd', v)
@@ -32,19 +36,19 @@ class App extends Yam {
     return (
       <div >
         <p onClick={this.show.bind(this)}>----------{this.$store.width}</p>
-        <div>{this.sec % 60 > 30 ? '' : <slot />}</div>
+        <div>{this.sec % 60 > 30 ? '' : <slot name='aaa' />}</div>
         <div className='all' >
           <Hour callFn={this.showP.bind(this)} className='hour' hour={this.hour} width='200' />
           <Hour callFn={this.showP.bind(this)} className='min' hour={this.mins} step='60' width='280' />
           <Hour callFn={this.showP.bind(this)} className='sce' hour={this.sec} step='60' width='350' />
         </div>
-        <div> <slot name='aaaaaa' /></div>
+        <div> <slot name='bottom' /></div>
       </div>
     )
   }
   $mounted () {
     this.go()
-    this.show()
+    // this.show()
     this.setTimeout(() => {
       this.$mounted()
     }, 1000)

@@ -1,5 +1,5 @@
 import Router from '../lib/plugins/router/router'
-export default new Router({ 
+export default new Router({
   routes: [{
     name: 'index',
     path: '/',

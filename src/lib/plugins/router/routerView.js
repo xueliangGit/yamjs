@@ -49,13 +49,29 @@ class RouterView extends Yam {
     }
     return <this.$router.current.component />
   }
+  getCurrentComponent () {
+    if (this.$router.current.component) {
+      return <this.$router.current.component ref='dom' />
+    } else {
+      return <page-404 path={this.$router.current.path}>
+        {this.get404()}
+      </page-404>
+    }
+  }
+  get404 () {
+    return <div class='tip-404' >
+      <p class='title-404 tac'>YAMJS</p>
+      <p class='text-404 tac'>【404】 肯定是你的方向不对</p>
+      <p class='des-404 tac'>只要方向对，目标肯定就在远方，先去检查一下吧</p>
+    </div >
+  }
   render () {
     let hashName = window.location.hash.split('?')[0]
     return (
       <div ref='routerDiv'>{
         this.live && this.cache[hashName]
           ? this.showCacheView(hashName)
-          : <this.$router.current.component ref='dom' />}</div>
+          : this.getCurrentComponent()}</div>
     )
   }
 }
