@@ -1,4 +1,4 @@
-
+import { global as window } from './global'
 /**
  * [def 定义对象属性]
  * @param  {Object}  obj        对象
@@ -52,7 +52,7 @@ function creatMutationObserser (el, callFn, config = { attributes: true }) {
         // do any code
       }
       if (record.type === 'childList') { // 监听结构发生变化
-      // do any code
+        // do any code
       }
     })
   })

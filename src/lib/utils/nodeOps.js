@@ -1,3 +1,4 @@
+import { doc as document } from './global'
 function createElement$1 (tagName, vnode) {
   var elm = document.createElement(tagName)
   if (tagName !== 'select') {
