@@ -1,3 +1,9 @@
+/*
+ * @Author: xuxueliang
+ * @Date: 2019-06-25 13:56:05
+ * @LastEditors: xuxueliang
+ * @LastEditTime: 2019-08-15 18:49:44
+ */
 let { $ComponentSymbol, $closestParentSymbol } = require('../symbol')
 // 设置组件标示
 const syncComponentMark = (context) => {

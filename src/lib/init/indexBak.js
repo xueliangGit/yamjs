@@ -1,7 +1,7 @@
 // import updateElement from '../vDom'
 import updateElement from '../diff'
 
-import { creatMutationObserser, proxy, setAttributes, _extends } from '../utils'
+import { creatMutationObserser, proxy, setAttributes, _extends } from '../utils/index'
 // $vdom Symbol
 var $vdom = Symbol('$vdom')
 // $componentData Symbol
@@ -76,10 +76,10 @@ function createdComponent () {
       }
       if (!styleIsInstalled[nameStyle].includes(this._cid)) {
         if (parent.tagName === 'HTML') {
-        // body
+          // body
           document.head.appendChild(style)
         } else {
-        // div inner
+          // div inner
           parent.parentNode.insertBefore(style, parent)
         }
         // nameStyle

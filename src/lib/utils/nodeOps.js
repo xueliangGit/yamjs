@@ -1,4 +1,11 @@
+/*
+ * @Author: xuxueliang
+ * @Date: 2019-06-25 13:56:05
+ * @LastEditors: xuxueliang
+ * @LastEditTime: 2019-08-21 15:56:49
+ */
 import { doc as document } from './global'
+import { requestAnimationFrame } from './index'
 function createElement$1 (tagName, vnode) {
   var elm = document.createElement(tagName)
   if (tagName !== 'select') {
@@ -19,29 +26,33 @@ function createTextNode (text) {
 function createComment (text) {
   return document.createComment(text)
 }
-function insertBefore (parentNode, newNode, referenceNode) {
-  parentNode.insertBefore(newNode, referenceNode)
-  insertCall(newNode)
+function insertBefore (parentNode, newNode, referenceNode, isNeed) {
+  requestAnimationFrame(() => {
+    parentNode.insertBefore(newNode, referenceNode)
+    insertCall(newNode)
+  }, isNeed)
 }
 function removeChild (node, child) {
-  // 移除事件 触发
-  if (child.beforeDisconnectedCallback) {
-    child.beforeDisconnectedCallback()
-  }
-  node.removeChild(child)
-  // 移除事件 触发
-  if (child.disconnectedCallback && !child.isUnset) {
-    child.disconnectedCallback()
-  }
+  requestAnimationFrame(() => {
+    // 移除事件 触发
+    if (child.beforeDisconnectedCallback) {
+      child.beforeDisconnectedCallback()
+    }
+    node.removeChild(child)
+    // 移除事件 触发
+    if (child.disconnectedCallback && !child.isUnset) {
+      child.disconnectedCallback()
+    }
+  })
 }
-function appendChild (node, child, callBk = false) {
-  if (!node) {
-    return false
-  }
-  node.appendChild(child)
-  insertCall(child)
-  if (callBk) {
-  }
+function appendChild (node, child, isNeed) {
+  requestAnimationFrame(() => {
+    if (!node) {
+      return false
+    }
+    node.appendChild(child)
+    insertCall(child)
+  }, isNeed)
 }
 function parentNode (node) {
   return node.parentNode
@@ -53,7 +64,9 @@ function tagName (node) {
   return node.tagName
 }
 function setTextContent (node, text) {
-  node.textContent = text
+  requestAnimationFrame(() => {
+    node.textContent = text
+  })
 }
 function setAttribute (node, key, val) {
   node.setAttribute(key, val)

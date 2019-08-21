@@ -1,5 +1,11 @@
+/*
+ * @Author: xuxueliang
+ * @Date: 2019-06-25 13:56:05
+ * @LastEditors: xuxueliang
+ * @LastEditTime: 2019-08-21 15:49:54
+ */
 import cacheLib from '../utils/cacheLib'
-import { guid2 } from '../utils'
+import { guid2 } from '../utils/index'
 class ChildComponentsManage {
   constructor (context) {
     this.id = 'childComponents' + '-' + (context._eid || guid2())

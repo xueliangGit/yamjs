@@ -1,3 +1,9 @@
+/*
+ * @Author: xuxueliang
+ * @Date: 2019-07-03 16:00:17
+ * @LastEditors: xuxueliang
+ * @LastEditTime: 2019-08-13 14:50:46
+ */
 
 import Yam, { Component } from './Yam'
 import tools from './plugins/tools'

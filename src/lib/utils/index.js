@@ -1,3 +1,9 @@
+/*
+ * @Author: xuxueliang
+ * @Date: 2019-06-25 13:56:05
+ * @LastEditors: xuxueliang
+ * @LastEditTime: 2019-08-21 16:59:42
+ */
 import { global as window } from './global'
 /**
  * [def 定义对象属性]
@@ -94,27 +100,27 @@ function isForDirective (str) {
 // 获取styleStr
 function getStyleStr (_id, style) {
   if (!style) return ''
-  if (style.i) {
+  if (!Array.isArray(style)) {
     style = [style]
   }
-  let isScope = styleIsScope(style[0])
-  // console.log(style)
-  return style.map(v => _getStrByStyle(_id, v, isScope)).join('')
+  return style.map(v => _getStrByStyle(_id, v, styleIsScope(v))).join('')
 }
 function styleIsScope (style) {
-  if (style) {
+  if (typeof style === 'string') {
+    return style.includes('[scope]')
+  } else if (style) {
     return style[0][1].includes('[scope]')
   }
   return false
 }
 function _getStrByStyle (_id, style, isScope) {
   if (style) {
-    let str = style[0][1].split('\n')
+    let str = (typeof style === 'string' ? style : style[0][1]).split('\n')
     let isScope = str[0].includes('scope')
     if (isScope) {
       str.shift()
     }
-    return str.map(v => {
+    return map(str, v => {
       if (v.includes('{')) {
         if (v.includes('[root]')) {
           if (isScope) {
@@ -145,19 +151,19 @@ function isTrue (v) {
 function isFalse (v) {
   return v === false
 }
-function forEach (array, v = () => {}, get = false) {
+function forEach (array, v = () => { }, get = false) {
   let getArr = []
   // eslint-disable-next-line no-cond-assign
   for (let i = 0, item; item = array[i]; i++) {
     let runResult = v(item, i)
     get && getArr.push(runResult)
     if (typeof runResult === 'boolean' && !runResult && !get) {
-      return false
+      return get ? getArr : null
     }
   }
   return get ? getArr : null
 }
-function map (array, v = () => {}) {
+function map (array, v = () => { }) {
   return forEach(array, v, true)
 }
 function setProp (obj, el) {
@@ -198,11 +204,21 @@ const info = function (...arg) {
   arg[arg.length] = 'background:#ff0'
   console.log.apply(console, arg)
 }
-module.exports = {
-  def: def,
-  protoAugment: protoAugment,
-  copyAugment: copyAugment,
-  hasOwn: hasOwn,
+// rIdC
+let requestIdleCallback = function (callback, timeOut) {
+  callback()
+  // window.requestIdleCallback ? window.requestIdleCallback(callback, timeOut ? { timeout: timeOut } : {}) : callback()
+}
+// raf
+let requestAnimationFrame = function (callback, isNeed) {
+  callback()
+  // !isNeed ? callback() : window.requestAnimationFrame ? window.requestAnimationFrame(callback) : callback()
+}
+export {
+  def,
+  protoAugment,
+  copyAugment,
+  hasOwn,
   creatMutationObserser,
   proxy,
   setAttributes,
@@ -220,5 +236,7 @@ module.exports = {
   guid,
   guid2,
   log,
-  info
+  info,
+  requestIdleCallback,
+  requestAnimationFrame
 }

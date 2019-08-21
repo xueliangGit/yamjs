@@ -1,3 +1,9 @@
+/*
+ * @Author: xuxueliang
+ * @Date: 2019-04-09 14:57:14
+ * @LastEditors: xuxueliang
+ * @LastEditTime: 2019-08-14 19:54:52
+ */
 // webpack.prod.js
 const merge = require('webpack-merge')
 const webpack = require('webpack')
@@ -18,6 +24,7 @@ module.exports = merge(common, {
   output: {
     // filename: 'js/[name].[chunkhash].bundle.js',
     filename: 'js/yam.min.js',
+    libraryTarget: 'umd',
     path: path.resolve(__dirname, '../dist') // 定义输出文件夹dist路径
   },
   plugins: [
@@ -25,7 +32,7 @@ module.exports = merge(common, {
     new webpack.DefinePlugin({
       'process.env': 'production'
     }),
-    
+
     new UglifyJsPlugin({
       uglifyOptions: {
         compress: {
@@ -37,10 +44,10 @@ module.exports = merge(common, {
     }),
     new webpack.BannerPlugin(
       {
-        banner: `Yamjs v${package.version}
-(c) 2019-${(new Date()).getFullYear()} xuxueliang
+        banner: `Yamjs v${ package.version }
+(c) 2019-${(new Date()).getFullYear() } xuxueliang
 Released under the MIT License.
-lastTime:${new Date()}`, // 要输出的注释内容
+lastTime:${new Date() }`, // 要输出的注释内容
         entryOnly: !0 // 即是否只在入口 模块 文件中添加注释；
       }),
     // extract css into its own file
@@ -118,7 +125,7 @@ lastTime:${new Date()}`, // 要输出的注释内容
         ignore: ['.*']
       }
     ]),
-    process.env.analyz?new BundleAnalyzerPlugin():function(){}
+    process.env.analyz ? new BundleAnalyzerPlugin() : function () { }
   ],
   optimization: {
     splitChunks: {

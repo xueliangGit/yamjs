@@ -1,4 +1,4 @@
-import _ from '../utils'
+import _ from '../utils/index'
 import Dep from './dep'
 // observe array
 // 针对数组操作 监听

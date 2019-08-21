@@ -1,7 +1,13 @@
+/*
+ * @Author: xuxueliang
+ * @Date: 2019-08-01 15:22:48
+ * @LastEditors: xuxueliang
+ * @LastEditTime: 2019-08-21 15:52:44
+ */
 /** @jsx createElement */
 import { HTML_TAGS, GLOBAL_ATTRIBUTES, EVENT_HANDLERS } from './creatConfig'
 import nodeOps from '../utils/nodeOps'
-import { forEach, toCamelCase } from '../utils'
+import { forEach, toCamelCase } from '../utils/index'
 import { getCallFnName, getComponentMark, setComponentForElm, getComponentByElm, getparentCom } from '../utils/componentUtil'
 
 import cacheLib from '../utils/cacheLib'

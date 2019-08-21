@@ -1,6 +1,12 @@
+/*
+ * @Author: xuxueliang
+ * @Date: 2019-08-01 15:22:48
+ * @LastEditors: xuxueliang
+ * @LastEditTime: 2019-08-15 18:49:37
+ */
+import { creatMutationObserser } from './index'
 let domIsLoaded = false
 let domFnCache = []
-let { creatMutationObserser } = require('./index')
 
 function addObserse () {
   // 在dom变化时需要从新渲染

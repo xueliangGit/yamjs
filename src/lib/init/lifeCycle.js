@@ -1,5 +1,11 @@
+/*
+ * @Author: xuxueliang
+ * @Date: 2019-08-01 15:22:48
+ * @LastEditors: xuxueliang
+ * @LastEditTime: 2019-08-21 15:48:08
+ */
 import { $ComponentSymbol, $vdomSymbol } from '../symbol/index'
-import { forEach } from '../utils'
+import { forEach } from '../utils/index'
 // import { runOnReadyElmFn } from '../utils/componentUtil'
 export default {
   // 初始化前
@@ -29,7 +35,7 @@ export default {
         configurable: false,
         enumerable: true,
         get: function proxyGetter () {
-          return function () {}
+          return function () { }
         },
         set: function proxySetter (newVal) {
           typeof newVal === 'function' && newVal.call(context.elm)

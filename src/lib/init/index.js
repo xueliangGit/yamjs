@@ -1,13 +1,19 @@
+/*
+ * @Author: xuxueliang
+ * @Date: 2019-08-01 15:22:48
+ * @LastEditors: xuxueliang
+ * @LastEditTime: 2019-08-21 15:54:18
+ */
 // import updateElement from '../vDom'
-import updateElement from '../diff'
+import updateElement from '../diff/index'
 // /creatMutationObserser ,setAttributes,
-import { creatMutationObserser, setAttributes, forEach, map, log, isFalse } from '../utils'
+import { creatMutationObserser, setAttributes, forEach, map, log, isFalse } from '../utils/index'
 import { getCallFnName, syncComponentMark, setComponentForElm, getComponentByElm, setClosetParentCom } from '../utils/componentUtil'
 import nodeOps from '../utils/nodeOps'
 import lifeCycle from './lifeCycle'
 import Destory from './destory'
-import ChildComponentsManage from './ChildComponentsManage'
-import { $vdomSymbol, $componentDataSymbol } from '../symbol'
+import ChildComponentsManage from './childComponentsManage'
+import { $vdomSymbol, $componentDataSymbol } from '../symbol/index'
 // 初始化 init
 let componenesSize = {}
 let styleIsInstalled = {}
@@ -71,7 +77,7 @@ function create () {
         }
       })
       // 添加 监听事件， 适配三方框架
-      this.addWatcher = this.elm.addWatcher = (names, fn = () => {}) => {
+      this.addWatcher = this.elm.addWatcher = (names, fn = () => { }) => {
         // 添加监听方法
         this.elm._runfn_ = this.elm._runfn_ || {}
         this.elm._runfn_[getCallFnName(this, names)] = fn

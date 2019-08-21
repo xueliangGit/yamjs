@@ -1,3 +1,9 @@
+/*
+ * @Author: xuxueliang
+ * @Date: 2019-04-09 14:52:29
+ * @LastEditors: xuxueliang
+ * @LastEditTime: 2019-08-19 17:07:36
+ */
 // webpack.common.js
 const path = require('path')
 const config = require('../config')
@@ -75,7 +81,12 @@ module.exports = {
       }, {
         test: /\.styl$/,
         use: [
-          { loader: MiniCssExtractPlugin.loader },
+          {
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              hmr: process.env.NODE_ENV === 'development'
+            }
+          },
           'css-loader',
           'postcss-loader',
           'stylus-loader'

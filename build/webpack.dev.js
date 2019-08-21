@@ -1,3 +1,9 @@
+/*
+ * @Author: xuxueliang
+ * @Date: 2019-04-09 14:55:22
+ * @LastEditors: xuxueliang
+ * @LastEditTime: 2019-08-19 17:06:39
+ */
 // webpack.dev.js
 const merge = require('webpack-merge')
 const path = require('path')
@@ -11,6 +17,7 @@ const portfinder = require('portfinder')
 const CleanWebpackPlugin = require('clean-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
 
 const devWebpackConfig = merge(common, {
   devtool: config.dev.devtool,
@@ -26,13 +33,18 @@ const devWebpackConfig = merge(common, {
     historyApiFallback: true // 开发单页应用时有用，依赖于HTML5 history API，设为true时所有跳转将指向index.html
   },
   plugins: [
-    new CleanWebpackPlugin(),  
+    new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
       filename: 'index.html',
       template: 'index.html'
     }),
     new MiniCssExtractPlugin({
       filename: '[name].css'
+    }),
+    new OptimizeCSSPlugin({
+      cssProcessorOptions: config.build.productionSourceMap
+        ? { safe: true, map: { inline: false } }
+        : { safe: true }
     }),
     new webpack.NoEmitOnErrorsPlugin(),
     new webpack.NamedModulesPlugin(), // HMR shows correct file names in console on update.

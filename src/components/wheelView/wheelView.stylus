@@ -1,0 +1,31 @@
+  .container
+  height 200px
+  overflow auto
+  position relative
+  text-align center
+  margin-right: -15px;
+  margin-left: -15px;
+  .scroller
+    padding-top: 80px;
+    line-height 40px
+    padding-bottom 80px
+    .item
+      color #ddd
+      transition: all 0.1s
+      font-size 14px
+      &.active
+        font-size: 16px
+        color #333
+[root]
+  position relative
+  overflow hidden
+  &:before
+    position absolute
+    content: ''
+    width 100%
+    height 30px
+    background: #cccccc
+    top: 50%
+    margin-top -15px
+    left 0
+    right 0

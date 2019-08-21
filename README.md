@@ -1,3 +1,5 @@
+
+
 # Yam - a baseComponents for html
 
 > _本组件基类即将开源，现在阶段只是内部使用，修复一些 bug，以及一些优化_
@@ -499,50 +501,49 @@ Yam.use(store);
 
 有时候在组件内部也需要一个切换组件的东西，这里就引入了简单的路由功能。
 
-
-
 使用方法：
 
 1. 引入`router`并注入组件的依赖
 
    ```js
-   import Router from '../lib/plugins/router/router'
-   export default new Router({ 
-     routes: [{
-       name: 'index',
-       path: '/',
-       component: 'my-timer'
-     },
-     {
-       path: '/goTop',
-       component: 'go-top',
-       name: 'gotop'
-     },
-     {
-       path: '/myTimer',
-       component: 'my-timer',
-       name: 'myTimer'
-     }]
-   })
-   
+   import Router from "../lib/plugins/router/router";
+   export default new Router({
+     routes: [
+       {
+         name: "index",
+         path: "/",
+         component: "my-timer"
+       },
+       {
+         path: "/goTop",
+         component: "go-top",
+         name: "gotop"
+       },
+       {
+         path: "/myTimer",
+         component: "my-timer",
+         name: "myTimer"
+       }
+     ]
+   });
    ```
 
-   `name`主要是用来跳转用的，`path`是地址栏的路径，采用的是hash模式；`component`要渲染的组件名字；
+   `name`主要是用来跳转用的，`path`是地址栏的路径，采用的是 hash 模式；`component`要渲染的组件名字；
 
    使用路由
 
    ```js
    //common.js
-   import Yam from '../lib/index'
-   import router from './router'
-   
-   Yam.use(router)
+   import Yam from "../lib/index";
+   import router from "./router";
+
+   Yam.use(router);
    //main.js
-   import './components/common'
-   import './lib/plugins/router/routerView'
+   import "./components/common";
+   import "./lib/plugins/router/routerView";
    ```
 
-   html中
+   html 中
 
    ```html
    <router-view></router-view>
@@ -551,7 +552,7 @@ Yam.use(store);
    在组件中使用路由跳转
 
    ```js
-   
+
    //....
     goT () {
        this.$router.push({
@@ -559,7 +560,7 @@ Yam.use(store);
          query:{a:1,b:2}
        })
      }
-   
+
    //.....
    ```
 
@@ -569,48 +570,47 @@ Yam.use(store);
 
 2. 有的方法：
 
-   * `push`进入另外一个组件
+   - `push`进入另外一个组件
 
      ```js
      this.$router.push({
-       name: 'myTimer',//name
-       query:{a:1,b:2}// 参数
-     })
+       name: "myTimer", //name
+       query: { a: 1, b: 2 } // 参数
+     });
      ```
 
-   * `back`返回
-
-
+   - `back`返回
 
 > fix 匹配不到组件时页面无反应情况处理（2019-8-1）
 >
-> > 添加404组件显示，当没有匹配到地址的时候，就会显示404组件；用户可以自定义404页面；只需要设定pae-404组件即可，实例如下:
+> > 添加 404 组件显示，当没有匹配到地址的时候，就会显示 404 组件；用户可以自定义 404 页面；只需要设定 pae-404 组件即可，实例如下:
 > >
 > > ```js
-> > import Yam, { Component } from 'yamjs'
+> > import Yam, { Component } from "yamjs";
 > > @Component({
-> >   tagName: 'page-404',
-> >   style: '',
-> >   props: ['path']
+> >   tagName: "page-404",
+> >   style: "",
+> >   props: ["path"]
 > > })
 > > class App extends Yam {
-> >   data () {
+> >   data() {
 > >     return {
 > >       // your data
-> >     }
+> >     };
 > >   }
-> >   render () {
-> >     return <div>
-> >       <p class='tip-404'>404</p>
-> >       <p class='tip-404'>{this.path} 没有相应的页面，请检测</p>
-> >     </div>
+> >   render() {
+> >     return (
+> >       <div>
+> >         <p class="tip-404">404</p>
+> >         <p class="tip-404">{this.path} 没有相应的页面，请检测</p>
+> >       </div>
+> >     );
 > >   }
 > > }
-> > export default App
-> > 
+> > export default App;
 > > ```
 > >
-> > 若没有自定义404页面会使用组件默认的404页面
+> > 若没有自定义 404 页面会使用组件默认的 404 页面
 
 ---
 
@@ -623,17 +623,17 @@ Yam.use(store);
 
 > FIX
 
-* 在三方框架内可以调用组件的方法，但是组件内无法调用三方传递进去的放方法
+- 在三方框架内可以调用组件的方法，但是组件内无法调用三方传递进去的放方法
 
-- prop 传`0,''`时显示异常
-- 组件环境外调用组件内方法调用错误
-- 优化 组件内部统一为组件渲染
-- 组件外使用 slot 渲染问题
+* prop 传`0,''`时显示异常
+* 组件环境外调用组件内方法调用错误
+* 优化 组件内部统一为组件渲染
+* 组件外使用 slot 渲染问题
   - 优化 slot 渲染，禁止跨组件渲染
   - 优化组件内部渲染过程
-- 与 VUE 结合使用，销毁组件时没有调用销毁方法，导致方法还在继续
-- 与 react 混合使用，销毁组件周期问题。
-- 组件统一设置为自动渲染，添加 dom 变化监测；
+* 与 VUE 结合使用，销毁组件时没有调用销毁方法，导致方法还在继续
+* 与 react 混合使用，销毁组件周期问题。
+* 组件统一设置为自动渲染，添加 dom 变化监测；
 
 > 兼容性
 
@@ -643,21 +643,22 @@ Yam.use(store);
 
 > 更新
 
-* 0.2.0 (2019-8-1)
-  * 优化slot加载显示，调成为，若只有一个slot并且定了name，那么要想插入内容需要定义slot属性与之对应，否则不予显示
-  * 优化`router`插件，当没有匹配到组件时，默认显示内置的404页面；也可以使用自定义404页面；详见[路由管理]
-  * 优化diff算法，当检测到元素时组件时不再进行检测更改，组件的diff只是针对自身的组件
-* 0.1.9
+- 0.2.0 (2019-8-1)
+  - 优化 slot 加载显示，调成为，若只有一个 slot 并且定了 name，那么要想插入内容需要定义 slot 属性与之对应，否则不予显示
+  - 优化`router`插件，当没有匹配到组件时，默认显示内置的 404 页面；也可以使用自定义 404 页面；详见[路由管理]
+  - 优化 diff 算法，当检测到元素时组件时不再进行检测更改，组件的 diff 只是针对自身的组件
+- 0.1.9
   - 优化 `store` 使用方式
   - 添加 `router`路由管理
-* 0.1.8
+- 0.1.8
   - 添加 `$slot` 属性，显示 slot 是否有内容
   - 添加 `store`状态管理，在不用组件更改状态，所有的状态都会改变,
   - 修复 未加载完毕立即调用`update`方法无效
-* 0.1.4
+- 0.1.4
 
   - 修复 `$updated` 回调里进行赋值（是被监听的值时），有时会进入死循环。在结尾加入 `return false` 可以避免。（原理时在一定时间（500ms）内不更新，谨慎使用）
   - 优化 属性变化时，值属性是 `function` 不再更新。
-* 0.1.3
+
+- 0.1.3
 
   - 修复属性变化时，值为 false 或者 0 时不变的话的问题
