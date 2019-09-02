@@ -1,3 +1,9 @@
+/*
+ * @Author: xuxueliang
+ * @Date: 2019-08-01 15:22:48
+ * @LastEditors: xuxueliang
+ * @LastEditTime: 2019-09-02 17:54:39
+ */
 import Yam, { Component } from '../../lib/index'
 // import { Transform } from 'stream'
 // var style = require('./myTimers.styl')
@@ -28,7 +34,7 @@ class App extends Yam {
   showList () {
     let listArray = []
     for (let i = this.step - 1; i >= 0; i--) {
-      listArray.push(<li className={this.hour % this.step === i ? 'active' : ''} style={this.getStyle(i)}><span>{i}</span></li>)
+      listArray.push(<li className={this.hour % this.step === i ? 'active' : ''} style={this.getStyle(i)}><span>{ i }</span></li>)
     }
     return listArray
   }
@@ -41,7 +47,7 @@ class App extends Yam {
   render () {
     return (
       <ul style={this.getUlStyle()} onClick={this.showP.bind(this)} className='hour' >
-        {this.showList()}
+        { this.showList() }
       </ul>
     )
   }

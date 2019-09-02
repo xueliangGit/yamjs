@@ -2,7 +2,9 @@
   "name": "yamjs",
   "version": "0.2.0",
   "description": "yamjs is a basecomponents for html,it can make your can write a components and run any where such as html,vue,react eg.",
-  "main": "./src/lib/index.js",
+  "main": "./dist/yam.common.min.js",
+  "module": "./dist/yam.esm.min.js",
+  "jsnext:main": "./dist/yam.esm.min.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "npm run start",

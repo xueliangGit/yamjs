@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-06-25 13:56:05
  * @LastEditors: xuxueliang
- * @LastEditTime: 2019-08-21 16:59:42
+ * @LastEditTime: 2019-09-02 17:59:40
  */
 import { global as window } from './global'
 /**
@@ -115,7 +115,7 @@ function styleIsScope (style) {
 }
 function _getStrByStyle (_id, style, isScope) {
   if (style) {
-    let str = (typeof style === 'string' ? style : style[0][1]).split('\n')
+    let str = (typeof style === 'string' ? style : style[1]).split('\n')
     let isScope = str[0].includes('scope')
     if (isScope) {
       str.shift()
