@@ -1,0 +1,16 @@
+.router-hide{
+  display none!important
+}
+.tip-404{
+  text-align center
+  font-weight bold
+  font-size 26px
+  color #888888
+  margin 50px
+  }
+  .text-404{
+    font-size: 36px
+    }
+    .des-404{
+      font-size: 18px
+      }
