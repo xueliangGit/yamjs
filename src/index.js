@@ -2,12 +2,13 @@
  * @Author: xuxueliang
  * @Date: 2019-08-13 16:13:59
  * @LastEditors: xuxueliang
- * @LastEditTime: 2019-08-20 20:08:41
+ * @LastEditTime: 2019-09-17 19:10:24
  */
 
 import './components/common'
 import './lib/plugins/router/routerView'
 import './components/goTop.js'
+import './components/showDemo.js'
 import './components/page404'
 import './components/datePicker/datePicker.js'
 import './components/dataPicker/dataPicker.js'

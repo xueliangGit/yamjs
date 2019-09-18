@@ -2,9 +2,9 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2019-08-21 15:46:29
+ * @LastEditTime: 2019-09-17 18:09:04
  */
-import { createElementJson } from '../vDom/createElement'
+import { _createElementJson } from '../vDom/createElement'
 import { forEach } from '../utils/index'
 // 注解
 // 预留字段
@@ -12,11 +12,16 @@ var reserved = 'constructor __createElement connectedCallback $connectedCallback
 // 安装的扩展
 var installed = []
 window.parant = []
+// 兼容react 的jsx
+window.React = window.React || { createElement: _createElementJson }
 export function Mix () {
   return function (Target) {
-    Target.__createElement = function (tagName, props = {}, ...childNodes) {
-      // childNodes = childNodes.length ? childNodes : undefined
-      return createElementJson(tagName, props, childNodes)
+    Target.__createElement = _createElementJson
+    Target.setConfig = (config = {}) => {
+      addPrototype(Target, 'isDev').addAuto('isDev', function (context) {
+        context.env = config.isDev ? 'development' : 'pro'
+      })
+      Target.isDev = !!config.isDev
     }
     Target.use = (Config = {}) => {
       /**

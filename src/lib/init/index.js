@@ -2,11 +2,10 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2019-09-02 17:56:42
+ * @LastEditTime: 2019-09-18 15:37:02
  */
 // import updateElement from '../vDom'
 import updateElement from '../diff/index'
-// /creatMutationObserser ,setAttributes,
 import { creatMutationObserser, setAttributes, forEach, map, log, isFalse } from '../utils/index'
 import { getCallFnName, syncComponentMark, setComponentForElm, getComponentByElm, setClosetParentCom } from '../utils/componentUtil'
 import nodeOps from '../utils/nodeOps'
@@ -14,6 +13,7 @@ import lifeCycle from './lifeCycle'
 import Destory from './destory'
 import ChildComponentsManage from './childComponentsManage'
 import { $vdomSymbol, $componentDataSymbol } from '../symbol/index'
+
 // 初始化 init
 let componenesSize = {}
 let styleIsInstalled = {}
@@ -38,12 +38,16 @@ function create () {
   if (this.elm) {
     // 现在都走这个
     this._childrenOri = this.elm.children.length ? map(this.elm.children, (v) => delChildrenOriThatFromYam(v, this)) : undefined
+    // console.log('this._childrenOri', this._childrenOri)
     this.elm._childrenOri = this._childrenOri
     if (this._childrenOri) {
       // 开启把原有的 子集销毁
       // eslint-disable-next-line no-cond-assign
       for (let j = 0, child; child = this.elm.children[j];) {
-        this.elm.removeChild(child)
+        // 设置 isRemovedBySlot 处理外环境使用slot嵌套组件
+        child.isRemovedBySlot = true
+        nodeOps.removeChild(this.elm, child)
+        // this.elm.removeChild(child)
       }
     }
     bindElmentEvent(this)
@@ -62,6 +66,7 @@ function create () {
       // setAttributes(this, v, this.getAttribute(v))
     })
     if (!this.props) {
+      // 处理外环境的情况
       this.mutation = creatMutationObserser(this.elm, (record) => {
         if (record.type === 'attributes') {
           setAttributes(this, record.attributeName, this.elm.getAttribute(record.attributeName) || data[record.attributeName] || null)
@@ -84,11 +89,15 @@ function create () {
       }
       let handle = (e) => {
         // console.log('DOMNodeRemoved', e)
-        if (e.target._eid && e.target._eid === this.elm._eid) {
-          this.elm.parentNode.removeEventListener('DOMNodeRemoved', handle, false)
-          if (this.elm.disconnectedCallback) {
-            this.elm.beforeDisconnectedCallback()
-            this.elm.disconnectedCallback()
+        if (this.elm) {
+          if (e.target._eid && e.target._eid === this.elm._eid) {
+            this.elm.parentNode.removeEventListener('DOMNodeRemoved', handle, false)
+            if (this.elm.disconnectedCallback) {
+              if (!this.elm.isRemovedBySlot) {
+                this.elm.beforeDisconnectedCallback()
+                this.elm.disconnectedCallback()
+              }
+            }
           }
         }
       }
@@ -114,7 +123,6 @@ function create () {
   })
 }
 function _update (context) {
-  // console.log('_update', context, context.__isWillupdate, context.__stopUpdata)
   if (context.__isWillupdate) {
     clearTimeout(context.__isWillupdate)
     context.__isWillupdate = null
@@ -127,8 +135,9 @@ function _update (context) {
 function initRefs () {
   this.$refs = this.$refs || {}
   this.__shadowRoot.querySelectorAll('[ref]').forEach(v => {
+    console.log('initRefs', v, this)
     this.$refs[v.getAttribute('ref')] = v.isComponent ? getComponentByElm(v) : v
-    v.removeAttribute('ref')
+    // v.removeAttribute('ref')
   })
 }
 // 创建组件
@@ -145,7 +154,6 @@ function createdComponent () {
       shadowRoot._parentNode = this.elm
       nodeOps.appendChild(shadowRoot, style)
       nodeOps.appendChild(shadowRoot, getFram.call(this, true))
-      // console.log('shadowRoot', shadowRoot)
     } else {
       this.__shadowRoot = this.elm
       nodeOps.appendChild(this.elm, getFram.call(this))
@@ -193,7 +201,7 @@ function bindElmentEvent (context) {
 // 删除标示
 // eslint-disable-next-line no-unused-vars
 function delFlag (context, key) {
-  if (process.env.NODE_ENV === 'development') {
+  if (process.env.NODE_ENV === 'development' || context.env === 'development') {
     return
   }
   delete context[key]
@@ -250,8 +258,25 @@ function delChildrenOriThatFromYam (child, context) {
   if (child.getAttribute('dom') === 'com-' + context._tagName) {
     return null
   }
+  // return getOriDom(child)
   return child
 }
+// 暂时保留，等待后续更优的解决方案
+// function getOriDom (child) {
+//   if (~child.tagName.indexOf('-')) {
+//     let newTag = document.createElement(child.tagName)
+//     forEach(child.attributes, (v) => { newTag.setAttribute(v.name, v.value) })
+//     console.log('newTag', newTag)
+//     if (child.children) {
+//       forEach(child.children, (v) => {
+//         nodeOps.appendChild(newTag, getOriDom(v))
+//       })
+//     }
+//     return newTag
+//   } else {
+//     return child
+//   }
+// }
 export default function init (context) {
   // 初始化 配置信息
   _init.call(context)

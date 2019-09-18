@@ -1,3 +1,9 @@
+/*
+ * @Author: xuxueliang
+ * @Date: 2019-08-01 15:22:48
+ * @LastEditors: xuxueliang
+ * @LastEditTime: 2019-09-18 14:45:46
+ */
 import Yam, { Component } from '../lib/index'
 // var style = require('./myTimers.styl')
 // eslint-disable-next-line no-unused-vars
@@ -30,17 +36,21 @@ class App extends Yam {
     //  console.log(this)
   }
   showList () {
-    return this.list.map(v => <li>{v}</li>)
+    return this.list.map(v => <li>{ v }</li>)
+  }
+  change () {
+    this.$store.commit('width', Math.random())
   }
   render () {
     return (
       <div >
-        <p onClick={this.show.bind(this)}>----------{this.$store.width}</p>
-        <div>{this.sec % 60 > 30 ? '' : <slot name='aaa' />}</div>
+        <p onClick={ this.change.bind(this) }>-change--{ this.$store.width }</p>
+        <p onClick={ this.show.bind(this) }>----------{ this.$store.width }</p>
+        <div>{ this.sec % 60 > 30 ? '' : <slot name='aaa' /> }</div>
         <div className='all' >
-          <Hour callFn={this.showP.bind(this)} className='hour' hour={this.hour} width='200' />
-          <Hour callFn={this.showP.bind(this)} className='min' hour={this.mins} step='60' width='280' />
-          <Hour callFn={this.showP.bind(this)} className='sce' hour={this.sec} step='60' width='350' />
+          <Hour callFn={ this.showP.bind(this) } className='hour' hour={ this.hour } width='200' />
+          <Hour callFn={ this.showP.bind(this) } className='min' hour={ this.mins } step='60' width='280' />
+          <Hour callFn={ this.showP.bind(this) } className='sce' hour={ this.sec } step='60' width='350' />
         </div>
         <div> <slot name='bottom' /></div>
       </div>

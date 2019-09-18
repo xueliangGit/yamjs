@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2019-08-13 14:45:40
+ * @LastEditTime: 2019-09-17 18:19:59
  */
 
 declare class Yam {
@@ -12,11 +12,8 @@ declare class Yam {
     * @return {props} 组件传值
     */
   static use(plugins: object): void
-  /**
-    * 组件状态信息，需要在component里添加配置.
-    * @return {props} 组件传值
-    */
-   $store:{}
+  
+  
   /**
     * 组件配置信息.
     * @return {props} 组件传值
@@ -78,11 +75,42 @@ declare class Yam {
     * 更新
     */ 
   update():void 
+  /**
+   * 路由管理
+   * */
+  $router:{
+    /**
+     * 新页面
+     * */
+    push({
+      name,
+      query
+    }),
+    /**
+     * 返回
+     **/
+    pop(),
+    back(),
+    /**
+     * 当前值路由信息
+     * */
+    current:{}
+  }
+  /**
+   * 公共状态管理
+   * eg:this.$store.width
+   * */
+  $store:{
+    /**
+     * 修改一个值
+     * */
+    commit(fnNameOrstate, ...params)
+  }
 }
 /**
   * 定义组件的一些属性类型tagName,style,shadow,customElements,prop
   */ 
-declare function Component(config:{
+declare function Component(config:{''
   //组件名字
   tagName: 'tag-name',
   //样式类型

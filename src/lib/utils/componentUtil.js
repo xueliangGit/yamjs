@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-06-25 13:56:05
  * @LastEditors: xuxueliang
- * @LastEditTime: 2019-08-15 18:49:44
+ * @LastEditTime: 2019-09-18 13:20:14
  */
 let { $ComponentSymbol, $closestParentSymbol } = require('../symbol')
 // 设置组件标示
@@ -28,7 +28,10 @@ const getComponentMark = (dom) => {
 const getCallFnName = (context, prop) => `${context.tagType || context._tagName}_${prop}_fn`
 // 获取component
 function getComponentByElm (elm) {
-  if (process.env.NODE_ENV === 'development') {
+  if (!elm.isComponent) {
+    return getComponentMark(elm)
+  }
+  if (process.env.NODE_ENV === 'development' || elm[$ComponentSymbol]) {
     return elm[$ComponentSymbol]
   }
   if (elm.getApp) {
@@ -38,7 +41,7 @@ function getComponentByElm (elm) {
 }
 // setGet getComponentByElm
 function setComponentForElm (elm, context) {
-  if (process.env.NODE_ENV === 'development') {
+  if (process.env.NODE_ENV === 'development' || context.env === 'development') {
     elm[$ComponentSymbol] = context
   } else {
     elm.getApp = function () {

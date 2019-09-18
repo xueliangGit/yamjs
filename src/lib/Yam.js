@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2019-08-21 16:02:17
+ * @LastEditTime: 2019-09-17 20:18:22
  */
 import init, { initConfig } from './init/index'
 import { canUseCustomElements } from './init/bolConf'
@@ -24,13 +24,13 @@ class Yam {
   constructor () {
     this._eid = guid2()
     initConfig.call(this)
-    this._config()
+    this._config && this._config()
     lifeCycle.beforeInit(this)
     // console.log(new.target)
     comps[this._cid + '-' + ++compsIds] = this
     this._rootId = compsIds
     // 自动启动函数
-    console.log(this._autoDo)
+    // console.log(this._autoDo)
     if (this._autoDo) {
       for (const key in this._autoDo) {
         if (this._autoDo.hasOwnProperty(key)) {
@@ -194,7 +194,7 @@ export function Component (Config) {
       try {
         window.customElements.define(tagName, BaseCustomElements(Target))
       } catch (e) {
-        console.log('e', e)
+        console.log('e' + tagName, e)
       }
     } else {
       Target.customElements = false
@@ -207,6 +207,7 @@ export function Component (Config) {
         })
       })
     }
+    return Target
   }
 }
 // 适配器 store

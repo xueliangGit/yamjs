@@ -1,3 +1,9 @@
+/*
+ * @Author: xuxueliang
+ * @Date: 2019-06-25 13:56:05
+ * @LastEditors: xuxueliang
+ * @LastEditTime: 2019-06-25 13:56:05
+ */
 import { getComponentByElm, setComponentForElm } from './utils/componentUtil'
 export default function getCustom (Target) {
   // eslint-disable-next-line
@@ -10,7 +16,7 @@ export default function getCustom (Target) {
       comps = null
     }
     disconnectedCallback () {
-      if (!this.isUnset) {
+      if (!this.isUnset && !this.isRemovedBySlot) {
         this.isUnset = true
         let comps = getComponentByElm(this)
         comps.__beforeDisconnectedCallback()

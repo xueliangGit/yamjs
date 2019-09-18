@@ -22,6 +22,7 @@
       "@babel/plugin-transform-react-jsx",
       { "pragma": "Yam.__createElement", "pragmaFrag": "c" }
     ]
+    //
   ]
   //"transform-vue-jsx",
 }

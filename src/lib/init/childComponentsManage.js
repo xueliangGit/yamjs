@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-06-25 13:56:05
  * @LastEditors: xuxueliang
- * @LastEditTime: 2019-08-21 15:49:54
+ * @LastEditTime: 2019-09-18 14:20:27
  */
 import cacheLib from '../utils/cacheLib'
 import { guid2 } from '../utils/index'
@@ -27,9 +27,12 @@ class ChildComponentsManage {
       return null
     }
     let Apps = this.get()
-    let app = Apps[index]
-    delete Apps[index]
-    return app
+    if (Apps) {
+      let app = Apps[index]
+      delete Apps[index]
+      return app
+    }
+    return null
   }
   destory () {
     let Apps = this.get()

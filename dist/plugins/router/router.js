@@ -1,3 +1,9 @@
+/*
+ * @Author: xuxueliang
+ * @Date: 2019-08-01 15:22:48
+ * @LastEditors: xuxueliang
+ * @LastEditTime: 2019-09-16 15:42:49
+ */
 let changeFnCache = []
 export default function RouterFactory (conf) {
   // 一个状态管理工具
@@ -115,7 +121,7 @@ function setCurrent (context, obj) {
 function init (context, option) {
   // 获取本页页面名字
   let current = context.current = getCurrent()
-  console.log(current)
+  console.log('current', current)
   /* 写入页面简单路由配置到缓存 */
   option.forEach(v => {
     if (v.name) {

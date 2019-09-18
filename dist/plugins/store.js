@@ -1,3 +1,9 @@
+/*
+ * @Author: xuxueliang
+ * @Date: 2019-08-01 15:22:48
+ * @LastEditors: xuxueliang
+ * @LastEditTime: 2019-08-01 15:22:48
+ */
 export default function StoreFactory (conf) {
   // 一个状态管理工具
   let storeData = {

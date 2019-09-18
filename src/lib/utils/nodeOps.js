@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-06-25 13:56:05
  * @LastEditors: xuxueliang
- * @LastEditTime: 2019-08-21 15:56:49
+ * @LastEditTime: 2019-09-17 20:27:08
  */
 import { doc as document } from './global'
 import { requestAnimationFrame } from './index'
@@ -35,12 +35,12 @@ function insertBefore (parentNode, newNode, referenceNode, isNeed) {
 function removeChild (node, child) {
   requestAnimationFrame(() => {
     // 移除事件 触发
-    if (child.beforeDisconnectedCallback) {
+    if (child.beforeDisconnectedCallback && !child.isRemovedBySlot) {
       child.beforeDisconnectedCallback()
     }
     node.removeChild(child)
     // 移除事件 触发
-    if (child.disconnectedCallback && !child.isUnset) {
+    if (!child.isRemovedBySlot && child.disconnectedCallback && !child.isUnset) {
       child.disconnectedCallback()
     }
   })

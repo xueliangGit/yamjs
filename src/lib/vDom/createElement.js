@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2019-08-21 15:52:44
+ * @LastEditTime: 2019-09-18 16:57:33
  */
 /** @jsx createElement */
 import { HTML_TAGS, GLOBAL_ATTRIBUTES, EVENT_HANDLERS } from './creatConfig'
@@ -95,7 +95,6 @@ class Element {
         el.setAttribute('tag', 'slot')
         let mark = getComponentMark(parentELm)
         el.isBelong = mark._name
-
         doAfterSlotUpdate(el, this, mark.elm.rand, mark)
         // 添加 移除时的事件
         el.disconnectedCallback = () => {
@@ -110,16 +109,28 @@ class Element {
     if (this.props) {
       Object.keys(this.props).forEach(prop => {
         if (prop in this.attrs) {
-          el.setAttribute(this.attrs[prop], this.props[prop])
+          if (typeof this.props[prop] === 'function') {
+            if (prop === 'ref') {
+              console.log('getCallFnName', prop, getComponentByElm(el), this)
+              this.props[prop](getComponentByElm(el))
+              // el.setAttribute(this.attrs[prop], this.props[prop](getComponentByElm(el)))
+            } else {
+              el.setAttribute(this.attrs[prop], this.props[prop](getComponentByElm(el)))
+            }
+          } else {
+            el.setAttribute(this.attrs[prop], this.props[prop])
+          }
         } else if (prop in EVENT_HANDLERS) {
           el.addEventListener(EVENT_HANDLERS[prop], this.props[prop])
         } else if (typeof this.props[prop] !== 'function' && !this.class) {
           el.setAttribute(prop, this.props[prop])
-        } else if (typeof this.props[prop] === 'function' && this.isElement) {
-          // let fnName = getCallFnName(this, prop) // `${this.tagType}_${prop}_fn`
-          el._runfn_ = el._runfn_ || {}
-          el._runfn_[getCallFnName(this, prop)] = this.props[prop]
-          // el.setAttribute(prop, fnName)
+        } else if (typeof this.props[prop] === 'function') {
+          if (this.isElement) {
+            // let fnName = getCallFnName(this, prop) // `${this.tagType}_${prop}_fn`
+            el._runfn_ = el._runfn_ || {}
+            el._runfn_[getCallFnName(this, prop)] = this.props[prop]
+            // el.setAttribute(prop, fnName)
+          }
         }
       })
       // 兼容 style 是字符串形式
@@ -150,13 +161,7 @@ class Element {
         setSlotState(getComponentByElm(el), v.getAttribute('name'), false)
       })
     }
-    this.childNodes.forEach((child, key) => {
-      // 优化若是null 就不进行下一步操作了
-      let newParents = getRenderElmBySlot(slot, child, el)
-      if (newParents) {
-        nodeOps.appendChild(newParents, child.render(key, el))
-      }
-    })
+
     // 组件内部使用
     if (slot.length && this.childNodes) {
       this.rand = this.rand || Math.random()
@@ -174,7 +179,7 @@ class Element {
     // 处理组件在最顶层时 slot 情况
     let comsOri = getparentCom(parentELm._parentElement)
     if (comsOri && comsOri._childrenOri) {
-      slot = el.querySelectorAll('[tag=slot]')
+      // slot = el.querySelectorAll('[tag=slot]')
       comsOri.elm.rand = comsOri.elm.rand || Math.random()
       this.rand = comsOri.elm.rand
       let _names = comsOri._name
@@ -185,6 +190,15 @@ class Element {
       })
       comsOri = null
     }
+    // fix 简单组件渲染时 获取不到slot
+    // 渲染子组件
+    this.childNodes.forEach((child, key) => {
+      // 优化若是null 就不进行下一步操作了
+      let newParents = getRenderElmBySlot(slot, child, el)
+      if (newParents) {
+        nodeOps.appendChild(newParents, child.render(key, el))
+      }
+    })
     this.elm = el
     return this.elm
   }
@@ -224,8 +238,13 @@ function doAfterSlotUpdate (el, context, rand, parentCom) {
     setSlotState(parentCom, name, hasSlothContent)
   }
 }
+
 // 修改 slot状态
 function setSlotState (coms, name, hasSlothContent) {
+  // 修复 不存在coms时
+  if (!coms) {
+    return
+  }
   // 标注slot是否有东西
   coms.$slot = coms.$slot || {}
   if (name) {
@@ -299,4 +318,8 @@ export function renderElement (dom) {
 }
 export function createElementJson (tagName, props = {}, childNodes, root) {
   return new Element(tagName, props, childNodes, root)
+}
+export function _createElementJson (tagName, props = {}, ...childNodes) {
+  // childNodes = childNodes.length ? childNodes : undefined
+  return createElementJson(tagName, props, childNodes)
 }

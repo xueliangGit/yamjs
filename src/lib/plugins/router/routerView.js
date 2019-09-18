@@ -1,3 +1,9 @@
+/*
+ * @Author: xuxueliang
+ * @Date: 2019-08-01 15:22:48
+ * @LastEditors: xuxueliang
+ * @LastEditTime: 2019-08-01 15:22:48
+ */
 import Yam, { Component } from '../../index'
 @Component({
   tagName: 'router-view',
@@ -50,11 +56,11 @@ class RouterView extends Yam {
     return <this.$router.current.component />
   }
   getCurrentComponent () {
-    if (this.$router.current.component) {
+    if (this.$router.current && this.$router.current.component) {
       return <this.$router.current.component ref='dom' />
     } else {
       return <page-404 path={this.$router.current.path}>
-        {this.get404()}
+        { this.get404() }
       </page-404>
     }
   }
@@ -71,7 +77,7 @@ class RouterView extends Yam {
       <div ref='routerDiv'>{
         this.live && this.cache[hashName]
           ? this.showCacheView(hashName)
-          : this.getCurrentComponent()}</div>
+          : this.getCurrentComponent() }</div>
     )
   }
 }

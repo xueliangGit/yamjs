@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-07-03 16:00:17
  * @LastEditors: xuxueliang
- * @LastEditTime: 2019-08-13 14:50:46
+ * @LastEditTime: 2019-09-18 14:51:28
  */
 
 import Yam, { Component } from './Yam'
@@ -14,6 +14,7 @@ Array.prototype.flat = Array.prototype.flat || function () {
 Yam.use(tools)
 export default Yam
 export { Component }
+// fix 外环境组件嵌套组件
 // ok1 样式只是加载一次
 // ok2 完成 基类可有 扩展
 // ok3 完成 setTimeOut ，setInterval 封装

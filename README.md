@@ -1,5 +1,3 @@
-
-
 # Yam - a baseComponents for html
 
 > _本组件基类即将开源，现在阶段只是内部使用，修复一些 bug，以及一些优化_
@@ -642,7 +640,11 @@ Yam.use(store);
 ![image-20190612140407922](https://dev.tencent.com/u/Supermen/p/yam/git/raw/master/src/lib/image-20190612140407922.png)
 
 > 更新
-
+- 0.2.5 (2019-9-18)
+  - 优化ref，支持`ref={(v)=>{this.dom=v}}`写法；直接把ref赋值到`this.com`上
+  - 优化slot；在外环镜中嵌套slot时，当slot渲染组件时，该组件状态会被保存住，不会被销毁；（暂行方法，等待后续优化）
+- 0.2.4 (2019-9-17)
+  - 添加设置环境 `Yam.setConfig({isdev:true})`
 - 0.2.0 (2019-8-1)
   - 优化 slot 加载显示，调成为，若只有一个 slot 并且定了 name，那么要想插入内容需要定义 slot 属性与之对应，否则不予显示
   - 优化`router`插件，当没有匹配到组件时，默认显示内置的 404 页面；也可以使用自定义 404 页面；详见[路由管理]
