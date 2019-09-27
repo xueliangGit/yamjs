@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2019-09-18 15:37:02
+ * @LastEditTime: 2019-09-27 19:16:41
  */
 // import updateElement from '../vDom'
 import updateElement from '../diff/index'
@@ -12,7 +12,7 @@ import nodeOps from '../utils/nodeOps'
 import lifeCycle from './lifeCycle'
 import Destory from './destory'
 import ChildComponentsManage from './childComponentsManage'
-import { $vdomSymbol, $componentDataSymbol } from '../symbol/index'
+import { $vdomSymbol, $componentDataSymbol, $closestParentSymbol } from '../symbol/index'
 
 // 初始化 init
 let componenesSize = {}
@@ -22,8 +22,8 @@ function _init () {
   create.call(this)
   lifeCycle.created(this)
   lifeCycle.beforeMount(this)
-  createdComponent.call(this)
   setClosetParentCom(this)
+  createdComponent.call(this)
   initRefs.call(this)
   lifeCycle.mounted(this)
   this.update = () => {
@@ -157,11 +157,20 @@ function createdComponent () {
     } else {
       this.__shadowRoot = this.elm
       nodeOps.appendChild(this.elm, getFram.call(this))
-      let parent = this.elm
-      while ((parent.parentElement || parent._parentElement) && parent.nodeType !== 11) {
-        parent = parent.parentNode || parent._parentNode
+      // let parent = this.elm
+      console.log(this[$closestParentSymbol], this)
+      // ori
+      // while ((parent.parentElement || parent._parentElement) && parent.nodeType !== 11) {
+      //   parent = parent.parentNode || parent._parentNode
+      // }
+      // new wati
+      let parentS = this[$closestParentSymbol]
+      while (!parentS._shadow && parentS[$closestParentSymbol]) {
+        parentS = parentS[$closestParentSymbol]
       }
-      let nameStyle = parent.tagName === 'HTML' ? 'HTML' : parent._root ? parent._root : parent.parentNode ? parent.parentNode._root || parent.parentNode.host.tagName : 'HTML'
+      console.log('parentS', parentS)
+      let nameStyle = parentS._shadow ? parentS.__shadowRoot._root : 'html'
+      // parent.tagName === 'HTML' ? 'HTML' : parent._root ? parent._root : parent.parentNode ? parent.parentNode._root || parent.parentNode.host.tagName : 'HTML'
       if (!styleIsInstalled[nameStyle]) {
         styleIsInstalled[nameStyle] = []
       }
@@ -171,7 +180,8 @@ function createdComponent () {
           document.head.appendChild(style)
         } else {
           // div inner
-          parent.insertBefore(style, parent.lastChild)
+          // parent.insertBefore(style, parent.lastChild)
+          parentS.__shadowRoot.insertBefore(style, parentS.__shadowRoot.lastChild)
         }
         // nameStyle
         styleIsInstalled[nameStyle].push(this._cid)
@@ -209,11 +219,11 @@ function delFlag (context, key) {
 // 获取dom片段
 function getFram (isNeedDiv = false) {
   if (isNeedDiv) {
-    this.$dom = document.createElement('div')
+    this.$dom = document.createDocumentFragment() || document.createElement('div')
   } else {
-    this.$dom = document.createElement('div')
+    this.$dom = document.createDocumentFragment() || document.createElement('div')
   }
-  this.$dom.setAttribute('dom', this._cid)
+  // this.$dom.setAttribute('dom', this._cid)
   try {
     this[$vdomSymbol] = this.render()
     // console.log(this[$vdomSymbol])
@@ -226,6 +236,7 @@ function getFram (isNeedDiv = false) {
   this.$dom._parentNode = this.__shadowRoot
   updateElement(this.$dom, this[$vdomSymbol])
   this.$dom._eid = this._eid
+  this.$dom.lastChild.setAttribute('dom', this._cid)
   return this.$dom
 }
 // 更新dom

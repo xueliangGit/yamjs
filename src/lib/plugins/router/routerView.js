@@ -65,10 +65,10 @@ class RouterView extends Yam {
     }
   }
   get404 () {
-    return <div class='tip-404' >
-      <p class='title-404 tac'>YAMJS</p>
-      <p class='text-404 tac'>【404】 肯定是你的方向不对</p>
-      <p class='des-404 tac'>只要方向对，目标肯定就在远方，先去检查一下吧</p>
+    return <div className='tip-404' >
+      <p className='title-404 tac'>YAMJS</p>
+      <p className='text-404 tac'>【404】 肯定是你的方向不对</p>
+      <p className='des-404 tac'>只要方向对，目标肯定就在远方，先去检查一下吧</p>
     </div >
   }
   render () {

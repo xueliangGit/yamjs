@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2019-09-18 15:41:40
+ * @LastEditTime: 2019-09-27 19:16:31
  */
 import Yam, { Component } from '../lib/index'
 // import jsxp from 'jsx-parser'
@@ -78,11 +78,11 @@ export default Component({
   }
   getTimer () {
     if (this.index == 1) {
-      return <my-timer ref={ (c) => { this.mytime = c } }>
+      return <MyTimer ref={ (c) => { this.mytime = c } }>
         < p > 我是时间 - 2</p >
         <p slot='aaa'>我是时间-11112</p>
         <show-demo slot='bottom'></show-demo>
-      </my-timer >
+      </MyTimer >
     }
     return ''
   }

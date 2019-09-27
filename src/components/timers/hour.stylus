@@ -1,10 +1,8 @@
 [scope]
-[root]
-  height 100%
-  width 100%
+
 div
   height 100%
-ul
+[root]
   position relative
   height 200px
   width 200px

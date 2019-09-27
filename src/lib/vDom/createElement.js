@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2019-09-18 16:57:33
+ * @LastEditTime: 2019-09-27 19:19:30
  */
 /** @jsx createElement */
 import { HTML_TAGS, GLOBAL_ATTRIBUTES, EVENT_HANDLERS } from './creatConfig'
@@ -89,6 +89,10 @@ class Element {
       }
       component = null
     } else {
+      // if (this.tagName === 'slot') {
+      //   el = document.createDocumentFragment()
+      // } else {
+      // }
       el = document.createElement(this.tagType)
       // 处理 slot 更新
       if (this.tagName === 'slot') {

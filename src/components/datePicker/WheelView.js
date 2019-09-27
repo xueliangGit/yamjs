@@ -1,3 +1,9 @@
+/*
+ * @Author: xuxueliang
+ * @Date: 2019-06-25 13:56:05
+ * @LastEditors: xuxueliang
+ * @LastEditTime: 2019-06-25 13:56:05
+ */
 import Yam, { Component } from '../../lib/index'
 const lineHeight = 40
 @Component({
@@ -113,7 +119,7 @@ class App extends Yam {
         {
           Array.isArray(this.data) ? this.data.map((item, i) => {
             // 循环把数据显示出来
-            return <div className={this.index === i ? 'active item' : 'item'}>{item} {this.index === i ? this.gzName : ''}</div>
+            return <div key={i} className={this.index === i ? 'active item' : 'item'}>{ item } { this.index === i ? this.gzName : '' }</div>
           }) : ''
         }
       </div>

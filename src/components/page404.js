@@ -12,8 +12,8 @@ class App extends Yam {
   }
   render () {
     return <div>
-      <p class='tip-404'>404</p>
-      <p class='tip-404'>{this.path} 没有相应的页面，请检测</p>
+      <p className='tip-404'>404</p>
+      <p className='tip-404'>{ this.path } 没有相应的页面，请检测</p>
     </div>
   }
 }
