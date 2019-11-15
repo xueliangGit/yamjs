@@ -2,19 +2,19 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2019-09-17 20:18:22
+ * @LastEditTime: 2019-11-14 10:01:29
  */
 import init, { initConfig } from './init/index'
 import { canUseCustomElements } from './init/bolConf'
 import lifeCycle from './init/lifeCycle'
 import { Mix } from './init/mix'
-import { getStyleStr, guid2, toCamelCase, forEach } from './utils/index'
+import { getStyleStr, guid2, toCamelCase, forEach, getCid } from './utils/index'
 import { getCallFnName, getClosetParentCom } from './utils/componentUtil'
 import cacheLib from './utils/cacheLib'
 import BaseCustomElements from './BaseCustomElements'
 import { HTML_TAGS } from './vDom/creatConfig'
 import domOnLoad from './utils/domLoad'
-import { version } from '../../package.json'
+import { versionBate } from '../../package.json'
 var comps = window.comps = {}
 let hasCompsName = []
 let compsIds = 0
@@ -166,7 +166,7 @@ export function Component (Config) {
       this._shadow = !!shadow || false
       this._props = props || []
       this._canBeCalledExt = typeof canBeCalledExt === 'boolean' ? canBeCalledExt : false
-      this._cid = 'com-' + tagName
+      this._cid = getCid(tagName)
       this._style = getStyleStr(this._cid, style)
       // store
       this.$store = {}
@@ -217,7 +217,7 @@ export function store (Config) {
 }
 console.log(`
     
-    Bate-${version} for this version of yamjs, 
+    Bate-${versionBate} for this version of yamjs, 
     
     that is a baseComponet for html and can run in html or Vue or reactjs
     

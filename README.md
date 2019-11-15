@@ -639,10 +639,15 @@ Yam.use(store);
 
 ![image-20190612140407922](https://dev.tencent.com/u/Supermen/p/yam/git/raw/master/src/lib/image-20190612140407922.png)
 
+> todo
+
+- 0.3.1 解决 slot，mounted
+
 > 更新
+
 - 0.2.5 (2019-9-18)
-  - 优化ref，支持`ref={(v)=>{this.dom=v}}`写法；直接把ref赋值到`this.com`上
-  - 优化slot；在外环镜中嵌套slot时，当slot渲染组件时，该组件状态会被保存住，不会被销毁；（暂行方法，等待后续优化）
+  - 优化 ref，支持`ref={(v)=>{this.dom=v}}`写法；直接把 ref 赋值到`this.com`上
+  - 优化 slot；在外环镜中嵌套 slot 时，当 slot 渲染组件时，该组件状态会被保存住，不会被销毁；（暂行方法，等待后续优化）
 - 0.2.4 (2019-9-17)
   - 添加设置环境 `Yam.setConfig({isdev:true})`
 - 0.2.0 (2019-8-1)

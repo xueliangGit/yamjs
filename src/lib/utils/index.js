@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-06-25 13:56:05
  * @LastEditors: xuxueliang
- * @LastEditTime: 2019-09-25 19:00:03
+ * @LastEditTime: 2019-10-08 17:43:42
  */
 import { global as window } from './global'
 /**
@@ -105,6 +105,9 @@ function getStyleStr (_id, style) {
   }
   return style.map(v => _getStrByStyle(_id, v, styleIsScope(v))).join('')
 }
+function getDomStyleFlag (_id, attr) {
+  return attr ? _id : '[' + _id + ']'
+}
 function styleIsScope (style) {
   if (typeof style === 'string') {
     return style.includes('[scope]')
@@ -123,13 +126,13 @@ function _getStrByStyle (_id, style, isScope) {
     return map(str, v => {
       if (v.includes('{')) {
         if (v.includes('[root]')) {
-          if (isScope) {
-            v = v.replace('[root]', '')
-          } else {
-            v = v.replace('[root]', '[dom="' + _id + '"]')
-          }
+          // if (isScope) {
+          //   v = v.replace('[root]', '')
+          // } else {
+          return v.replace('[root]', getDomStyleFlag(_id + '-root'))
+          // }
         }
-        return isScope ? '[dom="' + _id + '"] ' + v : v
+        return isScope ? v.replace(' {', '').replace('{', '') + getDomStyleFlag(_id) + '{' : v
       }
       return v
     }).join('')
@@ -214,6 +217,7 @@ let requestAnimationFrame = function (callback, isNeed) {
   callback()
   // !isNeed ? callback() : window.requestAnimationFrame ? window.requestAnimationFrame(callback) : callback()
 }
+let getCid = (value) => 'com-' + value
 export {
   def,
   protoAugment,
@@ -238,5 +242,7 @@ export {
   log,
   info,
   requestIdleCallback,
-  requestAnimationFrame
+  requestAnimationFrame,
+  getDomStyleFlag, getCid
+
 }

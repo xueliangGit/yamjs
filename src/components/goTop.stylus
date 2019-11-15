@@ -4,3 +4,5 @@ div
   font-weight bold
 a
   display inline-block
+.times
+  font-size: 18px

@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2019-08-21 16:02:02
+ * @LastEditTime: 2019-11-14 14:33:49
  */
 import nodeOps from '../utils/nodeOps'
 // import { renderElement } from '../vDom/createElement'
@@ -78,21 +78,29 @@ function createElm (vnode, parentElm, refElm, isFirst) {
     */
 function addVnodes (parentElm, refElm, vnodes, startIdx, endIdx, isFirst) {
   if (startIdx > -1) {
-    for (; startIdx <= endIdx; ++startIdx) {
-      createElm(vnodes[startIdx], parentElm, refElm, isFirst)
+    if (startIdx <= endIdx) {
+      let flag = document.createDocumentFragment()
+      for (; startIdx <= endIdx; ++startIdx) {
+        createElm(vnodes[startIdx], flag, refElm, isFirst)
+      }
+      // console.log(flag, parentElm, vnodes)
+      insert(parentElm, flag, refElm, isFirst)
     }
   } else {
     createElm(vnodes, parentElm, refElm, isFirst)
   }
 }
-
 /**
     * 移除一个节点
     */
-function removeNode (el) {
+function removeNode (el, index) {
   const parent = nodeOps.parentNode(el)
   if (parent) {
-    nodeOps.removeChild(parent, el)
+    if (index) {
+      nodeOps.removeChild(parent, parent.childNodes[index])
+    } else {
+      nodeOps.removeChild(parent, el)
+    }
   }
 }
 
@@ -102,10 +110,26 @@ function removeNode (el) {
     * 父节点 孩子节点集合 开始下标 结束下标
     */
 function removeVnodes (parentElm, vnodes, startIdx, endIdx) {
+  let before = 0
+  if (parentElm.hasslot) {
+    for (var i = 0; i < startIdx; i++) {
+      if (vnodes[i].elmSize) {
+        before += +vnodes[i].elmSize
+      }
+    }
+  }
   for (; startIdx <= endIdx; ++startIdx) {
     const ch = vnodes[startIdx]
-    if (ch) {
-      removeNode(ch.elm)
+    if (ch && ch.elm) {
+      if (ch.elmSize) {
+        var l = 1
+        for (l; l < ch.elmSize; l++) {
+          removeNode(ch.elm, before + startIdx + 1)
+        }
+        removeNode(ch.elm)
+      } else {
+        removeNode(ch.elm)
+      }
     }
   }
 }
@@ -125,7 +149,7 @@ function sameVnode (a, b) {
   // tagType 代替tagName
   return (
     a.key === b.key &&
-    a.tagType === b.tagType &&
+    a.tagName === b.tagName &&
     sameInputType(a, b) &&
     editProp(a, b)
     // &&
@@ -210,7 +234,12 @@ function sameInputType (a, b) {
 function patchVnode (oldVnode, vnode) {
   requestIdleCallback(() => {
     // 如果这个是个组件，那么跳过该组件的patch
-    if (oldVnode.elm.isComponent) {
+    if (vnode.tagName === 'slot') {
+      vnode.elmSize = oldVnode.elmSize
+      vnode.elm = oldVnode.elm
+      return
+    }
+    if (oldVnode.class || oldVnode.elm.isComponent) {
       vnode.elm = oldVnode.elm
       vnode.componentInstance = oldVnode.componentInstance
       // console.log(vnode)
@@ -282,7 +311,6 @@ function updateChildren (parentElm, oldCh, newCh) {
   let newEndVnode = newCh[newEndIdx]
   /* 定义当前面所有条件都不满足时，才使用的变量，具体后面分析 */
   let oldKeyToIdx, idxInOld, refElm
-
   while (oldStartIdx <= oldEndIdx && newStartIdx <= newEndIdx) {
     /* 当 oldStartVnode 不存在时，直接更新索引以及对应的节点指向 */
     if (!oldStartVnode) {
@@ -346,12 +374,13 @@ function updateChildren (parentElm, oldCh, newCh) {
   }
   /* 终止条件， oldStartIdx > oldEndIdx 说明 newCh 中还有剩余节点，直接批量添加 */
   if (oldStartIdx > oldEndIdx) {
+    // console.log('updateChildren', 'oldStartIdx:', oldStartIdx, 'newStartIdx:', newStartIdx, 'oldEndIdx', oldEndIdx, 'newEndIdx', newEndIdx)
     // console.log('============')
     // console.log('', newStartIdx, newEndIdx, newCh)
     refElm = (newCh[newEndIdx + 1]) ? newCh[newEndIdx + 1].elm : null
-    let fgm = document.createDocumentFragment()
-    addVnodes(fgm, refElm, newCh, newStartIdx, newEndIdx)
-    parentElm.appendChild(fgm)
+    // let fgm = document.createDocumentFragment()
+    addVnodes(parentElm, refElm, newCh, newStartIdx, newEndIdx)
+    // parentElm.appendChild(fgm)
   } else if (newStartIdx > newEndIdx) {
     /* 终止条件， newStartIdx > newEndIdx 说明 oldCh 中还有剩余节点，直接批量删除 */
     removeVnodes(parentElm, oldCh, oldStartIdx, oldEndIdx)

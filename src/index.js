@@ -2,16 +2,18 @@
  * @Author: xuxueliang
  * @Date: 2019-08-13 16:13:59
  * @LastEditors: xuxueliang
- * @LastEditTime: 2019-09-17 19:10:24
+ * @LastEditTime: 2019-10-25 14:49:24
  */
 
 import './components/common'
-import './lib/plugins/router/routerView'
-import './components/goTop.js'
-import './components/showDemo.js'
-import './components/page404'
-import './components/datePicker/datePicker.js'
-import './components/dataPicker/dataPicker.js'
+// import './lib/plugins/router/routerView'
+// import './components/goTop.js'
+// import './components/showDemo.js'
+// import './components/page404'
+// import './components/datePicker/datePicker.js'
+// import './components/dataPicker/dataPicker.js'
+import './components/test.1'
+import './components/test.2'
 // import './components/mis.js'
 // // eslint-disable-next-line no-new
 // (new App()).renderAt('go-top')

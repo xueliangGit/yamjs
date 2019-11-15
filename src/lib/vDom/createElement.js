@@ -2,14 +2,14 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2019-09-27 19:19:30
+ * @LastEditTime: 2019-11-14 14:33:38
  */
 /** @jsx createElement */
 import { HTML_TAGS, GLOBAL_ATTRIBUTES, EVENT_HANDLERS } from './creatConfig'
 import nodeOps from '../utils/nodeOps'
-import { forEach, toCamelCase } from '../utils/index'
+import { forEach, toCamelCase, getCid } from '../utils/index'
 import { getCallFnName, getComponentMark, setComponentForElm, getComponentByElm, getparentCom } from '../utils/componentUtil'
-
+import { $slotSymbol } from '../symbol/index'
 import cacheLib from '../utils/cacheLib'
 // eslint-disable-next-line no-extend-native
 Array.prototype.flat = Array.prototype.flat || function () {
@@ -17,7 +17,7 @@ Array.prototype.flat = Array.prototype.flat || function () {
 }
 // let i = 0
 class Element {
-  constructor (tagName, props = {}, childNodes, _root, isText) {
+  constructor(tagName, props = {}, childNodes, _root, isText) {
     if (isText) {
       this.tagName = tagName
       this.props = props
@@ -43,6 +43,9 @@ class Element {
           }
         }
         v.key = key
+        if (v.props && v.props.key) {
+          v.key = v.props.key
+        }
         return v
       })
       const tag = HTML_TAGS[this.tagName] || this.tagName
@@ -60,11 +63,13 @@ class Element {
     }
     this._root = _root // 带搞根结点
   }
-  render (key = null, parentELm = null) {
+  render (key = null, parentELm = null, domFlag) {
     if (this.isText) {
       this.elm = document.createTextNode(this.text)
       return this.elm
     }
+    let mark = null
+    domFlag = domFlag || getCid(this._root) || (mark = getComponentMark(parentELm), getCid(mark._tagName))
     let el = null
     let slot = []
     // 自定义webcomponent
@@ -89,28 +94,38 @@ class Element {
       }
       component = null
     } else {
-      // if (this.tagName === 'slot') {
-      //   el = document.createDocumentFragment()
-      // } else {
-      // }
-      el = document.createElement(this.tagType)
+      if (this.tagName === 'slot') {
+        el = document.createDocumentFragment()
+      } else {
+        el = document.createElement(this.tagType)
+        el.setAttribute(domFlag, '')
+      }
       // 处理 slot 更新
       if (this.tagName === 'slot') {
-        el.setAttribute('tag', 'slot')
-        let mark = getComponentMark(parentELm)
-        el.isBelong = mark._name
-        doAfterSlotUpdate(el, this, mark.elm.rand, mark)
-        // 添加 移除时的事件
-        el.disconnectedCallback = () => {
-          setSlotState(mark, this.props.name, false)
+        // 20191114
+        // 处理slot新的形式
+        let mark = getparentCom(parentELm)
+        // console.log(mark)
+        let slotKey = this.props.name || 'default'
+        // el.setAttribute('tag', 'slot')
+        if (mark[$slotSymbol][slotKey]) {
+          forEach(mark[$slotSymbol][slotKey], (v) => {
+            el.appendChild(v)
+          })
         }
+        // el.isBelong = mark._name
+        // doAfterSlotUpdate(el, this, mark.elm.rand, mark)
+        // 添加 移除时的事件
+        // el.disconnectedCallback = () => {
+        //   setSlotState(mark, this.props.name, false)
+        // }
       }
       el._parentNode = parentELm
       el._parentElement = parentELm
     }
     slot = el.querySelectorAll('[tag=slot]')
     // el.props = this.props
-    if (this.props) {
+    if (this.props && this.tagName !== 'slot') {
       Object.keys(this.props).forEach(prop => {
         if (prop in this.attrs) {
           if (typeof this.props[prop] === 'function') {
@@ -145,14 +160,14 @@ class Element {
             const value = styles[prop]
             if (typeof value === 'number') {
               if (prop !== 'zIndex') {
-                el.style[prop] = `${value}px`
+                el.style[prop] = `${ value }px`
               } else {
-                el.style[prop] = `${value}`
+                el.style[prop] = `${ value }`
               }
             } else if (typeof value === 'string') {
               el.style[prop] = value
             } else {
-              throw new Error(`Expected "number" or "string" but received "${typeof value}"`)
+              throw new Error(`Expected "number" or "string" but received "${ typeof value }"`)
             }
           })
         } else {
@@ -181,19 +196,19 @@ class Element {
       coms = null
     }
     // 处理组件在最顶层时 slot 情况
-    let comsOri = getparentCom(parentELm._parentElement)
-    if (comsOri && comsOri._childrenOri) {
-      // slot = el.querySelectorAll('[tag=slot]')
-      comsOri.elm.rand = comsOri.elm.rand || Math.random()
-      this.rand = comsOri.elm.rand
-      let _names = comsOri._name
-      cacheLib.set(_names + 'slot-' + this.rand, comsOri._childrenOri)
-      // 组件使用结束-销毁
-      comsOri.addDestory(() => {
-        cacheLib.del(_names + 'slot-' + this.rand)
-      })
-      comsOri = null
-    }
+    // let comsOri = getparentCom(parentELm._parentElement)
+    // if (comsOri && comsOri[$slotSymbol].length) {
+    //   // slot = el.querySelectorAll('[tag=slot]')
+    //   comsOri.elm.rand = comsOri.elm.rand || Math.random()
+    //   this.rand = comsOri.elm.rand
+    //   let _names = comsOri._name
+    //   cacheLib.set(_names + 'slot-' + this.rand, comsOri._childrenOri)
+    //   // 组件使用结束-销毁
+    //   comsOri.addDestory(() => {
+    //     cacheLib.del(_names + 'slot-' + this.rand)
+    //   })
+    //   comsOri = null
+    // }
     // fix 简单组件渲染时 获取不到slot
     // 渲染子组件
     this.childNodes.forEach((child, key) => {
@@ -203,12 +218,21 @@ class Element {
         nodeOps.appendChild(newParents, child.render(key, el))
       }
     })
-    this.elm = el
-    return this.elm
+    if (this.tagName === 'slot') {
+      this.elm = el.childNodes[0]
+      this.elmSize = el.childNodes.length
+      if (parentELm) {
+        parentELm.hasslot = true
+      }
+    } else {
+      this.elm = el
+    }
+    return el
   }
 }
 // do slot 更新后的slot数据渲染
 // 只有
+/*
 function doAfterSlotUpdate (el, context, rand, parentCom) {
   let childNodes = cacheLib.get(el.isBelong + 'slot-' + rand)
   // console.log('doAfterSlotUpdate', rand, childNodes, el, context, el.isBelong + 'slot-' + rand)
@@ -242,7 +266,7 @@ function doAfterSlotUpdate (el, context, rand, parentCom) {
     setSlotState(parentCom, name, hasSlothContent)
   }
 }
-
+*/
 // 修改 slot状态
 function setSlotState (coms, name, hasSlothContent) {
   // 修复 不存在coms时
@@ -276,7 +300,7 @@ function getRenderElmBySlot (slot, child, el, slotBelong = null) {
 
           否则将在【slot】出现改动的时候会时【slot】渲染出错
 
-          >> 位于 【${v.isBelong}】 组件内
+          >> 位于 【${v.isBelong }】 组件内
           `)
         }
         if (v.getAttribute('name') === slotName) {
@@ -300,7 +324,7 @@ function getRenderElmBySlot (slot, child, el, slotBelong = null) {
 
           否则将在【slot】出现改动的时候会时【slot】渲染出错
 
-          >> 位于 【${v.isBelong}】 组件内
+          >> 位于 【${v.isBelong }】 组件内
           `)
         }
       }

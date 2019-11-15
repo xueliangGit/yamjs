@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2019-09-27 19:16:31
+ * @LastEditTime: 2019-10-08 18:32:10
  */
 import Yam, { Component } from '../lib/index'
 // import jsxp from 'jsx-parser'
@@ -80,7 +80,7 @@ export default Component({
     if (this.index == 1) {
       return <MyTimer ref={ (c) => { this.mytime = c } }>
         < p > 我是时间 - 2</p >
-        <p slot='aaa'>我是时间-11112</p>
+        <p class='times' slot='aaa'>我是时间-11112</p>
         <show-demo slot='bottom'></show-demo>
       </MyTimer >
     }
@@ -92,6 +92,7 @@ export default Component({
   render () {
     return (
       <div className='asd' >
+        <show-demo title='bottom'></show-demo>
         <div onClick={ this.goT.bind(this) }>去timer</div>
         <div onClick={ this.switch.bind(this, -1) }>点击{ this.$store.width }</div>
         { this.index == 1 ? <slot></slot> : '' }

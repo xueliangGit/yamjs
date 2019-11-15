@@ -2,17 +2,17 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2019-09-29 15:36:02
+ * @LastEditTime: 2019-11-14 14:30:36
  */
 // import updateElement from '../vDom'
 import updateElement from '../diff/index'
-import { creatMutationObserser, setAttributes, forEach, map, log, isFalse } from '../utils/index'
+import { creatMutationObserser, setAttributes, forEach, log, isFalse, getDomStyleFlag } from '../utils/index'
 import { getCallFnName, syncComponentMark, setComponentForElm, getComponentByElm, setClosetParentCom } from '../utils/componentUtil'
 import nodeOps from '../utils/nodeOps'
 import lifeCycle from './lifeCycle'
 import Destory from './destory'
 import ChildComponentsManage from './childComponentsManage'
-import { $vdomSymbol, $componentDataSymbol, $closestParentSymbol } from '../symbol/index'
+import { $vdomSymbol, $componentDataSymbol, $closestParentSymbol, $slotSymbol } from '../symbol/index'
 
 // 初始化 init
 let componenesSize = {}
@@ -36,20 +36,44 @@ function _init () {
 }
 function create () {
   if (this.elm) {
-    // 现在都走这个
-    this._childrenOri = this.elm.children.length ? map(this.elm.children, (v) => delChildrenOriThatFromYam(v, this)) : undefined
-    // console.log('this._childrenOri', this._childrenOri)
-    this.elm._childrenOri = this._childrenOri
-    if (this._childrenOri) {
-      // 开启把原有的 子集销毁
+    // 新的处理slot
+    this[$slotSymbol] = {}
+    let slotSymbolLength = 0
+    if (this.elm.children.length) {
       // eslint-disable-next-line no-cond-assign
-      for (let j = 0, child; child = this.elm.children[j];) {
+      for (var j = 0, child; child = this.elm.childNodes[j];) {
+        let slotAttr = child.getAttribute && child.getAttribute('slot')
+        if (slotAttr) {
+          (this[$slotSymbol][slotAttr] = this[$slotSymbol][slotAttr] || (++slotSymbolLength && [])).push(child)
+        } else {
+          (this[$slotSymbol]['default'] = this[$slotSymbol]['default'] || (++slotSymbolLength && [])).push(child)
+        }
         // 设置 isRemovedBySlot 处理外环境使用slot嵌套组件
         child.isRemovedBySlot = true
         nodeOps.removeChild(this.elm, child)
         // this.elm.removeChild(child)
       }
+      // forEach(this.elm.childNodes, (v) => {
+      //   // delChildrenOriThatFromYam(v, this)
+
+      // })
     }
+    this[$slotSymbol]['length'] = slotSymbolLength
+    // this.elm.children = []
+    // 现在都走这个
+    // this._childrenOri = this.elm.children.length ? map(this.elm.children, (v) => delChildrenOriThatFromYam(v, this)) : undefined
+    // // console.log('this._childrenOri', this._childrenOri)
+    // this.elm._childrenOri = this._childrenOri
+    // if (this._childrenOri) {
+    //   // 开启把原有的 子集销毁
+    //   // eslint-disable-next-line no-cond-assign
+    //   for (let j = 0, child; child = this.elm.children[j];) {
+    //     // 设置 isRemovedBySlot 处理外环境使用slot嵌套组件
+    //     child.isRemovedBySlot = true
+    //     nodeOps.removeChild(this.elm, child)
+    //     // this.elm.removeChild(child)
+    //   }
+    // }
     bindElmentEvent(this)
     setComponentForElm(this.elm, this)
   } else {
@@ -169,7 +193,7 @@ function createdComponent () {
       while (!parentS._shadow && parentS[$closestParentSymbol]) {
         parentS = parentS[$closestParentSymbol]
       }
-      // console.log('parentS', parentS)
+      console.log('parentS.parentS._shadow ', parentS._shadow, parentS)
       let nameStyle = parentS._shadow ? parentS.__shadowRoot._root : 'html'
       // parent.tagName === 'HTML' ? 'HTML' : parent._root ? parent._root : parent.parentNode ? parent.parentNode._root || parent.parentNode.host.tagName : 'HTML'
       if (!styleIsInstalled[nameStyle]) {
@@ -217,6 +241,18 @@ function delFlag (context, key) {
   }
   delete context[key]
 }
+//
+function getRenderData (context) {
+  let element = context.render()
+  setRootName(element, context._tagName)
+  return element
+}
+function setRootName (element, tagName) {
+  element._root = tagName
+  if (element.childNodes) {
+    element.childNodes.forEach(v => setRootName(v, tagName))
+  }
+}
 // 获取dom片段
 function getFram (isNeedDiv = false) {
   if (isNeedDiv) {
@@ -226,8 +262,8 @@ function getFram (isNeedDiv = false) {
   }
   // this.$dom.setAttribute('dom', this._cid)
   try {
-    this[$vdomSymbol] = this.render()
-    // console.log(this[$vdomSymbol])
+    this[$vdomSymbol] = getRenderData(this)// .render()
+    console.log(this[$vdomSymbol])
     this[$vdomSymbol]._rootId = this._rootId
   } catch (e) {
     log('e', e)
@@ -237,7 +273,9 @@ function getFram (isNeedDiv = false) {
   this.$dom._parentNode = this.__shadowRoot
   updateElement(this.$dom, this[$vdomSymbol])
   this.$dom._eid = this._eid
-  this.$dom.lastChild.setAttribute('dom', this._cid)
+  this.$dom.lastChild._eid = this._eid
+  // this.$dom.lastChild.setAttribute(getDomStyleFlag(this._cid, true), '')
+  this.$dom.lastChild.setAttribute(getDomStyleFlag(this._cid + '-root', true), '')
   return this.$dom
 }
 // 更新dom
@@ -248,7 +286,7 @@ function update () {
   setTimeout(() => {
     if (this[$vdomSymbol]) {
       // console.time('------$update')
-      let newNode = this.render()
+      let newNode = getRenderData(this)// this.render()
       let oldNode = this[$vdomSymbol]
       this[$vdomSymbol] = newNode
       this[$vdomSymbol]._rootId = this._rootId
@@ -265,14 +303,14 @@ function update () {
 }
 
 // 处理  已经初始化的组件，再次初始化问题 -- vue 非编译版本出现问题
-function delChildrenOriThatFromYam (child, context) {
-  if (!child) return child
-  if (child.getAttribute('dom') === 'com-' + context._tagName) {
-    return null
-  }
-  // return getOriDom(child)
-  return child
-}
+// function delChildrenOriThatFromYam (child, context) {
+//   if (!child) return child
+//   if (child.getAttribute && child.getAttribute('dom') === 'com-' + context._tagName) {
+//     return null
+//   }
+//   // return getOriDom(child)
+//   return child
+// }
 // 暂时保留，等待后续更优的解决方案
 // function getOriDom (child) {
 //   if (~child.tagName.indexOf('-')) {
