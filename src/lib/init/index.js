@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2019-09-27 19:16:41
+ * @LastEditTime: 2019-09-29 15:36:02
  */
 // import updateElement from '../vDom'
 import updateElement from '../diff/index'
@@ -165,10 +165,11 @@ function createdComponent () {
       // }
       // new wati
       let parentS = this[$closestParentSymbol]
+      if (!parentS) parentS = getComponentByElm(this.elm)
       while (!parentS._shadow && parentS[$closestParentSymbol]) {
         parentS = parentS[$closestParentSymbol]
       }
-      console.log('parentS', parentS)
+      // console.log('parentS', parentS)
       let nameStyle = parentS._shadow ? parentS.__shadowRoot._root : 'html'
       // parent.tagName === 'HTML' ? 'HTML' : parent._root ? parent._root : parent.parentNode ? parent.parentNode._root || parent.parentNode.host.tagName : 'HTML'
       if (!styleIsInstalled[nameStyle]) {
