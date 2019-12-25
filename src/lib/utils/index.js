@@ -5,6 +5,9 @@
  * @LastEditTime: 2019-10-08 17:43:42
  */
 import { global as window } from './global'
+import { $slotSymbol } from '../symbol'
+import { _createElementJson } from '../vDom/createElement'
+
 /**
  * [def 定义对象属性]
  * @param  {Object}  obj        对象
@@ -213,11 +216,30 @@ let requestIdleCallback = function (callback, timeOut) {
   // window.requestIdleCallback ? window.requestIdleCallback(callback, timeOut ? { timeout: timeOut } : {}) : callback()
 }
 // raf
-let requestAnimationFrame = function (callback, isNeed) {
+let requestAnimationFrame = function (callback, isNeed = true) {
+  // Promise.resolve().then(() => {
+  // callback()
+  // })
   callback()
   // !isNeed ? callback() : window.requestAnimationFrame ? window.requestAnimationFrame(callback) : callback()
 }
 let getCid = (value) => 'com-' + value
+
+// 添加slot
+let addSlot = function (child, slotAttr = 'default', cb = () => { }) {
+  !this[$slotSymbol] && (this[$slotSymbol] = {});
+  (this[$slotSymbol][slotAttr] = this[$slotSymbol][slotAttr] || []).push(child)
+  cb()
+}
+// 获取el com
+let getNewElment = function (child, tagname) {
+  let props = {}
+  child.getAttributeNames().forEach(v => {
+    props[v] = child.getAttribute(v)
+  })
+  tagname = tagname || (child.tagName && child.tagName.toLowerCase())
+  return _createElementJson(tagname, props, ...child.childNodes)
+}
 export {
   def,
   protoAugment,
@@ -243,6 +265,6 @@ export {
   info,
   requestIdleCallback,
   requestAnimationFrame,
-  getDomStyleFlag, getCid
-
+  getDomStyleFlag, getCid,
+  addSlot, getNewElment
 }

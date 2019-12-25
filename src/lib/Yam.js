@@ -1,8 +1,8 @@
 /*
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
- * @LastEditors: xuxueliang
- * @LastEditTime: 2019-11-14 10:01:29
+ * @LastEditors  : xuxueliang
+ * @LastEditTime : 2019-12-23 17:34:04
  */
 import init, { initConfig } from './init/index'
 import { canUseCustomElements } from './init/bolConf'
@@ -15,7 +15,7 @@ import BaseCustomElements from './BaseCustomElements'
 import { HTML_TAGS } from './vDom/creatConfig'
 import domOnLoad from './utils/domLoad'
 import { versionBate } from '../../package.json'
-var comps = window.comps = {}
+var comps = (window.comps = {})
 let hasCompsName = []
 let compsIds = 0
 let lifeCycleArray = Object.keys(lifeCycle)
@@ -61,24 +61,24 @@ class Yam {
     this.ChildComponentsManage && this.ChildComponentsManage.destory()
     //
     if (getClosetParentCom(this)) {
-      getClosetParentCom(this).ChildComponentsManage && getClosetParentCom(this).ChildComponentsManage.del(this._eid)
+      getClosetParentCom(this).ChildComponentsManage &&
+        getClosetParentCom(this).ChildComponentsManage.del(this._eid)
     }
   }
   // 会被覆盖的方法
   $config () {
-    return {
-    }
+    return {}
   }
   // 会被覆盖的方法
   $data () {
     return {}
   }
   // 会被覆盖的方法
-  $updated () {
-  }
+  $updated () {}
   // 渲染
   renderAt (el) {
     if (!this.isCustomElements) {
+      // if(el).
       this.elm = typeof el === 'string' ? document.querySelector(el) : el
       if (!this.elm || this.elm.isInited) return
       this.elm.isInited = true
@@ -96,9 +96,11 @@ class Yam {
       console.warn(`需要传入方法名`)
       return
     }
-    return (typeof this[fnName] === 'function' ? this[fnName](...params) : (() => {
-      console.warn(`该组件【${this._tagName}】没有这个方法:【${fnName}】`)
-    })(...params))
+    return typeof this[fnName] === 'function'
+      ? this[fnName](...params)
+      : (() => {
+        console.warn(`该组件【${this._tagName}】没有这个方法:【${fnName}】`)
+      })(...params)
   }
   // 触发父级方法
   emitProp (fnName, ...params) {
@@ -116,7 +118,8 @@ class Yam {
     } else {
       // 根组件 this.elm.getAttribute(fnName)
       let fn = getCallFnName(this, fnName)
-      let runfn = window[fn] || (this.elm['_runfn_'] ? this.elm['_runfn_'][fn] : null)
+      let runfn =
+        window[fn] || (this.elm['_runfn_'] ? this.elm['_runfn_'][fn] : null)
       if (fn && typeof runfn === 'function') {
         return runfn(...params)
       } else {
@@ -137,8 +140,9 @@ class Yam {
   addLifeCycleCallFn (lifeCycle, fn) {
     if (~lifeCycleArray.indexOf(lifeCycle)) {
       if (typeof fn === 'function') {
-        this.lifeCycleCall = this.lifeCycleCall || {};
-        (this.lifeCycleCall[lifeCycle + '_callfn'] = this.lifeCycleCall[lifeCycle + '_callfn'] || []).push(fn)
+        this.lifeCycleCall = this.lifeCycleCall || {}
+        ;(this.lifeCycleCall[lifeCycle + '_callfn'] =
+          this.lifeCycleCall[lifeCycle + '_callfn'] || []).push(fn)
       } else {
         console.warn(`
         要添加的组件周期回调必须是函数
@@ -155,7 +159,16 @@ Yam.getComsName = () => hasCompsName
 export default Yam
 // 注解 适配器
 export function Component (Config) {
-  let { tagName, shadow, style, props, customElements, canBeCalledExt, store, router } = Config
+  let {
+    tagName,
+    shadow,
+    style,
+    props,
+    customElements,
+    canBeCalledExt,
+    store,
+    router
+  } = Config
   hasCompsName.push(tagName)
   return function (Target) {
     Target._tagName = tagName
@@ -165,7 +178,8 @@ export function Component (Config) {
       this._name = toCamelCase(tagName)
       this._shadow = !!shadow || false
       this._props = props || []
-      this._canBeCalledExt = typeof canBeCalledExt === 'boolean' ? canBeCalledExt : false
+      this._canBeCalledExt =
+        typeof canBeCalledExt === 'boolean' ? canBeCalledExt : false
       this._cid = getCid(tagName)
       this._style = getStyleStr(this._cid, style)
       // store
@@ -189,7 +203,10 @@ export function Component (Config) {
     if (!cacheLib.get('com-' + tagName)) {
       cacheLib.set('com-' + tagName, Target)
     }
-    if ((customElements || typeof customElements === 'undefined') && canUseCustomElements) {
+    if (
+      (customElements || typeof customElements === 'undefined') &&
+      canUseCustomElements
+    ) {
       Target.customElements = true
       try {
         window.customElements.define(tagName, BaseCustomElements(Target))
@@ -200,9 +217,9 @@ export function Component (Config) {
       Target.customElements = false
       domOnLoad(() => {
         let doms = document.querySelectorAll(tagName)
-        forEach(doms, (node) => {
+        forEach(doms, node => {
           if (!node.isInited) {
-            (new Target()).renderAt(node)
+            new Target().renderAt(node)
           }
         })
       })
@@ -212,8 +229,7 @@ export function Component (Config) {
 }
 // 适配器 store
 export function store (Config) {
-  return function (Target) {
-  }
+  return function (Target) {}
 }
 console.log(`
     

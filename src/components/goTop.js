@@ -1,8 +1,8 @@
 /*
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
- * @LastEditors: xuxueliang
- * @LastEditTime: 2019-10-08 18:32:10
+ * @LastEditors  : xuxueliang
+ * @LastEditTime : 2019-12-23 17:44:59
  */
 import Yam, { Component } from '../lib/index'
 // import jsxp from 'jsx-parser'
@@ -79,9 +79,12 @@ export default Component({
   getTimer () {
     if (this.index == 1) {
       return <MyTimer ref={ (c) => { this.mytime = c } }>
-        < p > 我是时间 - 2</p >
+        <p> 我是时间 - 2</p>
         <p class='times' slot='aaa'>我是时间-11112</p>
-        <show-demo slot='bottom'></show-demo>
+        <test-show slot='bottom'>222222
+          <test-show slot='top'>3333
+          </test-show>
+        </test-show>
       </MyTimer >
     }
     return ''
@@ -92,7 +95,7 @@ export default Component({
   render () {
     return (
       <div className='asd' >
-        <show-demo title='bottom'></show-demo>
+        <test-show title='bottom'>11111</test-show>
         <div onClick={ this.goT.bind(this) }>去timer</div>
         <div onClick={ this.switch.bind(this, -1) }>点击{ this.$store.width }</div>
         { this.index == 1 ? <slot></slot> : '' }

@@ -1,23 +1,23 @@
 /*
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
- * @LastEditors: xuxueliang
- * @LastEditTime: 2019-11-14 14:33:38
+ * @LastEditors  : xuxueliang
+ * @LastEditTime : 2019-12-23 19:31:40
  */
 /** @jsx createElement */
 import { HTML_TAGS, GLOBAL_ATTRIBUTES, EVENT_HANDLERS } from './creatConfig'
 import nodeOps from '../utils/nodeOps'
-import { forEach, toCamelCase, getCid } from '../utils/index'
+import { forEach, toCamelCase, getCid, addSlot } from '../utils/index'
 import { getCallFnName, getComponentMark, setComponentForElm, getComponentByElm, getparentCom } from '../utils/componentUtil'
 import { $slotSymbol } from '../symbol/index'
-import cacheLib from '../utils/cacheLib'
+// import cacheLib from '../utils/cacheLib'
 // eslint-disable-next-line no-extend-native
 Array.prototype.flat = Array.prototype.flat || function () {
   return this.reduce((acc, val) => Array.isArray(val) ? acc.concat(val.flat()) : acc.concat(val), [])
 }
 // let i = 0
 class Element {
-  constructor(tagName, props = {}, childNodes, _root, isText) {
+  constructor (tagName, props = {}, childNodes, _root, isText) {
     if (isText) {
       this.tagName = tagName
       this.props = props
@@ -48,6 +48,7 @@ class Element {
         }
         return v
       })
+      // console.log(this[$slotSymbol])
       const tag = HTML_TAGS[this.tagName] || this.tagName
       const object = typeof tag === 'object'
       const tagClass = typeof tag === 'function'
@@ -71,7 +72,7 @@ class Element {
     let mark = null
     domFlag = domFlag || getCid(this._root) || (mark = getComponentMark(parentELm), getCid(mark._tagName))
     let el = null
-    let slot = []
+    // let slot = []
     // 自定义webcomponent
 
     if (this.needClass) {
@@ -79,9 +80,19 @@ class Element {
       // 回调
       cacheDom._parentNode = parentELm
       cacheDom._parentElement = parentELm
+      // console.log('slot-render', this.childNodes)
       // fix 隐藏 component 使用方法调用
       //  eslint-disable-next-line new-cap
       let component = new this.class()
+      // new 20191223 处理组件内部的slot
+      // console.log('components-slot', slot, this)
+      forEach(this.childNodes, (v) => {
+        if (v instanceof Element) {
+          addSlot.call(component, v, v.props.slot)
+        } else {
+          addSlot.call(component, v, v.getAttribute('slot'))
+        }
+      })
       component.props = this.props
       component.renderAt(cacheDom)
       setComponentForElm(cacheDom, component)
@@ -105,12 +116,20 @@ class Element {
         // 20191114
         // 处理slot新的形式
         let mark = getparentCom(parentELm)
-        // console.log(mark)
+        console.log(mark)
         let slotKey = this.props.name || 'default'
         // el.setAttribute('tag', 'slot')
-        if (mark[$slotSymbol][slotKey]) {
+        if (mark[$slotSymbol] && mark[$slotSymbol][slotKey]) {
           forEach(mark[$slotSymbol][slotKey], (v) => {
-            el.appendChild(v)
+            if (v instanceof Element) {
+              el.appendChild(v.render())
+            } else {
+              if (v._isComponent) {
+                el.appendChild(v.cloneNode(true))
+              } else {
+                el.appendChild(v)
+              }
+            }
           })
         }
         // el.isBelong = mark._name
@@ -123,7 +142,7 @@ class Element {
       el._parentNode = parentELm
       el._parentElement = parentELm
     }
-    slot = el.querySelectorAll('[tag=slot]')
+    // slot = el.querySelectorAll('[tag=slot]') // 由新的slot 机制代替
     // el.props = this.props
     if (this.props && this.tagName !== 'slot') {
       Object.keys(this.props).forEach(prop => {
@@ -160,14 +179,14 @@ class Element {
             const value = styles[prop]
             if (typeof value === 'number') {
               if (prop !== 'zIndex') {
-                el.style[prop] = `${ value }px`
+                el.style[prop] = `${value}px`
               } else {
-                el.style[prop] = `${ value }`
+                el.style[prop] = `${value}`
               }
             } else if (typeof value === 'string') {
               el.style[prop] = value
             } else {
-              throw new Error(`Expected "number" or "string" but received "${ typeof value }"`)
+              throw new Error(`Expected "number" or "string" but received "${typeof value}"`)
             }
           })
         } else {
@@ -175,26 +194,33 @@ class Element {
         }
       }
     }
-    if (slot.length) {
-      forEach(slot, (v) => {
-        setSlotState(getComponentByElm(el), v.getAttribute('name'), false)
-      })
-    }
+    // if (slot.length) {
+    //   forEach(slot, (v) => {
+    //     setSlotState(getComponentByElm(el), v.getAttribute('name'), false)
+    //   })
+    // }
 
     // 组件内部使用
-    if (slot.length && this.childNodes) {
-      this.rand = this.rand || Math.random()
-      el.rand = this.rand
-      cacheLib.set(this._name + 'slot-' + this.rand, this.childNodes)
-      let coms = getComponentByElm(el)
-      if (el.beforeDisconnectedCallback) {
-        coms.addDestory(() => {
-          cacheLib.del(this._name + 'slot-' + this.rand)
-        })
-      }
-      // 检测插槽 是否有内容填充
-      coms = null
-    }
+    // if (slot.length && this.childNodes) {
+    // new
+    // let coms = getComponentByElm(el)
+    // console.log('components-slot', slot, this)
+    // forEach(this.childNodes, (v) => {
+    //   addSlot.call(coms, v, v.props.slot)
+    // })
+    // old
+    // this.rand = this.rand || Math.random()
+    // el.rand = this.rand
+    // cacheLib.set(this._name + 'slot-' + this.rand, this.childNodes)
+    // let coms = getComponentByElm(el)
+    // if (el.beforeDisconnectedCallback) {
+    //   coms.addDestory(() => {
+    //     cacheLib.del(this._name + 'slot-' + this.rand)
+    //   })
+    // }
+    // // 检测插槽 是否有内容填充
+    // coms = null
+    // }
     // 处理组件在最顶层时 slot 情况
     // let comsOri = getparentCom(parentELm._parentElement)
     // if (comsOri && comsOri[$slotSymbol].length) {
@@ -212,10 +238,17 @@ class Element {
     // fix 简单组件渲染时 获取不到slot
     // 渲染子组件
     this.childNodes.forEach((child, key) => {
-      // 优化若是null 就不进行下一步操作了
-      let newParents = getRenderElmBySlot(slot, child, el)
+      let newParents = el.isComponent ? null : el // getRenderElmBySlot(slot, child, el) 已经舍去
       if (newParents) {
-        nodeOps.appendChild(newParents, child.render(key, el))
+        if (child instanceof Element) {
+          // 优化若是null 就不进行下一步操作了
+          if (newParents) {
+            // console.log('appendChild:nodeOps.default.appendChild', nodeOps.appendChild)
+            nodeOps.appendChild(newParents, child.render(key, el))
+          }
+        } else {
+          nodeOps.appendChild(newParents, child)
+        }
       }
     })
     if (this.tagName === 'slot') {
@@ -268,76 +301,76 @@ function doAfterSlotUpdate (el, context, rand, parentCom) {
 }
 */
 // 修改 slot状态
-function setSlotState (coms, name, hasSlothContent) {
-  // 修复 不存在coms时
-  if (!coms) {
-    return
-  }
-  // 标注slot是否有东西
-  coms.$slot = coms.$slot || {}
-  if (name) {
-    coms.$slot[name] = hasSlothContent
-  } else {
-    coms.$slot[0] = hasSlothContent
-  }
-}
-// 添加 组件内slot 区分；slot不能越级渲染,越级渲染只是处在顶层组件中
-function getRenderElmBySlot (slot, child, el, slotBelong = null) {
-  // 先获取 slot所属一样的
-  if (slot.length) {
-    let slotName = child.props ? child.props.slot : child.attributes ? child.getAttribute('slot') : false
-    if (slotName) {
-      let l = 0
-      // eslint-disable-next-line no-cond-assign
-      for (let i = 0, v; v = slot[i]; i++) {
-        if (slotBelong && slotBelong !== v.isBelong) {
-          continue
-        }
-        l++
-        if ((!slotBelong || l > 1) && !v.getAttribute('name')) {
-          console.warn(`
-          当 【slot】 多于一个的时候，必须要用name区分开，
+// function setSlotState (coms, name, hasSlothContent) {
+//   // 修复 不存在coms时
+//   if (!coms) {
+//     return
+//   }
+//   // 标注slot是否有东西
+//   coms.$slot = coms.$slot || {}
+//   if (name) {
+//     coms.$slot[name] = hasSlothContent
+//   } else {
+//     coms.$slot[0] = hasSlothContent
+//   }
+// }
+// 添加 组件内slot 区分；slot不能越级渲染,越级渲染只是处在顶层组件中 ---- 舍去
+// function getRenderElmBySlot (slot, child, el, slotBelong = null) {
+//   // 先获取 slot所属一样的
+//   if (slot.length) {
+//     let slotName = child.props ? child.props.slot : child.attributes ? child.getAttribute('slot') : false
+//     if (slotName) {
+//       let l = 0
+//       // eslint-disable-next-line no-cond-assign
+//       for (let i = 0, v; v = slot[i]; i++) {
+//         if (slotBelong && slotBelong !== v.isBelong) {
+//           continue
+//         }
+//         l++
+//         if ((!slotBelong || l > 1) && !v.getAttribute('name')) {
+//           console.warn(`
+//           当 【slot】 多于一个的时候，必须要用name区分开，
 
-          否则将在【slot】出现改动的时候会时【slot】渲染出错
+//           否则将在【slot】出现改动的时候会时【slot】渲染出错
 
-          >> 位于 【${v.isBelong }】 组件内
-          `)
-        }
-        if (v.getAttribute('name') === slotName) {
-          setSlotState(getComponentByElm(el), slotName, true)
-          return v
-        }
-      }
-      // 修改成 若指定了 slot 必须渲染到改slot里
-      return null
-    } else {
-      let l = []
-      // eslint-disable-next-line no-cond-assign
-      for (let i = 0, v; v = slot[i]; i++) {
-        if (slotBelong && slotBelong !== v.isBelong) {
-          continue
-        }
-        l.push(v)
-        if ((!slotBelong || l.length > 1) && !v.getAttribute('name')) {
-          console.warn(`
-          当 【slot】 多于一个的时候，必须要用name区分开，
+//           >> 位于 【${v.isBelong}】 组件内
+//           `)
+//         }
+//         if (v.getAttribute('name') === slotName) {
+//           setSlotState(getComponentByElm(el), slotName, true)
+//           return v
+//         }
+//       }
+//       // 修改成 若指定了 slot 必须渲染到改slot里
+//       return null
+//     } else {
+//       let l = []
+//       // eslint-disable-next-line no-cond-assign
+//       for (let i = 0, v; v = slot[i]; i++) {
+//         if (slotBelong && slotBelong !== v.isBelong) {
+//           continue
+//         }
+//         l.push(v)
+//         if ((!slotBelong || l.length > 1) && !v.getAttribute('name')) {
+//           console.warn(`
+//           当 【slot】 多于一个的时候，必须要用name区分开，
 
-          否则将在【slot】出现改动的时候会时【slot】渲染出错
+//           否则将在【slot】出现改动的时候会时【slot】渲染出错
 
-          >> 位于 【${v.isBelong }】 组件内
-          `)
-        }
-      }
-      // 修复 只有一个slot且存在name时没有指定slot值不再渲染
-      if (l.length === 1 && !l[0].getAttribute('name')) {
-        return l[l.length - 1]
-      }
-    }
-    return null
-  }
-  // 优化 若是组件没有slot将不渲染
-  return el.isComponent ? null : el
-}
+//           >> 位于 【${v.isBelong} 】 组件内
+//           `)
+//         }
+//       }
+//       // 修复 只有一个slot且存在name时没有指定slot值不再渲染
+//       if (l.length === 1 && !l[0].getAttribute('name')) {
+//         return l[l.length - 1]
+//       }
+//     }
+//     return null
+//   }
+//   // 优化 若是组件没有slot将不渲染
+//   return el.isComponent ? null : el
+// }
 
 export function renderElement (dom) {
   return (dom instanceof Element)

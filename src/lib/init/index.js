@@ -1,17 +1,19 @@
 /*
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
- * @LastEditors: xuxueliang
- * @LastEditTime: 2019-11-14 14:30:36
+ * @LastEditors  : xuxueliang
+ * @LastEditTime : 2019-12-23 20:40:23
  */
-// import updateElement from '../vDom'
+import { _createElementJson } from '../vDom/createElement'
+
 import updateElement from '../diff/index'
-import { creatMutationObserser, setAttributes, forEach, log, isFalse, getDomStyleFlag } from '../utils/index'
+import { creatMutationObserser, setAttributes, forEach, log, isFalse, getDomStyleFlag, addSlot, getNewElment } from '../utils/index'
 import { getCallFnName, syncComponentMark, setComponentForElm, getComponentByElm, setClosetParentCom } from '../utils/componentUtil'
 import nodeOps from '../utils/nodeOps'
 import lifeCycle from './lifeCycle'
 import Destory from './destory'
 import ChildComponentsManage from './childComponentsManage'
+import { HTML_TAGS } from '../vDom/creatConfig'
 import { $vdomSymbol, $componentDataSymbol, $closestParentSymbol, $slotSymbol } from '../symbol/index'
 
 // 初始化 init
@@ -37,20 +39,38 @@ function _init () {
 function create () {
   if (this.elm) {
     // 新的处理slot
-    this[$slotSymbol] = {}
-    let slotSymbolLength = 0
+    this[$slotSymbol] = this[$slotSymbol] || {}
+    // 处理是和否有keeplive - 保持组件的内部的协调性
+    // console.log('keeplive', this)
     if (this.elm.children.length) {
       // eslint-disable-next-line no-cond-assign
       for (var j = 0, child; child = this.elm.childNodes[j];) {
-        let slotAttr = child.getAttribute && child.getAttribute('slot')
-        if (slotAttr) {
-          (this[$slotSymbol][slotAttr] = this[$slotSymbol][slotAttr] || (++slotSymbolLength && [])).push(child)
-        } else {
-          (this[$slotSymbol]['default'] = this[$slotSymbol]['default'] || (++slotSymbolLength && [])).push(child)
+        let slotAttr = (child.getAttribute && child.getAttribute('slot')) || undefined
+        let tagname = child.tagName && child.tagName.toLowerCase()
+        if (tagname && HTML_TAGS[tagname] && typeof HTML_TAGS[tagname] === 'object' && HTML_TAGS[tagname].isComponent) {
+          // let props = {}
+          // child.getAttributeNames().forEach(v => {
+          //   props[v] = child.getAttribute(v)
+          // })
+          // console.log(child)
+          // // child._ori = child
+          // let newCom = _createElementJson(tagname, props, ...child.childNodes)
+          let newCom = getNewElment(child, tagname)
+          newCom._ori = child
+          newCom._isComponent = true
+          child = newCom
+          console.log('getAttributeNames1', newCom._ori.childNodes)
         }
+        addSlot.call(this, child, slotAttr)
+        // 移除
+        // if (slotAttr) {
+        //   (this[$slotSymbol][slotAttr] = this[$slotSymbol][slotAttr] || ([])).push(child)
+        // } else {
+        //   (this[$slotSymbol]['default'] = this[$slotSymbol]['default'] || ([])).push(child)
+        // }
         // 设置 isRemovedBySlot 处理外环境使用slot嵌套组件
         child.isRemovedBySlot = true
-        nodeOps.removeChild(this.elm, child)
+        nodeOps.removeChild(this.elm, child._ori || child)
         // this.elm.removeChild(child)
       }
       // forEach(this.elm.childNodes, (v) => {
@@ -58,7 +78,7 @@ function create () {
 
       // })
     }
-    this[$slotSymbol]['length'] = slotSymbolLength
+    this[$slotSymbol]['length'] = Object.keys(this[$slotSymbol]).length
     // this.elm.children = []
     // 现在都走这个
     // this._childrenOri = this.elm.children.length ? map(this.elm.children, (v) => delChildrenOriThatFromYam(v, this)) : undefined
@@ -97,7 +117,7 @@ function create () {
           _update(this)
         }
       }, { attributeFilter: this._props })
-      // 绑定 原声元素上的方法
+      // 绑定 原生元素上的方法
       forEach(this.elm.attributes, (v) => {
         if (typeof window[v.value] === 'function') {
           this.elm._runfn_ = this.elm._runfn_ || {}
@@ -126,7 +146,11 @@ function create () {
         }
       }
       // 绑定 移除事件
-      this.elm.parentNode.addEventListener('DOMNodeRemoved', handle, false)
+      if (this.elm.parentNode) {
+        this.elm.parentNode.addEventListener('DOMNodeRemoved', handle, false)
+      } else {
+        console.log(this.elm)
+      }
     }
   }
   Object.keys(data).forEach(key => {
@@ -181,8 +205,8 @@ function createdComponent () {
     } else {
       this.__shadowRoot = this.elm
       nodeOps.appendChild(this.elm, getFram.call(this))
-      // let parent = this.elm
-      console.log(this[$closestParentSymbol], this)
+      // // let parent = this.elm
+      // console.log(this[$closestParentSymbol], this)
       // ori
       // while ((parent.parentElement || parent._parentElement) && parent.nodeType !== 11) {
       //   parent = parent.parentNode || parent._parentNode

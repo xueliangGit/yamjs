@@ -1,0 +1,12 @@
+.tabs-group{
+  display flex
+  align-items center
+  justify-content center
+}
+.tabs{
+  flex 1 auto
+  text-align center
+  &.active{
+    border-bottom 1px solid #000
+    }
+}

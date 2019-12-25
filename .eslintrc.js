@@ -1,8 +1,8 @@
 /*
  * @Author: xuxueliang
  * @Date: 1984-01-24 16:00:00
- * @LastEditors: xuxueliang
- * @LastEditTime: 2019-09-18 20:39:03
+ * @LastEditors  : xuxueliang
+ * @LastEditTime : 2019-12-19 15:28:32
  */
 // https://eslint.org/docs/user-guide/configuring
 
@@ -34,6 +34,7 @@ module.exports = {
     // allow async-await
     'react/no-string-refs': 'off',
     'generator-star-spacing': 'off',
+    'template-curly-spacing': 'off',
     // allow debugger during development
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     // 'vue/no-parsing-error': [2, { 'x-invalid-end-tag': false }],

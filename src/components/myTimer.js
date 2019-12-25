@@ -52,7 +52,7 @@ class App extends Yam {
           <Hour callFn={this.showP.bind(this)} className='min' hour={this.mins} step='60' width='280' />
           <Hour callFn={this.showP.bind(this)} className='sce' hour={this.sec} step='60' width='350' />
         </div>
-        <div> <slot name='bottom' /></div>
+        <div className='bottom'> <slot name='bottom' /></div>
       </div>
     )
   }

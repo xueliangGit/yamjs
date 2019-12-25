@@ -11,9 +11,9 @@ export default function RouterFactory (conf) {
     history: []
   }
   /**
- * 需要在一个地方统一声明一些状态，在组件内部都可以使用
- *
- * */
+   * 需要在一个地方统一声明一些状态，在组件内部都可以使用
+   *
+   * */
   class Router {
     constructor (routerConf = {}) {
       this.name = 'Router'
@@ -22,9 +22,13 @@ export default function RouterFactory (conf) {
       this.Conf = Object.assign({ mode: 'hash' }, routerConf.conf)
       this.init(routerConf.routes)
       let routerView = document.getElementsByTagName('router-view')[0]
-      changeFnCache.push((e) => {
+      changeFnCache.push(e => {
         let current = getCurrent()
-        this.current = Object.assign({}, this.pathConf[current.path] || {}, current)
+        this.current = Object.assign(
+          {},
+          this.pathConf[current.path] || {},
+          current
+        )
         routerView && routerView.updateView && routerView.updateView(e)
       })
     }
@@ -33,7 +37,12 @@ export default function RouterFactory (conf) {
       if (type_ === 'object') {
         init(this, option)
       } else {
-        console.warn(new Error('使用state.setConfig函数去设置页面跳转需要 传入{}对象，而不是' + type_))
+        console.warn(
+          new Error(
+            '使用state.setConfig函数去设置页面跳转需要 传入{}对象，而不是' +
+              type_
+          )
+        )
       }
     }
     push (routeObj) {
@@ -69,7 +78,7 @@ export default function RouterFactory (conf) {
       return this
     }
     install (target) {
-      target.addAuto('router', (context) => {
+      target.addAuto('router', context => {
         context.$router = this
       })
     }
@@ -120,7 +129,7 @@ function setCurrent (context, obj) {
 }
 function init (context, option) {
   // 获取本页页面名字
-  let current = context.current = getCurrent()
+  let current = (context.current = getCurrent())
   console.log('current', current)
   /* 写入页面简单路由配置到缓存 */
   option.forEach(v => {
@@ -160,6 +169,4 @@ function _hashChangFun (e) {
 }
 window.addEventListener('hashchange', _hashChangFun)
 // 添加声明周期 routerEnter，routerLeave
-function $beforeRouterEnter () {
-
-}
+function $beforeRouterEnter () {}

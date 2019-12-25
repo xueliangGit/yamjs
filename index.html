@@ -1,8 +1,8 @@
 <!--
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
- * @LastEditors: xuxueliang
- * @LastEditTime: 2019-11-14 14:16:06
+ * @LastEditors  : xuxueliang
+ * @LastEditTime : 2019-12-19 15:32:55
  -->
 <!DOCTYPE html>
 <html lang="en">
@@ -18,7 +18,8 @@
   </head>
 
   <body>
-    <test-show>
+    <switch-tab tabs='a,b'></switch-tab>
+    <test-show keeplive=true>
       11111
       <p>asdasd</p>
       <div slot='top'>大 sad sad sad 说1</div>
@@ -26,7 +27,11 @@
       <div slot='top'>大 sad sad sad 说2</div>
       <test-show slot='top'>
           4444
-          <div slot='top'>大 sad sad sad 说2</div>
+          <div onclick="showInfo()" slot='top'>大 sad sad sad 说3</div>
+          <test-show slot='top'>
+            5555
+            <div onclick="showInfo()" slot='top'>大 sad sad sad 说4</div>
+          </test-show>
         </test-show>
     </test-show>
     <!-- <mis-list></mis-list>
@@ -43,6 +48,10 @@
     <p id="showinfo"></p>
     <data-picker id="datePicker" change="fun" showZg="true"></data-picker>
     <script>
+      function showInfo(){
+        console.log('asdasd')
+      }
+
       function fun() {
         console.log(arguments);
         showinfo.innerText = arguments[0];

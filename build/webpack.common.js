@@ -1,8 +1,8 @@
 /*
  * @Author: xuxueliang
  * @Date: 2019-04-09 14:52:29
- * @LastEditors: xuxueliang
- * @LastEditTime: 2019-08-19 17:07:36
+ * @LastEditors  : xuxueliang
+ * @LastEditTime : 2019-12-19 15:37:19
  */
 // webpack.common.js
 const path = require('path')
@@ -27,8 +27,8 @@ module.exports = {
   entry: {
     index: './src/index.js'
   },
-
   resolve: {
+    modules: ['node_modules', 'src/lib'],
     extensions: ['.js', '.vue', '.json', '.css', '.scss', 'styl'], // 添加在此的后缀所对应的文件可以省略后缀
     alias: {
       // 'vue$': 'vue/dist/vue.esm.js',

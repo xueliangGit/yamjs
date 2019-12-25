@@ -1,8 +1,8 @@
 /*
  * @Author: xuxueliang
  * @Date: 2019-04-09 14:57:14
- * @LastEditors: xuxueliang
- * @LastEditTime: 2019-08-14 19:54:52
+ * @LastEditors  : xuxueliang
+ * @LastEditTime : 2019-12-19 15:33:39
  */
 // webpack.prod.js
 const merge = require('webpack-merge')
@@ -21,6 +21,7 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPl
 
 module.exports = merge(common, {
   mode: 'production',
+  
   output: {
     // filename: 'js/[name].[chunkhash].bundle.js',
     filename: 'js/yam.min.js',

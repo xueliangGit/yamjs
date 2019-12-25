@@ -614,6 +614,8 @@ Yam.use(store);
 
 > #### TODO
 
+- slot 支持live和offlive 是否持续渲染；记录状态；
+
 - page-offline
 - 添加 fetch 扩展
 
