@@ -1,8 +1,8 @@
 /*
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
- * @LastEditors: xuxueliang
- * @LastEditTime: 2019-09-17 18:19:59
+ * @LastEditors  : xuxueliang
+ * @LastEditTime : 2020-01-06 00:12:48
  */
 
 declare class Yam {
@@ -104,7 +104,17 @@ declare class Yam {
     /**
      * 修改一个值
      * */
-    commit(fnNameOrstate, ...params)
+    commit (fnNameOrstate, ...params)
+
+    /**
+     * 从新播放commit的记录
+     * */
+    replay ()
+    
+     /**
+     * 回到现在的commit
+     * */
+    reset ()
   }
 }
 /**
