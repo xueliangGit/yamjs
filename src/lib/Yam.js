@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors  : xuxueliang
- * @LastEditTime : 2019-12-23 17:34:04
+ * @LastEditTime : 2020-01-05 11:27:58
  */
 import init, { initConfig } from './init/index'
 import { canUseCustomElements } from './init/bolConf'
@@ -21,7 +21,7 @@ let compsIds = 0
 let lifeCycleArray = Object.keys(lifeCycle)
 @Mix()
 class Yam {
-  constructor () {
+  constructor() {
     this._eid = guid2()
     initConfig.call(this)
     this._config && this._config()
@@ -74,7 +74,7 @@ class Yam {
     return {}
   }
   // 会被覆盖的方法
-  $updated () {}
+  $updated () { }
   // 渲染
   renderAt (el) {
     if (!this.isCustomElements) {
@@ -99,7 +99,7 @@ class Yam {
     return typeof this[fnName] === 'function'
       ? this[fnName](...params)
       : (() => {
-        console.warn(`该组件【${this._tagName}】没有这个方法:【${fnName}】`)
+        console.warn(`该组件【${ this._tagName }】没有这个方法:【${ fnName }】`)
       })(...params)
   }
   // 触发父级方法
@@ -140,8 +140,8 @@ class Yam {
   addLifeCycleCallFn (lifeCycle, fn) {
     if (~lifeCycleArray.indexOf(lifeCycle)) {
       if (typeof fn === 'function') {
-        this.lifeCycleCall = this.lifeCycleCall || {}
-        ;(this.lifeCycleCall[lifeCycle + '_callfn'] =
+        this.lifeCycleCall = this.lifeCycleCall || {};
+        (this.lifeCycleCall[lifeCycle + '_callfn'] =
           this.lifeCycleCall[lifeCycle + '_callfn'] || []).push(fn)
       } else {
         console.warn(`
@@ -150,7 +150,7 @@ class Yam {
       }
     } else {
       console.warn(`
-      要添加的组件周期回调的参数，只能是${lifeCycle.join(',')}，请检查
+      要添加的组件周期回调的参数，只能是${lifeCycle.join(',') }，请检查
       `)
     }
   }
@@ -229,11 +229,11 @@ export function Component (Config) {
 }
 // 适配器 store
 export function store (Config) {
-  return function (Target) {}
+  return function (Target) { }
 }
 console.log(`
     
-    Bate-${versionBate} for this version of yamjs, 
+    Bate-${versionBate } for this version of yamjs, 
     
     that is a baseComponet for html and can run in html or Vue or reactjs
     

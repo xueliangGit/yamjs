@@ -37,72 +37,72 @@ YamJS 是一个针对 html 的开发的一个组件基类，让你开发一个�
 一个简单的组件构成
 
 ```js
-import Yam, { Component } from "../lib/index";
-import MyTimer from "./myTimer";
+import Yam, { Component } from '../lib/index'
+import MyTimer from './myTimer'
 @Component({
-  tagName: "go-top",
-  style: require("./goTop.stylus"),
+  tagName: 'go-top',
+  style: require('./goTop.stylus'),
   shadow: true,
   customElements: true,
-  props: ["msg"]
+  props: ['msg']
 })
 class App extends Yam {
   $data() {
     return {
       list: [0, 12, 2, 3],
       index: 1
-    };
+    }
   }
   $beforeCreate() {
-    console.log("-----beforeCreate");
+    console.log('-----beforeCreate')
   }
   $created() {
-    console.log("-----created");
+    console.log('-----created')
   }
   $beforeMount() {
-    console.log("-----beforeMount");
+    console.log('-----beforeMount')
   }
   $mounted() {
-    console.log("-----mounted");
+    console.log('-----mounted')
   }
   $beforeDestroyed() {
-    console.log("-----beforeMount");
+    console.log('-----beforeMount')
   }
   $destroyed() {
-    console.log("-----destroyed");
+    console.log('-----destroyed')
   }
   $beforeUpdate() {
-    console.log("-----beforeUpdate");
+    console.log('-----beforeUpdate')
   }
   $updated() {
-    console.log("-----updated");
+    console.log('-----updated')
   }
   show(v) {
-    this.$router.show();
+    this.$router.show()
     // console.log(v)
   }
   showList() {
-    return this.list.map(v => <li>{v}</li>);
+    return this.list.map(v => <li>{v}</li>)
   }
   switch(i) {
     // this.emit('ad')
     // console.log(this.$refs.mytim)
-    this.$refs.mytim.showP();
+    this.$refs.mytim.showP()
     // this.index = i
   }
   childEmit(i) {
-    console.log(`子组件传来信息` + i);
-    console.log(this);
+    console.log(`子组件传来信息` + i)
+    console.log(this)
   }
   getList() {
     // 渲染其他组件方式
     return (
       <MyTimer
-        msgTime={123 + "" + this.index}
+        msgTime={123 + '' + this.index}
         ref="mytim"
         showFn={this.showList.bind(this)}
       />
-    );
+    )
   }
   render() {
     return (
@@ -116,10 +116,10 @@ class App extends Yam {
         {this.getList()}
         <div />
       </div>
-    );
+    )
   }
 }
-export default App;
+export default App
 ```
 
 引入基类`Yam` 和注解`Component`
@@ -153,11 +153,11 @@ export default App;
 
       ```html
       <style>
-        [dom="com_go-top"] div {
+        [dom='com_go-top'] div {
           height: 100%;
           font-weight: bold;
         }
-        [dom="com_go-top"] a {
+        [dom='com_go-top'] a {
           display: inline-block;
         }
       </style>
@@ -277,13 +277,13 @@ dom 数据更新是仅仅在`$data`设定以及注解里`prop`设定的值改变
     </script>
     <script>
       // 组件内部
-      import Yam, { Component } from "../lib/index";
+      import Yam, { Component } from '../lib/index'
       @Component({
-        tagName: "date-picker"
+        tagName: 'date-picker'
       })
       class App extends Yam {
         update() {
-          this.emitProp("change");
+          this.emitProp('change')
         }
       }
       //...
@@ -301,32 +301,32 @@ dom 数据更新是仅仅在`$data`设定以及注解里`prop`设定的值改变
     <script>
       //组件外部
       new Vue({
-        el: "App",
+        el: 'App',
         mounted: () => {
           if (this.$refs.datePicker.isInited) {
-            this.$refs.datePicker.emit("addWatcher", "change", e => {
-              console.log(e);
-            });
+            this.$refs.datePicker.emit('addWatcher', 'change', e => {
+              console.log(e)
+            })
           } else {
             this.$refs.datePicker.onReady = function() {
-              this.emit("addWatcher", "change", e => {
-                console.log(e);
-              });
-            };
+              this.emit('addWatcher', 'change', e => {
+                console.log(e)
+              })
+            }
           }
         }
-      });
+      })
       // react 类似
     </script>
     <script>
       // 组件内部
-      import Yam, { Component } from "../lib/index";
+      import Yam, { Component } from '../lib/index'
       @Component({
-        tagName: "date-picker"
+        tagName: 'date-picker'
       })
       class App extends Yam {
         update() {
-          this.emitProp("change");
+          this.emitProp('change')
         }
       }
       //...
@@ -358,47 +358,47 @@ dom 数据更新是仅仅在`$data`设定以及注解里`prop`设定的值改变
 框架一个静态方法`Yam.use`用来安装扩展，用法如下
 
 ```js
-import Yam from "../lib/Yam";
-import animate from "../lib/plugins/animate";
-Yam.use(animate);
+import Yam from '../lib/Yam'
+import animate from '../lib/plugins/animate'
+Yam.use(animate)
 ```
 
 ```js
 //animate.js
 export default {
-  name: "animate",
-  needs: ["tolls"],
+  name: 'animate',
+  needs: ['tolls'],
   install: function(terget) {
-    terget.addPrototype("fadeOut", function(duration = 300) {
+    terget.addPrototype('fadeOut', function(duration = 300) {
       const keyframes = [
-        { opacity: 1, marginTop: "0" },
-        { opacity: 0, marginTop: "50px" }
-      ];
-      return _animate.call(this, keyframes, duration).finished;
-    });
-    terget.addPrototype("fadeIn", function(duration = 300) {
+        { opacity: 1, marginTop: '0' },
+        { opacity: 0, marginTop: '50px' }
+      ]
+      return _animate.call(this, keyframes, duration).finished
+    })
+    terget.addPrototype('fadeIn', function(duration = 300) {
       const keyframes = [
-        { opacity: 0, marginTop: "50px" },
-        { opacity: 1, marginTop: "0px" }
-      ];
-      return _animate.call(this, keyframes, duration).finished;
-    });
+        { opacity: 0, marginTop: '50px' },
+        { opacity: 1, marginTop: '0px' }
+      ]
+      return _animate.call(this, keyframes, duration).finished
+    })
   }
-};
+}
 function _animate(keyframes, duration) {
-  console.log(this);
+  console.log(this)
   for (let i in keyframes[0]) {
-    this.elm.style[i] = keyframes[0][i];
+    this.elm.style[i] = keyframes[0][i]
   }
-  this.elm.style.display = "block";
-  this.elm.style.transition = duration + "ms";
+  this.elm.style.display = 'block'
+  this.elm.style.transition = duration + 'ms'
   for (let i in keyframes[1]) {
-    this.elm.style[i] = keyframes[1][i];
+    this.elm.style[i] = keyframes[1][i]
   }
   setTimeout(() => {
-    this.elm.style.transition = "";
-  }, duration);
-  return {};
+    this.elm.style.transition = ''
+  }, duration)
+  return {}
 }
 ```
 
@@ -410,11 +410,11 @@ function _animate(keyframes, duration) {
 
 ```js
 let plugin = {
-  name: "",
+  name: '',
   install: target => {
-    terget.addPrototype("fadeIn", function() {});
+    terget.addPrototype('fadeIn', function() {})
   }
-};
+}
 ```
 
 - `name`
@@ -448,18 +448,18 @@ let plugin = {
 - `methods`是自定义方法集，是在`store.commit()`的时候触发
 
 ```js
-import Store from "../lib/plugins/store";
+import Store from '../lib/plugins/store'
 export default new Store({
   state: {
     width: 500
   },
   methods: {
     updateWidth(state, params) {
-      console.log(params);
-      state.width = params;
+      console.log(params)
+      state.width = params
     }
   }
-});
+})
 ```
 
 2. 使用状态管理，
@@ -467,11 +467,11 @@ export default new Store({
 - 非全局使用时，是在注解（适配器）Component 内声明使用，
 
 ```js
-import Yam, { Component } from "../lib/index";
-import store from "./store";
+import Yam, { Component } from '../lib/index'
+import store from './store'
 @Component({
-  tagName: "my-timer",
-  style: require("./myTimers.stylus"),
+  tagName: 'my-timer',
+  style: require('./myTimers.stylus'),
   canBeCalledExt: false,
   store: store,
   props: []
@@ -482,9 +482,9 @@ class App extends Yam {}
 - 全局使用时，直接在公共 js 处用`yam.use`方法使用，这样每个组件都会接受状态的监管，一旦状态改变时，所有组件都会进行更新。
 
 ```js
-import Yam from "../lib/index";
-import store from "./store";
-Yam.use(store);
+import Yam from '../lib/index'
+import store from './store'
+Yam.use(store)
 ```
 
 3. 取公共状态值
@@ -504,26 +504,26 @@ Yam.use(store);
 1. 引入`router`并注入组件的依赖
 
    ```js
-   import Router from "../lib/plugins/router/router";
+   import Router from '../lib/plugins/router/router'
    export default new Router({
      routes: [
        {
-         name: "index",
-         path: "/",
-         component: "my-timer"
+         name: 'index',
+         path: '/',
+         component: 'my-timer'
        },
        {
-         path: "/goTop",
-         component: "go-top",
-         name: "gotop"
+         path: '/goTop',
+         component: 'go-top',
+         name: 'gotop'
        },
        {
-         path: "/myTimer",
-         component: "my-timer",
-         name: "myTimer"
+         path: '/myTimer',
+         component: 'my-timer',
+         name: 'myTimer'
        }
      ]
-   });
+   })
    ```
 
    `name`主要是用来跳转用的，`path`是地址栏的路径，采用的是 hash 模式；`component`要渲染的组件名字；
@@ -532,13 +532,13 @@ Yam.use(store);
 
    ```js
    //common.js
-   import Yam from "../lib/index";
-   import router from "./router";
+   import Yam from '../lib/index'
+   import router from './router'
 
-   Yam.use(router);
+   Yam.use(router)
    //main.js
-   import "./components/common";
-   import "./lib/plugins/router/routerView";
+   import './components/common'
+   import './lib/plugins/router/routerView'
    ```
 
    html 中
@@ -572,9 +572,9 @@ Yam.use(store);
 
      ```js
      this.$router.push({
-       name: "myTimer", //name
+       name: 'myTimer', //name
        query: { a: 1, b: 2 } // 参数
-     });
+     })
      ```
 
    - `back`返回
@@ -584,17 +584,17 @@ Yam.use(store);
 > > 添加 404 组件显示，当没有匹配到地址的时候，就会显示 404 组件；用户可以自定义 404 页面；只需要设定 pae-404 组件即可，实例如下:
 > >
 > > ```js
-> > import Yam, { Component } from "yamjs";
+> > import Yam, { Component } from 'yamjs'
 > > @Component({
-> >   tagName: "page-404",
-> >   style: "",
-> >   props: ["path"]
+> >   tagName: 'page-404',
+> >   style: '',
+> >   props: ['path']
 > > })
 > > class App extends Yam {
 > >   data() {
 > >     return {
 > >       // your data
-> >     };
+> >     }
 > >   }
 > >   render() {
 > >     return (
@@ -602,10 +602,10 @@ Yam.use(store);
 > >         <p class="tip-404">404</p>
 > >         <p class="tip-404">{this.path} 没有相应的页面，请检测</p>
 > >       </div>
-> >     );
+> >     )
 > >   }
 > > }
-> > export default App;
+> > export default App
 > > ```
 > >
 > > 若没有自定义 404 页面会使用组件默认的 404 页面
@@ -614,7 +614,7 @@ Yam.use(store);
 
 > #### TODO
 
-- slot 支持live和offlive 是否持续渲染；记录状态；
+- slot 支持 live 和 offlive 是否持续渲染；记录状态；
 
 - page-offline
 - 添加 fetch 扩展
@@ -643,9 +643,17 @@ Yam.use(store);
 
 > todo
 
-- 0.3.1 解决 slot，mounted
-
 > 更新
+
+- 0.3.2 (2020-01-05)
+
+  - 优化 slot 插槽规则，默认插入和命名插入都支持
+  - 优化 外环境下多个 slot 嵌套的复杂情况
+  - stroe 增加 replay 和 reset 方法；方便调试 store 内部的数据；
+    - replay 把会从开始到现在的一切一切 commit 从新播放一边
+    - reset 把状态归位现在
+  - 修复 ref 在更新时的显示
+  - 修复 父子组件渲染时样式失效的状况
 
 - 0.2.5 (2019-9-18)
   - 优化 ref，支持`ref={(v)=>{this.dom=v}}`写法；直接把 ref 赋值到`this.com`上

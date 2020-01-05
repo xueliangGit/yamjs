@@ -1,8 +1,8 @@
 /*
  * @Author: xuxueliang
  * @Date: 2019-06-25 13:56:05
- * @LastEditors: xuxueliang
- * @LastEditTime: 2019-06-25 13:56:05
+ * @LastEditors  : xuxueliang
+ * @LastEditTime : 2020-01-05 21:49:32
  */
 export const HTML_TAGS = {
   a: {
@@ -385,6 +385,7 @@ export const HTML_TAGS = {
 export const GLOBAL_ATTRIBUTES = {
   accessKey: 'accesskey',
   className: 'class',
+  class: 'class',
   contentEditable: 'contenteditable',
   contextMenu: 'contextmenu',
   dir: 'dir',

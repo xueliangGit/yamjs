@@ -1,12 +1,11 @@
 /*
  * @Author: xuxueliang
  * @Date: 2019-06-25 13:56:05
- * @LastEditors: xuxueliang
- * @LastEditTime: 2019-10-08 17:43:42
+ * @LastEditors  : xuxueliang
+ * @LastEditTime : 2020-01-05 18:26:22
  */
 import { global as window } from './global'
 import { $slotSymbol } from '../symbol'
-import { _createElementJson } from '../vDom/createElement'
 
 /**
  * [def 定义对象属性]
@@ -231,15 +230,7 @@ let addSlot = function (child, slotAttr = 'default', cb = () => { }) {
   (this[$slotSymbol][slotAttr] = this[$slotSymbol][slotAttr] || []).push(child)
   cb()
 }
-// 获取el com
-let getNewElment = function (child, tagname) {
-  let props = {}
-  child.getAttributeNames().forEach(v => {
-    props[v] = child.getAttribute(v)
-  })
-  tagname = tagname || (child.tagName && child.tagName.toLowerCase())
-  return _createElementJson(tagname, props, ...child.childNodes)
-}
+
 export {
   def,
   protoAugment,
@@ -266,5 +257,5 @@ export {
   requestIdleCallback,
   requestAnimationFrame,
   getDomStyleFlag, getCid,
-  addSlot, getNewElment
+  addSlot
 }

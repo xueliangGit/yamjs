@@ -1,8 +1,8 @@
 /*
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
- * @LastEditors: xuxueliang
- * @LastEditTime: 2019-11-14 14:33:49
+ * @LastEditors  : xuxueliang
+ * @LastEditTime : 2020-01-05 23:32:20
  */
 import nodeOps from '../utils/nodeOps'
 // import { renderElement } from '../vDom/createElement'
@@ -169,14 +169,14 @@ function editProp (a, b) {
           const value = styles[prop]
           if (typeof value === 'number') {
             if (prop !== 'zIndex') {
-              a.elm.style[prop] = `${value}px`
+              a.elm.style[prop] = `${ value }px`
             } else {
-              a.elm.style[prop] = `${value}`
+              a.elm.style[prop] = `${ value }`
             }
           } else if (typeof value === 'string') {
             a.elm.style[prop] = value
           } else {
-            throw new Error(`Expected "number" or "string" but received "${typeof value}"`)
+            throw new Error(`Expected "number" or "string" but received "${ typeof value }"`)
           }
         })
       } else {
@@ -204,7 +204,18 @@ function editProp (a, b) {
 }
 function setProp (keys, attrs, props, elm) {
   if (keys in attrs) {
-    elm.setAttribute(attrs[keys], props)
+    if (typeof props === 'function') {
+      // 优化ref 被输出的情况
+      if (keys === 'ref') {
+        // props(getComponentByElm(elm))
+      } else {
+        elm.setAttribute(attrs[keys], props())
+      }
+    } else {
+      if (keys !== 'ref') {
+        elm.setAttribute(attrs[keys], props)
+      }
+    }
   } else if (typeof props !== 'function') {
     // elm.setAttribute(keys, props)
   }

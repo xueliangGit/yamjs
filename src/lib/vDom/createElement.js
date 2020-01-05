@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors  : xuxueliang
- * @LastEditTime : 2019-12-23 19:31:40
+ * @LastEditTime : 2020-01-05 23:12:10
  */
 /** @jsx createElement */
 import { HTML_TAGS, GLOBAL_ATTRIBUTES, EVENT_HANDLERS } from './creatConfig'
@@ -17,7 +17,7 @@ Array.prototype.flat = Array.prototype.flat || function () {
 }
 // let i = 0
 class Element {
-  constructor (tagName, props = {}, childNodes, _root, isText) {
+  constructor(tagName, props = {}, childNodes, _root, isText) {
     if (isText) {
       this.tagName = tagName
       this.props = props
@@ -37,7 +37,11 @@ class Element {
           v = new Element('textNode', '', v + '', _root, true)
         } else if (!v.tagName) {
           try {
-            v = new Element('textNode', '', JSON.stringify(v) + '', _root, true)
+            if (v.nodeType === 3) {
+              v = new Element('textNode', '', v.nodeValue, _root, true)
+            } else {
+              v = new Element('textNode', '', JSON.stringify(v) + '', _root, true)
+            }
           } catch (e) {
             v = new Element('textNode', '', '无法识别', _root, true)
           }
@@ -70,7 +74,7 @@ class Element {
       return this.elm
     }
     let mark = null
-    domFlag = domFlag || getCid(this._root) || (mark = getComponentMark(parentELm), getCid(mark._tagName))
+    domFlag = domFlag || (this._root ? getCid(this._root) : (mark = getComponentMark(parentELm), mark && getCid(mark._tagName)))
     let el = null
     // let slot = []
     // 自定义webcomponent
@@ -104,19 +108,21 @@ class Element {
         parentCom = null
       }
       component = null
+      // 在下一级组件 添加样式
+      domFlag && el.setAttribute(domFlag, '')
     } else {
       if (this.tagName === 'slot') {
         el = document.createDocumentFragment()
       } else {
         el = document.createElement(this.tagType)
-        el.setAttribute(domFlag, '')
+        domFlag && el.setAttribute(domFlag, '')
       }
       // 处理 slot 更新
       if (this.tagName === 'slot') {
         // 20191114
         // 处理slot新的形式
         let mark = getparentCom(parentELm)
-        console.log(mark)
+        // console.log(mark)
         let slotKey = this.props.name || 'default'
         // el.setAttribute('tag', 'slot')
         if (mark[$slotSymbol] && mark[$slotSymbol][slotKey]) {
@@ -124,11 +130,11 @@ class Element {
             if (v instanceof Element) {
               el.appendChild(v.render())
             } else {
-              if (v._isComponent) {
-                el.appendChild(v.cloneNode(true))
-              } else {
-                el.appendChild(v)
-              }
+              // if (v._isComponent) {
+              //   el.appendChild(v.cloneNode(true))
+              // } else {
+              el.appendChild(v)
+              // }
             }
           })
         }
@@ -149,9 +155,7 @@ class Element {
         if (prop in this.attrs) {
           if (typeof this.props[prop] === 'function') {
             if (prop === 'ref') {
-              console.log('getCallFnName', prop, getComponentByElm(el), this)
               this.props[prop](getComponentByElm(el))
-              // el.setAttribute(this.attrs[prop], this.props[prop](getComponentByElm(el)))
             } else {
               el.setAttribute(this.attrs[prop], this.props[prop](getComponentByElm(el)))
             }
@@ -168,7 +172,12 @@ class Element {
             el._runfn_ = el._runfn_ || {}
             el._runfn_[getCallFnName(this, prop)] = this.props[prop]
             // el.setAttribute(prop, fnName)
+          } else {
+            // 给属性赋值
+            this.props[prop] = this.props[prop]()
           }
+        } else if (prop.indexOf('com-') === 0) {
+          el.setAttribute(prop, '')
         }
       })
       // 兼容 style 是字符串形式
@@ -179,14 +188,14 @@ class Element {
             const value = styles[prop]
             if (typeof value === 'number') {
               if (prop !== 'zIndex') {
-                el.style[prop] = `${value}px`
+                el.style[prop] = `${ value }px`
               } else {
-                el.style[prop] = `${value}`
+                el.style[prop] = `${ value }`
               }
             } else if (typeof value === 'string') {
               el.style[prop] = value
             } else {
-              throw new Error(`Expected "number" or "string" but received "${typeof value}"`)
+              throw new Error(`Expected "number" or "string" but received "${ typeof value }"`)
             }
           })
         } else {
@@ -255,6 +264,7 @@ class Element {
       this.elm = el.childNodes[0]
       this.elmSize = el.childNodes.length
       if (parentELm) {
+        // 设置slot 标示
         parentELm.hasslot = true
       }
     } else {

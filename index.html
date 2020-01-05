@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors  : xuxueliang
- * @LastEditTime : 2019-12-19 15:32:55
+ * @LastEditTime : 2020-01-05 18:08:58
  -->
 <!DOCTYPE html>
 <html lang="en">
@@ -15,30 +15,32 @@
     <script>
       // new VConsole()
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
   </head>
 
   <body>
-    <switch-tab tabs='a,b'></switch-tab>
-    <test-show keeplive=true>
-      11111
+    <div id='app'>
+    <switch-tab tabs="a,b"></switch-tab>
+    <test-show keeplive="true">
+      1
       <p>asdasd</p>
-      <div slot='top'>大 sad sad sad 说1</div>
-      12312313123
-      <div slot='top'>大 sad sad sad 说2</div>
-      <test-show slot='top'>
-          4444
-          <div onclick="showInfo()" slot='top'>大 sad sad sad 说3</div>
-          <test-show slot='top'>
-            5555
-            <div onclick="showInfo()" slot='top'>大 sad sad sad 说4</div>
-          </test-show>
+      <div slot="top">大 sad sad sad 说1</div>
+      2
+      <div slot="top">大 sad sad sad 说2</div>
+      <test-show slot="top">
+        3
+        <div onclick="showInfo()" slot="top">大 sad sad sad 说3</div>
+        <test-show slot="top">
+          4
+          <div onclick="showInfo()" slot="top">大 sad sad sad 说4</div>
         </test-show>
+      </test-show>
     </test-show>
     <!-- <mis-list></mis-list>
   <div onasd='fun' msg='1111111' id='app'></div>-->
     <!-- <router-view></router-view> -->
     <!-- <show-demo title="go-top"><go-top msg="{a:123123}"> </go-top></show-demo> -->
-    <go-top msg="{a:123123}"> <show-demo title="go-top"><div>======</div></div></show-demo></go-top>
+    <go-top msg="{a:123123}"> <show-demo title="go-top"><div>======</div></div></show-demo></go-top> 
 
     <!-- <my-timer >
     <p slot='bottom'>我的时间</p>
@@ -47,15 +49,19 @@
     <div onclick="datePicker.emit('show')">时间</div>
     <p id="showinfo"></p>
     <data-picker id="datePicker" change="fun" showZg="true"></data-picker>
+  </div>
     <script>
-      function showInfo(){
+      function showInfo() {
         console.log('asdasd')
       }
 
       function fun() {
-        console.log(arguments);
-        showinfo.innerText = arguments[0];
+        console.log(arguments)
+        showinfo.innerText = arguments[0]
       }
+      new Vue({
+        el:'#app'
+      })
     </script>
   </body>
 </html>

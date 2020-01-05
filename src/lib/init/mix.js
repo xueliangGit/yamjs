@@ -1,8 +1,8 @@
 /*
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
- * @LastEditors: xuxueliang
- * @LastEditTime: 2019-09-17 18:09:04
+ * @LastEditors  : xuxueliang
+ * @LastEditTime : 2020-01-05 23:55:59
  */
 import { _createElementJson } from '../vDom/createElement'
 import { forEach } from '../utils/index'
@@ -49,12 +49,12 @@ export function Mix () {
         }
         forEach(needs, v => {
           if (!installed.includes(v)) {
-            console.info(`%c 该扩展【 ${name} 】需要依赖 【${v}】扩展`, 'background:#ff0')
+            console.info(`%c 该扩展【 ${ name } 】需要依赖 【${ v }】扩展`, 'background:#ff0')
           }
         })
       }
       if (installed.includes(name)) {
-        console.info(`已经注册此扩展:${name}`)
+        console.info(`已经注册此扩展:${ name }`)
       } else {
         installed.push(name)
         Config.install(addPrototype(Target, name))
@@ -81,15 +81,15 @@ function addPrototype (Target, name) {
         if (isCovered) {
           console.info(`
           ============
-          方法名：${type} 已存在，将被【${name}插件】中的 ${type} 方法覆盖
-          该覆盖方法将影响到【${Target.prototype[type]['pluginsName'] ? Target.prototype[type]['pluginsName'] + ' 插件' : '框架'}】中使用，请谨慎处理
+          方法名：${type } 已存在，将被【${ name }插件】中的 ${ type } 方法覆盖
+          该覆盖方法将影响到【${Target.prototype[type]['pluginsName'] ? Target.prototype[type]['pluginsName'] + ' 插件' : '框架' }】中使用，请谨慎处理
           ============
           `)
         } else {
           console.info(`
-          方法名：${type} 已存在，请修改
+          方法名：${type } 已存在，请修改
           
-          该方法是出现在 【${Target.prototype[type]['pluginsName'] ? Target.prototype[type]['pluginsName'] + ' 插件' : '框架'}】中，请修改方法再次安装使用
+          该方法是出现在 【${Target.prototype[type]['pluginsName'] ? Target.prototype[type]['pluginsName'] + ' 插件' : '框架' }】中，请修改方法再次安装使用
           `)
           return false
         }
@@ -108,7 +108,7 @@ function addPrototype (Target, name) {
           Target.prototype._autoDo[name] = fn
         } else {
           console.info(`
-          自动执行的方法名：${name} 已存在，请查看是否重复注册该方法
+          自动执行的方法名：${name } 已存在，请查看是否重复注册该方法
           `)
         }
       }

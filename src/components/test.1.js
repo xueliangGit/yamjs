@@ -1,13 +1,13 @@
 /*
  * @Author: xuxueliang
  * @Date: 2019-10-25 14:40:40
- * @LastEditors: xuxueliang
- * @LastEditTime: 2019-11-14 14:27:30
+ * @LastEditors  : xuxueliang
+ * @LastEditTime : 2020-01-05 21:54:46
  */
 import Yam, { Component } from '../lib/index'
 @Component({
   tagName: 'test-show',
-  style: '',
+  style: require('./goTop.stylus'),
   props: []
 })
 class TestShow extends Yam {

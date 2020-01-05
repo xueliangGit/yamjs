@@ -2,12 +2,11 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors  : xuxueliang
- * @LastEditTime : 2019-12-23 20:40:23
+ * @LastEditTime : 2020-01-05 20:33:42
  */
 import { _createElementJson } from '../vDom/createElement'
-
 import updateElement from '../diff/index'
-import { creatMutationObserser, setAttributes, forEach, log, isFalse, getDomStyleFlag, addSlot, getNewElment } from '../utils/index'
+import { creatMutationObserser, setAttributes, forEach, log, isFalse, getDomStyleFlag, addSlot } from '../utils/index'
 import { getCallFnName, syncComponentMark, setComponentForElm, getComponentByElm, setClosetParentCom } from '../utils/componentUtil'
 import nodeOps from '../utils/nodeOps'
 import lifeCycle from './lifeCycle'
@@ -42,42 +41,7 @@ function create () {
     this[$slotSymbol] = this[$slotSymbol] || {}
     // 处理是和否有keeplive - 保持组件的内部的协调性
     // console.log('keeplive', this)
-    if (this.elm.children.length) {
-      // eslint-disable-next-line no-cond-assign
-      for (var j = 0, child; child = this.elm.childNodes[j];) {
-        let slotAttr = (child.getAttribute && child.getAttribute('slot')) || undefined
-        let tagname = child.tagName && child.tagName.toLowerCase()
-        if (tagname && HTML_TAGS[tagname] && typeof HTML_TAGS[tagname] === 'object' && HTML_TAGS[tagname].isComponent) {
-          // let props = {}
-          // child.getAttributeNames().forEach(v => {
-          //   props[v] = child.getAttribute(v)
-          // })
-          // console.log(child)
-          // // child._ori = child
-          // let newCom = _createElementJson(tagname, props, ...child.childNodes)
-          let newCom = getNewElment(child, tagname)
-          newCom._ori = child
-          newCom._isComponent = true
-          child = newCom
-          console.log('getAttributeNames1', newCom._ori.childNodes)
-        }
-        addSlot.call(this, child, slotAttr)
-        // 移除
-        // if (slotAttr) {
-        //   (this[$slotSymbol][slotAttr] = this[$slotSymbol][slotAttr] || ([])).push(child)
-        // } else {
-        //   (this[$slotSymbol]['default'] = this[$slotSymbol]['default'] || ([])).push(child)
-        // }
-        // 设置 isRemovedBySlot 处理外环境使用slot嵌套组件
-        child.isRemovedBySlot = true
-        nodeOps.removeChild(this.elm, child._ori || child)
-        // this.elm.removeChild(child)
-      }
-      // forEach(this.elm.childNodes, (v) => {
-      //   // delChildrenOriThatFromYam(v, this)
-
-      // })
-    }
+    getChildSlot.call(this, this.elm)
     this[$slotSymbol]['length'] = Object.keys(this[$slotSymbol]).length
     // this.elm.children = []
     // 现在都走这个
@@ -351,7 +315,7 @@ function update () {
 //     return child
 //   }
 // }
-export default function init (context) {
+export default function init (context, isRenderIn) {
   // 初始化 配置信息
   _init.call(context)
 }
@@ -359,4 +323,42 @@ export default function init (context) {
 export function initConfig () {
   this.Destory = new Destory(this)
   this.ChildComponentsManage = new ChildComponentsManage(this)
+}
+
+// 获取el com
+function getNewElment (child, tagname) {
+  let props = {}
+  child.getAttributeNames().forEach(v => {
+    props[v] = child.getAttribute(v)
+  })
+  tagname = tagname || (child.tagName && child.tagName.toLowerCase())
+
+  return _createElementJson(tagname, props, ...getChildSlot(child, false))
+}
+function getChildSlot (elm, isAddToContext = true) {
+  let newChildNodes = []
+  if (elm.childNodes.length) {
+    // eslint-disable-next-line no-cond-assign
+    for (var j = 0, child; child = elm.childNodes[j];) {
+      let slotAttr = (child.getAttribute && child.getAttribute('slot')) || undefined
+      let tagname = child.tagName && child.tagName.toLowerCase()
+      // console.log('getChildSlot', this, child, child.tagName, tagname, HTML_TAGS[tagname])
+      if ((tagname && HTML_TAGS[tagname] && typeof HTML_TAGS[tagname] === 'object' && HTML_TAGS[tagname].isComponent)) {
+        let newCom = getNewElment.call(this, child, tagname)
+        newCom._ori = child
+        newCom._isComponent = true
+        child = newCom
+        console.log('getAttributeNames1', newCom._ori.childNodes)
+      }
+      if (isAddToContext) {
+        addSlot.call(this, child, slotAttr)
+      } else {
+        newChildNodes.push(child)
+      }
+      // 设置 isRemovedBySlot 处理外环境使用slot嵌套组件
+      // child.isRemovedBySlot = true
+      nodeOps.removeChild(elm, child._ori || child)
+    }
+  }
+  return newChildNodes
 }

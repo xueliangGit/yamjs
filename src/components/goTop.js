@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors  : xuxueliang
- * @LastEditTime : 2019-12-23 17:44:59
+ * @LastEditTime : 2020-01-05 23:39:23
  */
 import Yam, { Component } from '../lib/index'
 // import jsxp from 'jsx-parser'
@@ -25,7 +25,6 @@ export default Component({
   $data () {
     return {
       list: [0, 12, 2, 3],
-      mytime: '',
       index: 1
     }
   }
@@ -81,8 +80,8 @@ export default Component({
       return <MyTimer ref={ (c) => { this.mytime = c } }>
         <p> 我是时间 - 2</p>
         <p class='times' slot='aaa'>我是时间-11112</p>
-        <test-show slot='bottom'>222222
-          <test-show slot='top'>3333
+        <test-show class='test' slot='bottom'>222222
+          <test-show class='blue' slot='top'>3333
           </test-show>
         </test-show>
       </MyTimer >
@@ -98,6 +97,8 @@ export default Component({
         <test-show title='bottom'>11111</test-show>
         <div onClick={ this.goT.bind(this) }>去timer</div>
         <div onClick={ this.switch.bind(this, -1) }>点击{ this.$store.width }</div>
+        <button onClick={ () => this.$store.replay() }>重放</button>
+        <button onClick={ () => this.$store.reset() }>复位</button>
         { this.index == 1 ? <slot></slot> : '' }
         { this.getTimer() }
 
