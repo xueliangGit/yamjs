@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors  : xuxueliang
- * @LastEditTime : 2020-01-05 23:12:10
+ * @LastEditTime : 2020-01-06 17:14:48
  */
 /** @jsx createElement */
 import { HTML_TAGS, GLOBAL_ATTRIBUTES, EVENT_HANDLERS } from './creatConfig'
@@ -157,7 +157,8 @@ class Element {
             if (prop === 'ref') {
               this.props[prop](getComponentByElm(el))
             } else {
-              el.setAttribute(this.attrs[prop], this.props[prop](getComponentByElm(el)))
+              // 貌似不需要去编译方法
+              // el.setAttribute(this.attrs[prop], this.props[prop](getComponentByElm(el)))
             }
           } else {
             el.setAttribute(this.attrs[prop], this.props[prop])
@@ -173,8 +174,8 @@ class Element {
             el._runfn_[getCallFnName(this, prop)] = this.props[prop]
             // el.setAttribute(prop, fnName)
           } else {
-            // 给属性赋值
-            this.props[prop] = this.props[prop]()
+            //  不需要赋值
+            // this.props[prop] = this.props[prop]()
           }
         } else if (prop.indexOf('com-') === 0) {
           el.setAttribute(prop, '')
