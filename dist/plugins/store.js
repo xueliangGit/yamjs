@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors  : xuxueliang
- * @LastEditTime : 2020-01-05 23:59:50
+ * @LastEditTime : 2020-01-06 17:17:14
  */
 export default function StoreFactory (conf) {
   // 一个时间记录器
@@ -90,7 +90,7 @@ export default function StoreFactory (conf) {
     }
     // 重播
     replay () {
-      if (++replayNums >= timeTool.commits.length - 1) {
+      if (++replayNums >= timeTool.commits.length) {
         console.log('store replay end')
         replayNums = -1
       } else {
