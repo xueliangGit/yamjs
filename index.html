@@ -1,8 +1,8 @@
 <!--
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
- * @LastEditors  : xuxueliang
- * @LastEditTime : 2020-01-05 18:08:58
+ * @LastEditors: xuxueliang
+ * @LastEditTime: 2020-02-19 12:04:24
  -->
 <!DOCTYPE html>
 <html lang="en">
@@ -19,21 +19,28 @@
   </head>
 
   <body>
+    <mulit-upimg
+      width="120"
+      height="120"
+      uploadok="uploadok"
+      title="上传图片"
+    ></mulit-upimg>
     <div id='app'>
     <switch-tab tabs="a,b"></switch-tab>
     <test-show keeplive="true">
       1
       <p>asdasd</p>
-      <div slot="top">大 sad sad sad 说1</div>
+      <div slot="top">大 sad sad sad 说1-1</div>
       2
-      <div slot="top">大 sad sad sad 说2</div>
+      <div slot="top">大 sad sad sad 说2-2</div>
       <test-show slot="top">
         3
-        <div onclick="showInfo()" slot="top">大 sad sad sad 说3</div>
-        <test-show slot="top">
+        <div onclick="showInfo()" slot="top">大 sad sad sad 说3-3</div>
+        <test-show >
           4
-          <div onclick="showInfo()" slot="top">大 sad sad sad 说4</div>
+          <div onclick="showInfo()" slot="top">大 sad sad sad 说4-4</div>
         </test-show>
+
       </test-show>
     </test-show>
     <!-- <mis-list></mis-list>

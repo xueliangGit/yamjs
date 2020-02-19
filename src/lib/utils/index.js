@@ -1,8 +1,8 @@
 /*
  * @Author: xuxueliang
  * @Date: 2019-06-25 13:56:05
- * @LastEditors  : xuxueliang
- * @LastEditTime : 2020-01-05 18:26:22
+ * @LastEditors: xuxueliang
+ * @LastEditTime: 2020-02-19 11:43:35
  */
 import { global as window } from './global'
 import { $slotSymbol } from '../symbol'
@@ -226,7 +226,13 @@ let getCid = (value) => 'com-' + value
 
 // 添加slot
 let addSlot = function (child, slotAttr = 'default', cb = () => { }) {
-  !this[$slotSymbol] && (this[$slotSymbol] = {});
+  !this[$slotSymbol] && (this[$slotSymbol] = {})
+  if (!child.render) {
+    child.render = () => child
+  }
+  if (!child.elm) {
+    child.elm = child
+  }
   (this[$slotSymbol][slotAttr] = this[$slotSymbol][slotAttr] || []).push(child)
   cb()
 }

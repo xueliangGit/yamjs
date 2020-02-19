@@ -1,15 +1,15 @@
 /*
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
- * @LastEditors  : xuxueliang
- * @LastEditTime : 2020-01-06 17:14:48
+ * @LastEditors: xuxueliang
+ * @LastEditTime: 2020-02-19 12:33:43
  */
 /** @jsx createElement */
 import { HTML_TAGS, GLOBAL_ATTRIBUTES, EVENT_HANDLERS } from './creatConfig'
 import nodeOps from '../utils/nodeOps'
 import { forEach, toCamelCase, getCid, addSlot } from '../utils/index'
 import { getCallFnName, getComponentMark, setComponentForElm, getComponentByElm, getparentCom } from '../utils/componentUtil'
-import { $slotSymbol } from '../symbol/index'
+// import { $slotSymbol } from '../symbol/index'
 // import cacheLib from '../utils/cacheLib'
 // eslint-disable-next-line no-extend-native
 Array.prototype.flat = Array.prototype.flat || function () {
@@ -119,25 +119,43 @@ class Element {
       }
       // 处理 slot 更新
       if (this.tagName === 'slot') {
+        // 不需要再 处理solt
         // 20191114
         // 处理slot新的形式
-        let mark = getparentCom(parentELm)
-        // console.log(mark)
-        let slotKey = this.props.name || 'default'
+        // let mark = getparentCom(parentELm)
+        // // console.log(mark)
+        // let slotKey = this.props.name || 'default'
         // el.setAttribute('tag', 'slot')
-        if (mark[$slotSymbol] && mark[$slotSymbol][slotKey]) {
-          forEach(mark[$slotSymbol][slotKey], (v) => {
-            if (v instanceof Element) {
-              el.appendChild(v.render())
-            } else {
-              // if (v._isComponent) {
-              //   el.appendChild(v.cloneNode(true))
-              // } else {
-              el.appendChild(v)
-              // }
-            }
-          })
-        }
+        // 切换为新的方式
+        // if (mark[$slotSymbol] && mark[$slotSymbol][slotKey]) {
+        //   // forEach(mark[$slotSymbol][slotKey], (v) => {
+        //   //   if (v instanceof Element) {
+        //   //     el.appendChild(v.render())
+        //   //   } else {
+        //   //     // if (v._isComponent) {
+        //   //     //   el.appendChild(v.cloneNode(true))
+        //   //     // } else {
+        //   //     el.appendChild(v)
+        //   //     // }
+        //   //   }
+        //   // })
+        // }
+        // 埋点 slottHooks
+        // mark.__hooks_slot[slotKey] = function (slotKeys) {
+        //   // patch(el)
+        //   forEach(mark[$slotSymbol][slotKeys], (v) => {
+        //     console.log('__hooks_slot', v, el)
+        //     if (v instanceof Element) {
+        //       el.appendChild(v.render())
+        //     } else {
+        //       // if (v._isComponent) {
+        //       //   el.appendChild(v.cloneNode(true))
+        //       // } else {
+        //       el.appendChild(v)
+        //       // }
+        //     }
+        //   })
+        // }
         // el.isBelong = mark._name
         // doAfterSlotUpdate(el, this, mark.elm.rand, mark)
         // 添加 移除时的事件

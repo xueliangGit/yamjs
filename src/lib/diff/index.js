@@ -1,20 +1,22 @@
 /*
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
- * @LastEditors  : xuxueliang
- * @LastEditTime : 2020-01-05 23:32:20
+ * @LastEditors: xuxueliang
+ * @LastEditTime: 2020-02-19 12:35:52
  */
 import nodeOps from '../utils/nodeOps'
 // import { renderElement } from '../vDom/createElement'
 //
 import { isDef, requestIdleCallback } from '../utils/index'
 import { getComponentByElm } from '../utils/componentUtil'
+import taskLine from './taskLine'
 // import { $ComponentSymbol } from '../symbol/index'
 // import _ from 'lodash'
 /**
 * 核心patch算法，比较新旧node树的差异
 */
 export default function patch (parentElm, vnode, oldVnode) {
+  taskLine.runMicTask()
   if (!vnode && !oldVnode) {
     return
   }
@@ -37,6 +39,7 @@ export default function patch (parentElm, vnode, oldVnode) {
       addVnodes(parentElm, null, vnode, 0, vnode.length - 1)
     }
   }
+  console.log('---runMicTask--')
 }
 /**
     * 在 parent 这个父节点下插入一个子节点
@@ -46,10 +49,12 @@ function insert (parent, elm, ref, isFirst) {
   if (parent) {
     if (ref) {
       if (ref.parentNode === parent) {
-        nodeOps.insertBefore(parent, elm, ref, !isFirst)
+        // nodeOps.insertBefore(parent, elm, ref, !isFirst)
+        taskLine.addMicTask(() => { nodeOps.insertBefore(parent, elm, ref, !isFirst) })
       }
     } else {
-      nodeOps.appendChild(parent, elm, !isFirst)
+      // nodeOps.appendChild(parent, elm, !isFirst)
+      taskLine.addMicTask(() => { nodeOps.appendChild(parent, elm, !isFirst) })
     }
   }
 }
@@ -71,6 +76,10 @@ function createElm (vnode, parentElm, refElm, isFirst) {
   // }
 }
 
+function createElmOnly (vnode, parentElm, refElm, isFirst) {
+  nodeOps.appendChild(parentElm, vnode.render(null, parentElm))
+}
+
 /**
     * 批量创建新的节点
     * 参数对应
@@ -81,7 +90,8 @@ function addVnodes (parentElm, refElm, vnodes, startIdx, endIdx, isFirst) {
     if (startIdx <= endIdx) {
       let flag = document.createDocumentFragment()
       for (; startIdx <= endIdx; ++startIdx) {
-        createElm(vnodes[startIdx], flag, refElm, isFirst)
+        // createElm(vnodes[startIdx], flag, refElm, isFirst)
+        createElmOnly(vnodes[startIdx], flag, refElm, isFirst)
       }
       // console.log(flag, parentElm, vnodes)
       insert(parentElm, flag, refElm, isFirst)
@@ -148,7 +158,7 @@ function sameVnode (a, b) {
   // )
   // tagType 代替tagName
   return (
-    a.key === b.key &&
+    // a.key === b.key &&  暂时去掉
     a.tagName === b.tagName &&
     sameInputType(a, b) &&
     editProp(a, b)
@@ -200,6 +210,12 @@ function editProp (a, b) {
       }
     }
   }
+  // 如果是 class TODO a
+  if (a.class && b.class) {
+    let elmCom = getComponentByElm(a.elm)
+    a.childNodes = b.childNodes
+    elmCom._initSoltHooks(a.childNodes)
+  }
   return true
 }
 function setProp (keys, attrs, props, elm) {
@@ -248,9 +264,9 @@ function patchVnode (oldVnode, vnode) {
     if (vnode.tagName === 'slot') {
       vnode.elmSize = oldVnode.elmSize
       vnode.elm = oldVnode.elm
-      return
+      // return
     }
-    if (oldVnode.class || oldVnode.elm.isComponent) {
+    if (oldVnode.class || (oldVnode.elm && oldVnode.elm.isComponent)) {
       vnode.elm = oldVnode.elm
       vnode.componentInstance = oldVnode.componentInstance
       // console.log(vnode)
@@ -324,6 +340,7 @@ function updateChildren (parentElm, oldCh, newCh) {
   let oldKeyToIdx, idxInOld, refElm
   while (oldStartIdx <= oldEndIdx && newStartIdx <= newEndIdx) {
     /* 当 oldStartVnode 不存在时，直接更新索引以及对应的节点指向 */
+    // console.log('oldVnode', oldEndVnode, newEndVnode)
     if (!oldStartVnode) {
       oldStartVnode = oldCh[++oldStartIdx]
     } else if (!oldEndVnode) {
@@ -354,6 +371,7 @@ function updateChildren (parentElm, oldCh, newCh) {
       oldEndVnode = oldCh[--oldEndIdx]
       newStartVnode = newCh[++newStartIdx]
     } else {
+      // console.log('elmToMove=--------=', oldCh[idxInOld], newStartVnode)
       /* 当以上条件都不满足，调用 createKeyToOldIdx 获取一个 key-索引 的 map 集合 */
       let elmToMove = oldCh[idxInOld]
       if (!oldKeyToIdx) oldKeyToIdx = createKeyToOldIdx(oldCh, oldStartIdx, oldEndIdx)
@@ -367,7 +385,6 @@ function updateChildren (parentElm, oldCh, newCh) {
       } else {
         /* 索引存在 */
         elmToMove = oldCh[idxInOld]
-        // console.log('elmToMove=--------=')
         if (sameVnode(elmToMove, newStartVnode)) {
           /* 两个节点相同，调用 patchVnode 将老节点集合中对应节点赋值为 undefined ，将节点插入 oldStartVnode 之前，更新对应索引 */
           patchVnode(elmToMove, newStartVnode)

@@ -1,8 +1,8 @@
 /*
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
- * @LastEditors  : xuxueliang
- * @LastEditTime : 2020-01-06 00:12:48
+ * @LastEditors: xuxueliang
+ * @LastEditTime: 2020-02-18 17:08:16
  */
 
 declare class Yam {

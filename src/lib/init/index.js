@@ -1,8 +1,8 @@
 /*
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
- * @LastEditors  : xuxueliang
- * @LastEditTime : 2020-01-05 20:33:42
+ * @LastEditors: xuxueliang
+ * @LastEditTime: 2020-02-19 12:36:22
  */
 import { _createElementJson } from '../vDom/createElement'
 import updateElement from '../diff/index'
@@ -35,10 +35,22 @@ function _init () {
     delete this.isbyUsedByuser
   }
 }
+function initSolt (childNodes) {
+  this[$slotSymbol] = {}
+  childNodes.forEach(v => {
+    addSlot.call(this, v, (v.attributes ? v.getAttribute('slot') : v.props && v.props.slot) || 'default')
+  })
+  this[$slotSymbol]['length'] = Object.keys(this[$slotSymbol]).length
+  this.update()
+  // console.log('initSolt', this)
+}
 function create () {
   if (this.elm) {
-    // 新的处理slot
+    this._initSoltHooks = initSolt
+    // this._initSolt()
+    // // 新的处理slot
     this[$slotSymbol] = this[$slotSymbol] || {}
+    // this.__hooks_slot = {}
     // 处理是和否有keeplive - 保持组件的内部的协调性
     // console.log('keeplive', this)
     getChildSlot.call(this, this.elm)
@@ -113,7 +125,7 @@ function create () {
       if (this.elm.parentNode) {
         this.elm.parentNode.addEventListener('DOMNodeRemoved', handle, false)
       } else {
-        console.log(this.elm)
+        // console.log(this.elm)
       }
     }
   }
@@ -142,12 +154,12 @@ function _update (context) {
   context.__isWillupdate = setTimeout(() => {
     context.__isWillupdate = null
     update.call(context)
-  }, 20)
+  })
 }
 function initRefs () {
   this.$refs = this.$refs || {}
   this.__shadowRoot.querySelectorAll('[ref]').forEach(v => {
-    console.log('initRefs', v, this)
+    // console.log('initRefs', v, this)
     this.$refs[v.getAttribute('ref')] = v.isComponent ? getComponentByElm(v) : v
     // v.removeAttribute('ref')
   })
@@ -181,7 +193,7 @@ function createdComponent () {
       while (!parentS._shadow && parentS[$closestParentSymbol]) {
         parentS = parentS[$closestParentSymbol]
       }
-      console.log('parentS.parentS._shadow ', parentS._shadow, parentS)
+      // console.log('parentS.parentS._shadow ', parentS._shadow, parentS)
       let nameStyle = parentS._shadow ? parentS.__shadowRoot._root : 'html'
       // parent.tagName === 'HTML' ? 'HTML' : parent._root ? parent._root : parent.parentNode ? parent.parentNode._root || parent.parentNode.host.tagName : 'HTML'
       if (!styleIsInstalled[nameStyle]) {
@@ -232,13 +244,24 @@ function delFlag (context, key) {
 //
 function getRenderData (context) {
   let element = context.render()
-  setRootName(element, context._tagName)
+  setRootName(element, context._tagName, context)
   return element
 }
-function setRootName (element, tagName) {
-  element._root = tagName
+function setRootName (element, tagName, context) {
+  element._root = element._root || tagName
   if (element.childNodes) {
-    element.childNodes.forEach(v => setRootName(v, tagName))
+    for (var i = 0; i < element.childNodes.length; i++) {
+      let v = element.childNodes[i]
+      // element.childNodes.forEach((v, i) => {
+      setRootName(v, tagName, context)
+      if (v.tagName === 'slot') {
+        let slotelm = (context[$slotSymbol][v.props.name || 'default']) || []
+        element.childNodes.splice(i, 1, ...slotelm)
+        // v.childNodes = context[$slotSymbol][v.props.name || 'default']
+        i += slotelm.length
+      }
+      // })
+    }
   }
 }
 // 获取dom片段
@@ -251,7 +274,7 @@ function getFram (isNeedDiv = false) {
   // this.$dom.setAttribute('dom', this._cid)
   try {
     this[$vdomSymbol] = getRenderData(this)// .render()
-    console.log(this[$vdomSymbol])
+    // console.log(this[$vdomSymbol])
     this[$vdomSymbol]._rootId = this._rootId
   } catch (e) {
     log('e', e)
@@ -271,23 +294,24 @@ function update () {
   // 优化 update 默认在¥updated内方法 只是数据更新不是dom更新
   if (this.__stopUpdata) return
   lifeCycle.beforeUpdate(this)
-  setTimeout(() => {
-    if (this[$vdomSymbol]) {
-      // console.time('------$update')
-      let newNode = getRenderData(this)// this.render()
-      let oldNode = this[$vdomSymbol]
-      this[$vdomSymbol] = newNode
-      this[$vdomSymbol]._rootId = this._rootId
-      updateElement(this.$dom, newNode, oldNode)
-      // console.timeEnd('------$update')
-      if (isFalse(lifeCycle.updated(this))) {
-        this.__stopUpdata = true
-        setTimeout(() => {
-          this.__stopUpdata = false
-        }, 500)
-      }
+  // setTimeout(() => {
+  // console.log('setTimeout', this._tagName, this)
+  if (this[$vdomSymbol]) {
+    // console.time('------$update')
+    let newNode = getRenderData(this)// this.render()
+    let oldNode = this[$vdomSymbol]
+    this[$vdomSymbol] = newNode
+    this[$vdomSymbol]._rootId = this._rootId
+    updateElement(this.$dom, newNode, oldNode)
+    // console.timeEnd('------$update')
+    if (isFalse(lifeCycle.updated(this))) {
+      this.__stopUpdata = true
+      setTimeout(() => {
+        this.__stopUpdata = false
+      }, 500)
     }
-  })
+  }
+  // })
 }
 
 // 处理  已经初始化的组件，再次初始化问题 -- vue 非编译版本出现问题

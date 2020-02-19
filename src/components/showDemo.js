@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-09-17 19:07:58
  * @LastEditors: xuxueliang
- * @LastEditTime: 2019-09-17 20:30:44
+ * @LastEditTime: 2020-02-19 11:58:26
  */
 import Yam, { Component } from '../lib/index'
 @Component({
@@ -15,8 +15,9 @@ class App extends Yam {
   }
   render () {
     return (<div style='border:2px #333 dashed;margin:10px'>
-      <p onClick={this.showHide.bind(this)}>插件:{ this.title }</p>
-      { this.show ? <slot /> : '' }
+      <p onClick={ this.showHide.bind(this) }>插件:{ this.title }</p>
+      {/* { this.show ? <slot /> : '' } */ }
+      <div><slot /></div>
     </div>)
   }
 }
