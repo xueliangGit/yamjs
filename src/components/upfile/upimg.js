@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-16 17:53:23
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-02-18 19:22:29
+ * @LastEditTime: 2020-02-19 14:00:30
  */
 import Yam, { Component } from 'yamjs'
 import style from './upimg1.stylus'
@@ -78,7 +78,7 @@ class App extends Yam {
   }
   render () {
     // console.log(this.imgUrl)
-    return <div className='upfile'>
+    return <div className={ 'upfile' }>
       <label>
         <input type='file' onChange={ this.change.bind(this) } accept='image/*' />
         { this.imgUrl ? <div className='showimg' style={ { backgroundImage: 'url(' + this.imgUrl + (this.suffix || '') + ')' } } /> : this.isLoading ? '' : <p>+</p> }

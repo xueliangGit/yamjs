@@ -1,7 +1,9 @@
  
-  .img-show{
-    background-position center;
-    background-repeat no-repeat
-    background-size cover
-    display inline-block
-    }
+.img-show{
+  background-position center;
+  background-repeat no-repeat
+  background-size cover
+  display inline-block
+  border-radius: 5px;
+  background-color: #d8d8d8;
+  }
