@@ -2,9 +2,10 @@
  * @Author: xuxueliang
  * @Date: 2020-02-18 15:13:32
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-02-19 11:31:33
+ * @LastEditTime: 2020-02-20 14:02:06
  */
 import Yam, { Component } from 'yamjs'
+import UpImg from '../upfile/upimg'
 @Component({
   tagName: 'mulit-upimg',
   style: require('./index.stylus'),
@@ -28,6 +29,9 @@ class App extends Yam {
   $beforeUpdate () {
     console.log(this)
   }
+  $mounted () {
+    console.log('===============multi-upimg')
+  }
   render () {
     return <div>
       { this.width }
@@ -36,13 +40,7 @@ class App extends Yam {
 
       </div>
       )) }
-      <show-demo>
-        123{ this.imgs.map((v, i) => (<div key={ i } className='img-show' style={ { 'width': this.width + 'px', height: this.height + 'px', backgroundImage: 'url(' + v + ')' } }>
-        </div>
-        )) }
-
-      </show-demo>
-
+      <UpImg></UpImg>
       <up-img className='up-img' style={ { 'width': this.width + 'px', height: this.height + 'px' } } uploadok={ this.uploadok.bind(this) } title="上传图片"></up-img>
     </div >
   }

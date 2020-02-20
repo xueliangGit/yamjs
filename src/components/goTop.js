@@ -1,13 +1,12 @@
 /*
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
- * @LastEditors  : xuxueliang
- * @LastEditTime : 2020-01-05 23:39:23
+ * @LastEditors: xuxueliang
+ * @LastEditTime: 2020-02-20 14:03:21
  */
 import Yam, { Component } from '../lib/index'
 // import jsxp from 'jsx-parser'
 // var goTopTem = require('./goTopTem.html')
-// eslint-disable-next-line no-unused-vars
 import MyTimer from './myTimer'
 // import store from './store2'
 /*eslint-disable */

@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-16 17:53:23
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-02-19 14:00:30
+ * @LastEditTime: 2020-02-20 13:58:14
  */
 import Yam, { Component } from 'yamjs'
 import style from './upimg1.stylus'
@@ -75,6 +75,9 @@ class App extends Yam {
       <div>{ this.loadingInfo }</div>
       <span />
     </div>
+  }
+  $mounted () {
+    console.log('===============up-img')
   }
   render () {
     // console.log(this.imgUrl)

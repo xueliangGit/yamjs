@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-02-19 12:36:22
+ * @LastEditTime: 2020-02-20 14:06:14
  */
 import { _createElementJson } from '../vDom/createElement'
 import updateElement from '../diff/index'
@@ -193,13 +193,13 @@ function createdComponent () {
       while (!parentS._shadow && parentS[$closestParentSymbol]) {
         parentS = parentS[$closestParentSymbol]
       }
-      // console.log('parentS.parentS._shadow ', parentS._shadow, parentS)
-      let nameStyle = parentS._shadow ? parentS.__shadowRoot._root : 'html'
+      let nameStyle = parentS._shadow ? parentS.__shadowRoot._root : 'HTML'
       // parent.tagName === 'HTML' ? 'HTML' : parent._root ? parent._root : parent.parentNode ? parent.parentNode._root || parent.parentNode.host.tagName : 'HTML'
       if (!styleIsInstalled[nameStyle]) {
         styleIsInstalled[nameStyle] = []
       }
       if (!styleIsInstalled[nameStyle].includes(this._cid)) {
+        console.log('parentS.parentS._shadow ', parentS._shadow, parentS, nameStyle)
         if (nameStyle === 'HTML') {
           // body
           document.head.appendChild(style)
