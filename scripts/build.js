@@ -1,8 +1,8 @@
 /*
  * @Author: xuxueliang
  * @Date: 2019-08-13 19:10:43
- * @LastEditors  : xuxueliang
- * @LastEditTime : 2020-01-06 00:09:59
+ * @LastEditors: xuxueliang
+ * @LastEditTime: 2020-02-29 20:39:39
  */
 const fs = require('fs-extra')
 const path = require('path')
@@ -65,11 +65,12 @@ function buildEntry (config) {
     .then(({ output: [{ code }] }) => {
       if (isProd) {
         const minified =
-          // (banner ? banner + '\n' : '') +
+          (banner ? banner + '\n' : '') +
           terser.minify(code, {
             toplevel: true,
             output: {
-              ascii_only: true
+              ascii_only: true,
+              comments: false
             },
             compress: {
               pure_funcs: ['makeMap']

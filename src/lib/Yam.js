@@ -2,14 +2,14 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-02-29 17:18:01
+ * @LastEditTime: 2020-02-29 22:27:06
  */
 import './utils/Polyfill.js'
 import init, { initConfig } from './init/index'
 import { canUseCustomElements } from './init/bolConf'
 import lifeCycle from './init/lifeCycle'
 import { Mix } from './init/mix'
-import { getStyleStr, guid2, toCamelCase, forEach, getCid, supportMutationObserver } from './utils/index'
+import { getStyleStr, guid2, toCamelCase, forEach, getCid } from './utils/index' // supportMutationObserver
 import { getCallFnName, getClosetParentCom } from './utils/componentUtil'
 import cacheLib from './utils/cacheLib'
 import BaseCustomElements from './BaseCustomElements'
@@ -207,7 +207,7 @@ export function Component (Config) {
     }
     if (
       (customElements || typeof customElements === 'undefined') &&
-      canUseCustomElements
+      canUseCustomElements && window.customElements
     ) {
       Target.customElements = true
       try {
@@ -217,11 +217,12 @@ export function Component (Config) {
       }
     } else {
       Target.customElements = false
-      if (!supportMutationObserver) {
-        forNotsupportMutationObserver(tagName, Target)
-      }
+      // if (!supportMutationObserver) {
+      forNotsupportMutationObserver(tagName, Target)
+      // }
       domOnLoad(() => {
         let doms = document.querySelectorAll(tagName)
+        console.log(tagName, doms)
         forEach(doms, node => {
           if (!node.isInited) {
             new Target().renderAt(node)

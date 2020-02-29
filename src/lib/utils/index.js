@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-06-25 13:56:05
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-02-29 18:01:17
+ * @LastEditTime: 2020-02-29 23:40:35
  */
 import { global as window } from './global'
 import { $slotSymbol } from '../symbol'
@@ -68,7 +68,7 @@ function creatMutationObserser (el, callFn, config = { attributes: true }) {
   try {
     observer.observe(el, config)
   } catch (e) {
-    console.log(e)
+    // console.log(e)
   }
   return observer
 }
@@ -241,7 +241,7 @@ let addSlot = function (child, slotAttr = 'default', cb = () => { }) {
   (this[$slotSymbol][slotAttr] = this[$slotSymbol][slotAttr] || []).push(child)
   cb()
 }
-const supportMutationObserver = !!MutationObserver
+// const supportMutationObserver = !!MutationObserver
 
 export {
   def,
@@ -269,5 +269,6 @@ export {
   requestIdleCallback,
   requestAnimationFrame,
   getDomStyleFlag, getCid,
-  addSlot, supportMutationObserver
+  addSlot
+  // , supportMutationObserver
 }

@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-13 18:50:38
  * @LastEditors: xuxueliang
- * @LastEditTime: 2019-09-02 17:50:00
+ * @LastEditTime: 2020-02-29 20:35:30
  */
 const json = require('rollup-plugin-json')
 const babel = require('rollup-plugin-babel')
@@ -19,11 +19,11 @@ const weexVersion = true || process.env.WEEX_VERSION || require('../packages/wee
 const featureFlags = {} || require('./feature-flags')
 
 const banner =
-  '/*!\n' +
-  ` * Yam.js v${version}\n` +
-  ` * (c) 2019-${new Date().getFullYear()} xuxueliang\n` +
+  '/*\n' +
+  ` * Yam.js v${ version }\n` +
+  ` * (c) 2019-${ new Date().getFullYear() } xuxueliang\n` +
   ' * Released under the MIT License.\n' +
-  ` * lastTime:${new Date()}.\n` +
+  ` * lastTime:${ new Date() }.\n` +
   ' */'
 
 const weexFactoryPlugin = {
@@ -315,7 +315,7 @@ function genConfig (name) {
   }
   // feature flags
   Object.keys(featureFlags).forEach(key => {
-    vars[`process.env.${key}`] = featureFlags[key]
+    vars[`process.env.${ key }`] = featureFlags[key]
   })
   // build-specific env
   if (opts.env) {

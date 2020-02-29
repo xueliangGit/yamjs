@@ -2,14 +2,15 @@
  * @Author: xuxueliang
  * @Date: 2019-08-16 17:53:23
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-02-20 13:58:14
+ * @LastEditTime: 2020-02-29 20:10:16
  */
-import Yam, { Component } from 'yamjs'
+// import Yam, { Component } from 'yamjs'
+import Yam, { Component } from '../../lib/index'
 import style from './upimg1.stylus'
 @Component({
   tagName: 'up-img',
   style: style,
-  props: ['serverurl', 'title', 'type', 'suffix', 'canEdit'],
+  props: ['serverurl', 'title', 'type', 'suffix', 'canEdit', 'selelctOnly'],
   canBeCalledExt: true
 })
 
@@ -37,9 +38,11 @@ class App extends Yam {
     }
   }
   updateUrl (obj) {
-    this.imgUrl = obj.picUrl
-    this.isLoading = false
     this.emitProp('uploadok', obj)
+    if (!this.selelctOnly) {
+      this.imgUrl = obj.picUrl
+    }
+    this.isLoading = false
   }
   upLoad (file) {
     let params = new FormData()
@@ -76,18 +79,15 @@ class App extends Yam {
       <span />
     </div>
   }
-  $mounted () {
-    console.log('===============up-img')
-  }
   render () {
     // console.log(this.imgUrl)
-    return <div className={ 'upfile' }>
-      <label>
+    return <div className={ `upfile ${ this.imgUrl ? '' : 'showbk' }` }>
+      <label >
         <input type='file' onChange={ this.change.bind(this) } accept='image/*' />
-        { this.imgUrl ? <div className='showimg' style={ { backgroundImage: 'url(' + this.imgUrl + (this.suffix || '') + ')' } } /> : this.isLoading ? '' : <p>+</p> }
+        { this.imgUrl ? <div className='showimg' style={ { backgroundImage: 'url(' + this.imgUrl + (this.suffix || '') + ')' } } /> : this.isLoading ? '' : <span>+</span> }
         { this.isLoading ? this.loading() : '' }
       </label>
-    </div>
+    </div >
   }
 }
 export default App
@@ -100,6 +100,7 @@ function preImg (node) {
     } else if (node.files && node.files.item(0)) {
       file = node.files.item(0)
     }
+    node.value = ''
     // Firefox 因安全性问题已无法直接通过input[file].value 获取完整的文件路径
     try {
       imgURL = file.getAsDataURL()

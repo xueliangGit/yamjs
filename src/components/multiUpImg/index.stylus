@@ -1,9 +1,21 @@
- 
-.img-show{
+[scope]
+  // display flex
+.img-show
   background-position center;
+  vertical-align: top;
   background-repeat no-repeat
   background-size cover
   display inline-block
   border-radius: 5px;
   background-color: #d8d8d8;
-  }
+  margin 3px
+  &.hide
+    display none
+.close 
+  display inline-block
+  float right
+  margin 3px
+  border-radius 50%
+  img
+    width: 20PX;
+    height: 20PX;

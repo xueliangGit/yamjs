@@ -2,11 +2,11 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-02-29 17:58:46
+ * @LastEditTime: 2020-02-29 22:50:57
  */
 import { _createElementJson } from '../vDom/createElement'
 import updateElement from '../diff/index'
-import { creatMutationObserser, setAttributes, forEach, log, isFalse, getDomStyleFlag, addSlot } from '../utils/index'
+import { creatMutationObserser, setAttributes, forEach, isFalse, getDomStyleFlag, addSlot } from '../utils/index' // log,
 import { getCallFnName, syncComponentMark, setComponentForElm, getComponentByElm, setClosetParentCom } from '../utils/componentUtil'
 import nodeOps from '../utils/nodeOps'
 import lifeCycle from './lifeCycle'
@@ -283,7 +283,7 @@ function getFram (isNeedDiv = false) {
     // console.log(this[$vdomSymbol])
     this[$vdomSymbol]._rootId = this._rootId
   } catch (e) {
-    log('e', e)
+    // log('e', e)
   }
   // this.$dom._childrenOri = this._childrenOri
   this.$dom._parentElement = this.__shadowRoot
@@ -386,7 +386,7 @@ function getChildSlot (elm, isAddToContext = true) {
         newCom._ori = child
         newCom._isComponent = true
         child = newCom
-        console.log('getAttributeNames1', newCom._ori.childNodes)
+        // console.log('getAttributeNames1', newCom._ori.childNodes)
       }
       if (isAddToContext) {
         addSlot.call(this, child, slotAttr)

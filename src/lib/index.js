@@ -2,15 +2,12 @@
  * @Author: xuxueliang
  * @Date: 2019-07-03 16:00:17
  * @LastEditors: xuxueliang
- * @LastEditTime: 2019-09-18 14:51:28
+ * @LastEditTime: 2020-02-29 23:37:38
  */
 
 import Yam, { Component } from './Yam'
 import tools from './plugins/tools'
-// eslint-disable-next-line no-extend-native
-Array.prototype.flat = Array.prototype.flat || function () {
-  return this.reduce((acc, val) => Array.isArray(val) ? acc.concat(val.flat()) : acc.concat(val), [])
-}
+
 Yam.use(tools)
 export default Yam
 export { Component }
