@@ -345,9 +345,9 @@ dom 数据更新是仅仅在`$data`设定以及注解里`prop`设定的值改变
 
 - 组件内有多个 slot 时，**需要设定 name 值来区分**，相应在组件外部写的时候需要设定 slot 属性，将根据 slot 和 name 匹配来渲染内容
 
-- 组件内没有 slot 时，会默认把内容渲染到组件内容的尾部。
+<!-- - 组件内没有 slot 时，会默认把内容渲染到组件内容的尾部。 -->
 
-  _**注意，在使用 slot 时 shadow 不要是设为 True，否则，样式将不生效**_
+_**注意，在使用 slot 时 shadow 不要是设为 True，否则，样式将不生效**_
 
 ---
 
@@ -648,7 +648,12 @@ Yam.use(store)
 - 0.3.6 (2020-02-29)
 
   - 优化 ie 系列加载（支持 ie9+）
-  - 优化不支持`MutationObserver`方法的浏览器（例如 ie10）-无法自动渲染新加标签；添加方法 `yamjsRender(el)` 函数；去渲染
+  - 优化不支持`MutationObserver`方法的浏览器（例如 ie10）无法自动渲染新加标签
+    - 扩展了 `HTMLELEMENT` 对象方法,可以自动去渲染标签
+      - `node.appendYamjsNode(yamjsNode)` ：添加`yamjs`组件，可代替原生的`node.appendChild(yamjsNode)`
+      - `node.insertYamjsNodeBefore(yamjsNode,node)` ：再元素前插入`yamjs`组件，可代替原生的`node.insertBefore(yamjsNode,node)`
+      - `node.removeYamjsNode(yamjsNode)` ：移除`yamjs`组件，可以代替原生的`node.removeChild`
+    - 添加方法 `yamjsRender(el)` 函数；手动去渲染
 
 - 0.3.4 (2020-02-19)
 

@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-02-29 15:48:40
+ * @LastEditTime: 2020-02-29 17:18:01
  */
 import './utils/Polyfill.js'
 import init, { initConfig } from './init/index'
@@ -15,10 +15,10 @@ import cacheLib from './utils/cacheLib'
 import BaseCustomElements from './BaseCustomElements'
 import { HTML_TAGS } from './vDom/creatConfig'
 import domOnLoad from './utils/domLoad'
+import forNotsupportMutationObserver from './utils/forNotsupportMutationObserver.js'
 import { versionBate } from '../../package.json'
 var comps = (window.comps = {})
 let hasCompsName = []
-let __localYamjsElm = {}
 let compsIds = 0
 let lifeCycleArray = Object.keys(lifeCycle)
 @Mix()
@@ -218,8 +218,7 @@ export function Component (Config) {
     } else {
       Target.customElements = false
       if (!supportMutationObserver) {
-        __localYamjsElm = __localYamjsElm || {}
-        __localYamjsElm[tagName] = Target
+        forNotsupportMutationObserver(tagName, Target)
       }
       domOnLoad(() => {
         let doms = document.querySelectorAll(tagName)
@@ -236,16 +235,6 @@ export function Component (Config) {
 // 适配器 store
 export function store (Config) {
   return function (Target) { }
-}
-if (!supportMutationObserver) {
-  window.yamjsRender = function (node, tagName = '') {
-    if (!node.isInited) {
-      tagName = tagName || node.tagName.toLocaleLowerCase()
-      if (__localYamjsElm[tagName]) {
-        new __localYamjsElm[tagName]().renderAt(node)
-      }
-    }
-  }
 }
 console.log(`
     
