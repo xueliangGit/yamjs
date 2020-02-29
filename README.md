@@ -5,6 +5,8 @@
 
 [看实例](https://yamjs.bestsloth.top/dist/index.html)
 
+[文档](http://www.yamjs.cn/yamjs/book/)
+
 YamJS 是一个针对 html 的开发的一个组件基类，让你开发一个组件，可以运行在原生 HTML/vue/react 等环境。
 
 脚手架已经完善
