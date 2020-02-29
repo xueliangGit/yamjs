@@ -58,7 +58,7 @@ export default function RouterFactory (conf) {
         if (routeObj.query) {
           _url += '?' + memgerQuery(routeObj.query)
         }
-        console.log(_url)
+        // console.log(_url)
         routerCache.history.push(routeObj)
         $beforeRouterEnter()
         window.location.href = '#' + _url
@@ -130,7 +130,7 @@ function setCurrent (context, obj) {
 function init (context, option) {
   // 获取本页页面名字
   let current = (context.current = getCurrent())
-  console.log('current', current)
+  // console.log('current', current)
   /* 写入页面简单路由配置到缓存 */
   option.forEach(v => {
     if (v.name) {
@@ -165,7 +165,7 @@ function warnInfo (current) {
 }
 function _hashChangFun (e) {
   changeFnCache.forEach(v => v(e))
-  console.log('change over')
+  // console.log('change over')
 }
 window.addEventListener('hashchange', _hashChangFun)
 // 添加声明周期 routerEnter，routerLeave
