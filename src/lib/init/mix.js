@@ -1,8 +1,8 @@
 /*
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
- * @LastEditors  : xuxueliang
- * @LastEditTime : 2020-01-05 23:55:59
+ * @LastEditors: xuxueliang
+ * @LastEditTime: 2020-02-23 12:32:16
  */
 import { _createElementJson } from '../vDom/createElement'
 import { forEach } from '../utils/index'
@@ -48,12 +48,12 @@ export function Mix () {
           needs = [needs]
         }
         forEach(needs, v => {
-          if (!installed.includes(v)) {
+          if (!~installed.indexOf(v)) {
             console.info(`%c 该扩展【 ${ name } 】需要依赖 【${ v }】扩展`, 'background:#ff0')
           }
         })
       }
-      if (installed.includes(name)) {
+      if (~installed.indexOf(name)) {
         console.info(`已经注册此扩展:${ name }`)
       } else {
         installed.push(name)
@@ -77,7 +77,7 @@ function addPrototype (Target, name) {
      * @param {type} 方法名
      */
     addPrototype (type, fn, isCovered = false) {
-      if (reserved.includes(type) || Target.prototype[type]) {
+      if (~reserved.indexOf(type) || Target.prototype[type]) {
         if (isCovered) {
           console.info(`
           ============

@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2019-08-15 18:49:37
+ * @LastEditTime: 2020-02-29 11:47:51
  */
 import { creatMutationObserser } from './index'
 let domIsLoaded = false

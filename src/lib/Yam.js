@@ -1,14 +1,15 @@
 /*
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
- * @LastEditors  : xuxueliang
- * @LastEditTime : 2020-01-05 11:27:58
+ * @LastEditors: xuxueliang
+ * @LastEditTime: 2020-02-29 15:48:40
  */
+import './utils/Polyfill.js'
 import init, { initConfig } from './init/index'
 import { canUseCustomElements } from './init/bolConf'
 import lifeCycle from './init/lifeCycle'
 import { Mix } from './init/mix'
-import { getStyleStr, guid2, toCamelCase, forEach, getCid } from './utils/index'
+import { getStyleStr, guid2, toCamelCase, forEach, getCid, supportMutationObserver } from './utils/index'
 import { getCallFnName, getClosetParentCom } from './utils/componentUtil'
 import cacheLib from './utils/cacheLib'
 import BaseCustomElements from './BaseCustomElements'
@@ -17,6 +18,7 @@ import domOnLoad from './utils/domLoad'
 import { versionBate } from '../../package.json'
 var comps = (window.comps = {})
 let hasCompsName = []
+let __localYamjsElm = {}
 let compsIds = 0
 let lifeCycleArray = Object.keys(lifeCycle)
 @Mix()
@@ -215,6 +217,10 @@ export function Component (Config) {
       }
     } else {
       Target.customElements = false
+      if (!supportMutationObserver) {
+        __localYamjsElm = __localYamjsElm || {}
+        __localYamjsElm[tagName] = Target
+      }
       domOnLoad(() => {
         let doms = document.querySelectorAll(tagName)
         forEach(doms, node => {
@@ -230,6 +236,16 @@ export function Component (Config) {
 // 适配器 store
 export function store (Config) {
   return function (Target) { }
+}
+if (!supportMutationObserver) {
+  window.yamjsRender = function (node, tagName = '') {
+    if (!node.isInited) {
+      tagName = tagName || node.tagName.toLocaleLowerCase()
+      if (__localYamjsElm[tagName]) {
+        new __localYamjsElm[tagName]().renderAt(node)
+      }
+    }
+  }
 }
 console.log(`
     

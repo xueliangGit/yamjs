@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-02-19 12:35:52
+ * @LastEditTime: 2020-02-29 12:01:34
  */
 import nodeOps from '../utils/nodeOps'
 // import { renderElement } from '../vDom/createElement'
@@ -16,7 +16,6 @@ import taskLine from './taskLine'
 * 核心patch算法，比较新旧node树的差异
 */
 export default function patch (parentElm, vnode, oldVnode) {
-  taskLine.runMicTask()
   if (!vnode && !oldVnode) {
     return
   }
@@ -39,6 +38,7 @@ export default function patch (parentElm, vnode, oldVnode) {
       addVnodes(parentElm, null, vnode, 0, vnode.length - 1)
     }
   }
+  taskLine.runMicTask()
   console.log('---runMicTask--')
 }
 /**

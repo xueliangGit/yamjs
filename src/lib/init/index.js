@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-02-20 14:06:14
+ * @LastEditTime: 2020-02-29 12:53:04
  */
 import { _createElementJson } from '../vDom/createElement'
 import updateElement from '../diff/index'
@@ -158,7 +158,8 @@ function _update (context) {
 }
 function initRefs () {
   this.$refs = this.$refs || {}
-  this.__shadowRoot.querySelectorAll('[ref]').forEach(v => {
+  // console.log(ref.forEach)
+  forEach(this.__shadowRoot.querySelectorAll('[ref]'), (v) => {
     // console.log('initRefs', v, this)
     this.$refs[v.getAttribute('ref')] = v.isComponent ? getComponentByElm(v) : v
     // v.removeAttribute('ref')
@@ -169,7 +170,12 @@ function createdComponent () {
   if (this.render) {
     let style = document.createElement('style')
     style.type = 'text/css'
-    style.innerText = this._style
+    try {
+      style.appendChild(document.createTextNode(this._style))
+    } catch (ex) {
+      style.styleSheet.cssText = this._style
+    }
+    // style.innerText = this._style
     if (this._shadow) {
       var shadowRoot = this.__shadowRoot || (this.__shadowRoot = nodeOps.setAttachShadow(this.elm, { mode: 'closed' }))
       componenesSize[this._tagName] = componenesSize[this._tagName] ? componenesSize[this._tagName] + 1 : 1
@@ -198,7 +204,7 @@ function createdComponent () {
       if (!styleIsInstalled[nameStyle]) {
         styleIsInstalled[nameStyle] = []
       }
-      if (!styleIsInstalled[nameStyle].includes(this._cid)) {
+      if (!~styleIsInstalled[nameStyle].indexOf(this._cid)) {
         console.log('parentS.parentS._shadow ', parentS._shadow, parentS, nameStyle)
         if (nameStyle === 'HTML') {
           // body
@@ -352,9 +358,17 @@ export function initConfig () {
 // 获取el com
 function getNewElment (child, tagname) {
   let props = {}
-  child.getAttributeNames().forEach(v => {
-    props[v] = child.getAttribute(v)
+  // let a = { child }
+  // console.log(a)
+  // if (child.getAttributeNames) {
+  //   child.getAttributeNames().forEach(v => {
+  //     props[v] = child.getAttribute(v)
+  //   })
+  // } else if (child.attributes) {
+  forEach(child.attributes, (v) => {
+    props[v.name] = v.value
   })
+  // }
   tagname = tagname || (child.tagName && child.tagName.toLowerCase())
 
   return _createElementJson(tagname, props, ...getChildSlot(child, false))

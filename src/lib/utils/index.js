@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-06-25 13:56:05
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-02-19 11:43:35
+ * @LastEditTime: 2020-02-29 15:40:50
  */
 import { global as window } from './global'
 import { $slotSymbol } from '../symbol'
@@ -53,6 +53,7 @@ function hasOwn (obj, key) {
 // 添加 监控
 var MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver// 浏览器兼容
 function creatMutationObserser (el, callFn, config = { attributes: true }) {
+  if (!MutationObserver) return
   var observer = new MutationObserver(function (mutations) { // 构造函数回调
     mutations.forEach(function (record) {
       callFn && callFn(record)
@@ -64,7 +65,11 @@ function creatMutationObserser (el, callFn, config = { attributes: true }) {
       }
     })
   })
-  observer.observe(el, config)
+  try {
+    observer.observe(el, config)
+  } catch (e) {
+    console.log(e)
+  }
   return observer
 }
 // 代理
@@ -112,22 +117,22 @@ function getDomStyleFlag (_id, attr) {
 }
 function styleIsScope (style) {
   if (typeof style === 'string') {
-    return style.includes('[scope]')
+    return !!~style.indexOf('[scope]')
   } else if (style) {
-    return style[0][1].includes('[scope]')
+    return !!~style[0][1].indexOf('[scope]')
   }
   return false
 }
 function _getStrByStyle (_id, style, isScope) {
   if (style) {
     let str = (typeof style === 'string' ? style : style[1]).split('\n')
-    let isScope = str[0].includes('scope')
+    let isScope = !!~str[0].indexOf('scope')
     if (isScope) {
       str.shift()
     }
     return map(str, v => {
-      if (v.includes('{')) {
-        if (v.includes('[root]')) {
+      if (~v.indexOf('{')) {
+        if (~v.indexOf('[root]')) {
           // if (isScope) {
           //   v = v.replace('[root]', '')
           // } else {
@@ -137,7 +142,7 @@ function _getStrByStyle (_id, style, isScope) {
         return isScope ? v.replace(' {', '').replace('{', '') + getDomStyleFlag(_id) + '{' : v
       }
       return v
-    }).join('')
+    }).join('\n')
   }
   return ''
 }
@@ -236,6 +241,7 @@ let addSlot = function (child, slotAttr = 'default', cb = () => { }) {
   (this[$slotSymbol][slotAttr] = this[$slotSymbol][slotAttr] || []).push(child)
   cb()
 }
+const supportMutationObserver = !!MutationObserver
 
 export {
   def,
@@ -263,5 +269,5 @@ export {
   requestIdleCallback,
   requestAnimationFrame,
   getDomStyleFlag, getCid,
-  addSlot
+  addSlot, supportMutationObserver
 }
