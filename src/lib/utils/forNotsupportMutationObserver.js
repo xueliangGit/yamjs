@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2020-02-29 16:15:59
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-02-29 17:23:22
+ * @LastEditTime: 2020-02-29 17:56:38
  */
 /*
 * 针对不支持MutationObserver  做法，添加 appendYamNode 方法
@@ -45,7 +45,7 @@ if (!supportMutationObserver) {
       comp = null
     }
   }
-  HTMLElement.prototype.setYamNodeAttribute = function (key, val) {
+  HTMLElement.prototype.setYamjsNodeAttribute = function (key, val) {
     this.setAttribute(key, val)
     let comp = getComponentByElm(this)
     setAttributes(comp, key, val)

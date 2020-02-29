@@ -653,6 +653,7 @@ Yam.use(store)
       - `node.appendYamjsNode(yamjsNode)` ：添加`yamjs`组件，可代替原生的`node.appendChild(yamjsNode)`
       - `node.insertYamjsNodeBefore(yamjsNode,node)` ：再元素前插入`yamjs`组件，可代替原生的`node.insertBefore(yamjsNode,node)`
       - `node.removeYamjsNode(yamjsNode)` ：移除`yamjs`组件，可以代替原生的`node.removeChild`
+      - `node.setYamjsNodeAttribute(key,val)` ：设置`yamjs`组件属性，可以代替原生的`node.setAttribute`
     - 添加方法 `yamjsRender(el)` 函数；手动去渲染
 
 - 0.3.4 (2020-02-19)
