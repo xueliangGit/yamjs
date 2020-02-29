@@ -645,16 +645,13 @@ Yam.use(store)
 
 > 更新
 
-- 0.3.6 (2020-02-29)
+- 0.4.0 (2020-02-29)
 
   - 优化 ie 系列加载（支持 ie9+）
   - 优化不支持`MutationObserver`方法的浏览器（例如 ie10）无法自动渲染新加标签
-    - 扩展了 `HTMLELEMENT` 对象方法,可以自动去渲染标签
-      - `node.appendYamjsNode(yamjsNode)` ：添加`yamjs`组件，可代替原生的`node.appendChild(yamjsNode)`
-      - `node.insertYamjsNodeBefore(yamjsNode,node)` ：再元素前插入`yamjs`组件，可代替原生的`node.insertBefore(yamjsNode,node)`
-      - `node.removeYamjsNode(yamjsNode)` ：移除`yamjs`组件，可以代替原生的`node.removeChild`
-      - `node.setYamjsNodeAttribute(key,val)` ：设置`yamjs`组件属性，可以代替原生的`node.setAttribute`
+    - 扩展了 `HTMLELEMENT` 对象方法,可以自动去渲染标签 `appendChild,insertBefore,removeChild,replaceChild,setAttribute`
     - 添加方法 `yamjsRender(el)` 函数；手动去渲染
+  - 优化在 `vue` 项目中，低版本安卓组件未渲染出来
 
 - 0.3.4 (2020-02-19)
 

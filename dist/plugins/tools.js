@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-06-25 13:56:05
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-02-29 18:00:06
+ * @LastEditTime: 2020-02-29 23:40:17
  */
 import { getCss } from './utils'
 
@@ -48,7 +48,7 @@ export default {
         typeof fn === 'function' && fn(...arg)
       }, ...params)
       let ids = this.addDestory(() => {
-        console.log('intervalId,', intervalId)
+        // console.log('intervalId,', intervalId)
         if (intervalId) {
           clearInterval(intervalId)
           intervalId = null

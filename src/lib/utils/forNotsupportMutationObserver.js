@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2020-02-29 16:15:59
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-02-29 23:00:44
+ * @LastEditTime: 2020-02-29 23:53:01
  */
 /*
 * 针对不支持MutationObserver  做法，添加 appendYamNode 方法
@@ -14,7 +14,7 @@ let __localYamjsElm = {}
 export default function (k, v) {
   __localYamjsElm[k] = v
 }
-window.yamjsRender = function (node, tagName = '') {
+function yamjsRender (node, tagName = '') {
   if (!node.isInited) {
     tagName = tagName || (node.tagName ? node.tagName.toLocaleLowerCase() : '')
     if (!tagName) return
@@ -25,6 +25,9 @@ window.yamjsRender = function (node, tagName = '') {
     //   // console.log('没有[', tagName, ']组件')
     // }
   }
+}
+window.yamjsRender = function (node, tagName) {
+  yamjsRender(node, tagName)
 }
 // if (!supportMutationObserver) {
 //   window.yamjsRender = function (node, tagName = '') {
@@ -68,7 +71,7 @@ window.yamjsRender = function (node, tagName = '') {
 function runRender (node) {
   if (node.isYamjsInnerNode) return
   if (node.parentElement) {
-    window.yamjsRender(node)
+    yamjsRender(node)
   } else {
     setTimeout(() => {
       runRender(node)
@@ -77,21 +80,22 @@ function runRender (node) {
 }
 initHTMLEvent()
 function initHTMLEvent () {
-  HTMLElement.prototype._appendChild = HTMLElement.prototype.appendChild
-  HTMLElement.prototype.appendChild = function (node) {
+  let HTMLElementPrototype = HTMLElement.prototype
+  HTMLElementPrototype._appendChild = HTMLElementPrototype.appendChild
+  HTMLElementPrototype.appendChild = function (node) {
     this._appendChild(node)
     runRender(node)
   }
-  HTMLElement.prototype._insertBefore = HTMLElement.prototype.insertBefore
+  HTMLElementPrototype._insertBefore = HTMLElementPrototype.insertBefore
 
-  HTMLElement.prototype.insertBefore = function (node, referenceNode) {
+  HTMLElementPrototype.insertBefore = function (node, referenceNode) {
     if (referenceNode) {
       this._insertBefore(node, referenceNode)
       runRender(node)
     }
   }
-  HTMLElement.prototype._removeChild = HTMLElement.prototype.removeChild
-  HTMLElement.prototype.removeChild = function (node) {
+  HTMLElementPrototype._removeChild = HTMLElementPrototype.removeChild
+  HTMLElementPrototype.removeChild = function (node) {
     this._removeChild(node)
     if (node.isComponent && !node.isUnset) {
       node.isUnset = true
@@ -103,16 +107,28 @@ function initHTMLEvent () {
       }
     }
   }
-  HTMLElement.prototype._replaceChild = HTMLElement.prototype.replaceChild
-  HTMLElement.prototype.replaceChild = function (newNode, oldNode) {
+  HTMLElementPrototype._replaceChild = HTMLElementPrototype.replaceChild
+  HTMLElementPrototype.replaceChild = function (newNode, oldNode) {
     this.removeChild(oldNode)
     this.appendChild(newNode)
   }
-  HTMLElement.prototype.setYamjsNodeAttribute = function (key, val) {
-    this.setAttribute(key, val)
-    let comp = getComponentByElm(this)
-    setAttributes(comp, key, val)
-    comp.update()
-    comp = null
+  HTMLElementPrototype._setAttribute = HTMLElementPrototype.setAttribute
+  HTMLElementPrototype.setAttribute = function (key, val) {
+    this._setAttribute(key, val)
+    if (this.isComponent) {
+      let comp = getComponentByElm(this)
+      setAttributes(comp, key, val)
+      comp.update()
+      comp = null
+    }
   }
+  // HTMLElement.prototype.setYamjsNodeAttribute = function (key, val) {
+  //   this.setAttribute(key, val)
+  //   if (this.isComponent) {
+  //     let comp = getComponentByElm(this)
+  //     setAttributes(comp, key, val)
+  //     comp.update()
+  //     comp = null
+  //   }
+  // }
 }
