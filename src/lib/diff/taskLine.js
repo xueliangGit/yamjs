@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-16 15:06:26
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-02-29 12:01:59
+ * @LastEditTime: 2020-02-29 17:59:46
  */
 
 let tasks = {
@@ -22,14 +22,14 @@ export default {
   },
   runMicTask () {
     window.Promise ? Promise.resolve().then(() => {
-      console.log('runMicTask')
+      // console.log('runMicTask')
       runTash('mic')
     }) : runTash('mic')
   }
 }
 
 function runTash (key) {
-  console.log(key, tasks[key].length)
+  // console.log(key, tasks[key].length)
   if (tasks[key].length) {
     tasks[key].shift()()
     runTash(key)

@@ -1,3 +1,9 @@
+/*
+ * @Author: xuxueliang
+ * @Date: 2019-06-25 13:56:05
+ * @LastEditors: xuxueliang
+ * @LastEditTime: 2020-02-29 17:59:25
+ */
 import init from './init'
 import { Mix } from './init/mix'
 import { getStyleStr } from './utils'
@@ -5,7 +11,7 @@ var comps = window.comps = {}
 @Mix()
 // eslint-disable-next-line
 class Yam extends HTMLElement {
-  constructor () {
+  constructor() {
     super()
     this._config()
     comps[this._cid] = this

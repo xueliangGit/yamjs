@@ -39,7 +39,7 @@ export default function patch (parentElm, vnode, oldVnode) {
     }
   }
   taskLine.runMicTask()
-  console.log('---runMicTask--')
+  // console.log('---runMicTask--')
 }
 /**
     * 在 parent 这个父节点下插入一个子节点

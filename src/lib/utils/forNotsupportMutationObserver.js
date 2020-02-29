@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2020-02-29 16:15:59
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-02-29 17:56:38
+ * @LastEditTime: 2020-02-29 18:01:03
  */
 /*
 * 针对不支持MutationObserver  做法，添加 appendYamNode 方法

@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-02-29 12:53:04
+ * @LastEditTime: 2020-02-29 17:58:46
  */
 import { _createElementJson } from '../vDom/createElement'
 import updateElement from '../diff/index'
@@ -205,7 +205,7 @@ function createdComponent () {
         styleIsInstalled[nameStyle] = []
       }
       if (!~styleIsInstalled[nameStyle].indexOf(this._cid)) {
-        console.log('parentS.parentS._shadow ', parentS._shadow, parentS, nameStyle)
+        // console.log('parentS.parentS._shadow ', parentS._shadow, parentS, nameStyle)
         if (nameStyle === 'HTML') {
           // body
           document.head.appendChild(style)

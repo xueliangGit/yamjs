@@ -24,11 +24,11 @@ export function createElement (tagName, props = {}, ...childNodes) {
     Object.keys(styles).forEach(prop => {
       const value = styles[prop]
       if (typeof value === 'number') {
-        el.style[prop] = `${value}px`
+        el.style[prop] = `${ value }px`
       } else if (typeof value === 'string') {
         el.style[prop] = value
       } else {
-        throw new Error(`Expected "number" or "string" but received "${typeof value}"`)
+        throw new Error(`Expected "number" or "string" but received "${ typeof value }"`)
       }
     })
   }
@@ -52,7 +52,7 @@ function doChild (childNodes, el) {
     } else if (typeof childNode === 'function') {
       el.appendChild(document.createTextNode(childNode.toString()))
     } else {
-      console.warn(new Error(`${childNode} Expected "object" or "string" but received "${typeof value}"`))
+      console.warn(new Error(`${ childNode } Expected "object" or "string" but received "${ typeof value }"`))
     }
   })
 }

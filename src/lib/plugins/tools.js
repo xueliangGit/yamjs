@@ -1,3 +1,9 @@
+/*
+ * @Author: xuxueliang
+ * @Date: 2019-06-25 13:56:05
+ * @LastEditors: xuxueliang
+ * @LastEditTime: 2020-02-29 18:00:06
+ */
 import { getCss } from './utils'
 
 export default {
@@ -8,7 +14,7 @@ export default {
       intervalIds: {}
     }
     target.addPrototype('getCss', function (attr, elm) {
-      console.log(attr)
+      // console.log(attr)
       return getCss(elm || this.elm, attr)
     })
     // 设置延时器
@@ -19,7 +25,7 @@ export default {
         timeOutId = null
       }, ...params)
       let ids = this.addDestory(() => {
-        console.log('timeOutId,', timeOutId)
+        // console.log('timeOutId,', timeOutId)
         if (timeOutId) {
           clearTimeout(timeOutId)
           timeOutId = null

@@ -23,13 +23,13 @@ class RouterView extends Yam {
     } else {
 
     }
-    console.log(this.cache)
+    // console.log(this.cache)
   }
   getPage () {
   }
   $mounted () {
     this.elm.updateView = (e) => {
-      console.log('update', this.$router.current.component)
+      // console.log('update', this.$router.current.component)
       this.updateView(e)
     }
   }
@@ -39,11 +39,11 @@ class RouterView extends Yam {
       old = old.split('#')[1]
       if (old) {
         this.cache[old] = this.$refs.routerDiv.childNodes[0]
-        console.log(this.$router)
+        // console.log(this.$router)
       }
     }
     this.update()
-    console.log('this.$refs.dom', this.$refs.dom)
+    // console.log('this.$refs.dom', this.$refs.dom)
   }
   showCacheView (hashName) {
     this.$refs.routerDiv.appendChild(this.cache[hashName])
