@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2020-02-29 16:15:59
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-02-29 23:53:01
+ * @LastEditTime: 2020-03-02 12:24:16
  */
 /*
 * 针对不支持MutationObserver  做法，添加 appendYamNode 方法
@@ -78,49 +78,58 @@ function runRender (node) {
     }, 100)
   }
 }
+function removeChild (node) {
+  if (node.isYamjsInnerNode) return
+  if (node.isComponent && !node.isUnset) {
+    node.isUnset = true
+    let comp = getComponentByElm(node)
+    if (comp) {
+      comp.__beforeDisconnectedCallback()
+      comp.__disconnectedCallback()
+      comp = null
+    }
+  }
+}
 initHTMLEvent()
 function initHTMLEvent () {
   let HTMLElementPrototype = HTMLElement.prototype
   HTMLElementPrototype._appendChild = HTMLElementPrototype.appendChild
   HTMLElementPrototype.appendChild = function (node) {
-    this._appendChild(node)
+    let returnFlag = this._appendChild(node)
     runRender(node)
+    return returnFlag
   }
   HTMLElementPrototype._insertBefore = HTMLElementPrototype.insertBefore
-
   HTMLElementPrototype.insertBefore = function (node, referenceNode) {
     if (referenceNode) {
-      this._insertBefore(node, referenceNode)
+      let returnFlag = this._insertBefore(node, referenceNode)
       runRender(node)
+      return returnFlag
     }
   }
   HTMLElementPrototype._removeChild = HTMLElementPrototype.removeChild
   HTMLElementPrototype.removeChild = function (node) {
-    this._removeChild(node)
-    if (node.isComponent && !node.isUnset) {
-      node.isUnset = true
-      let comp = getComponentByElm(node)
-      if (comp) {
-        comp.__beforeDisconnectedCallback()
-        comp.__disconnectedCallback()
-        comp = null
-      }
-    }
+    let returnFlag = this._removeChild(node)
+    removeChild(node)
+    return returnFlag
   }
   HTMLElementPrototype._replaceChild = HTMLElementPrototype.replaceChild
   HTMLElementPrototype.replaceChild = function (newNode, oldNode) {
-    this.removeChild(oldNode)
-    this.appendChild(newNode)
+    let returnFlag = this._replaceChild(newNode, oldNode)
+    removeChild(oldNode)
+    runRender(newNode)
+    return returnFlag
   }
   HTMLElementPrototype._setAttribute = HTMLElementPrototype.setAttribute
   HTMLElementPrototype.setAttribute = function (key, val) {
-    this._setAttribute(key, val)
+    let returnFlag = this._setAttribute(key, val)
     if (this.isComponent) {
       let comp = getComponentByElm(this)
       setAttributes(comp, key, val)
       comp.update()
       comp = null
     }
+    return returnFlag
   }
   // HTMLElement.prototype.setYamjsNodeAttribute = function (key, val) {
   //   this.setAttribute(key, val)
