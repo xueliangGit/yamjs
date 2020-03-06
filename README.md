@@ -1,8 +1,6 @@
-# Yam - a baseComponents for html
+# YamJS - a baseComponents for html
 
-<!-- > _本组件基类即将开源，现在阶段只是内部使用，修复一些 bug，以及一些优化_ -->
-
-> Yam 一个 webComponent 的渲染函数组件;兼容非 webComponent 渲染组件基类
+> YamJS 一个 webComponent 的渲染函数组件;兼容非 webComponent 渲染组件基类
 
 [看实例](https://yamjs.bestsloth.top/dist/index.html)
 
@@ -137,16 +135,13 @@ export default App
 支持主流浏览器
 IE9+
 
-<!--
-> todo -->
-
 > 更新
 
 - 0.4.0 (2020-02-29)
 
   - 优化 ie 系列加载（支持 ie9+）
   - 优化不支持`MutationObserver`方法的浏览器（例如 ie10）无法自动渲染新加标签
-    - 扩展了 `HTMLELEMENT` 对象方法,可以自动去渲染标签 `appendChild,insertBefore,removeChild,replaceChild,setAttribute`
+    - 修改了 `HTMLELEMENT` 对象一些方法,可以自动去渲染标签 `appendChild,insertBefore,removeChild,replaceChild,setAttribute`
     - 添加方法 `yamjsRender(el)` 函数；手动去渲染
   - 优化在 `vue` 项目中，低版本安卓组件未渲染出来
 
