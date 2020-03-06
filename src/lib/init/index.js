@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-02-29 22:50:57
+ * @LastEditTime: 2020-03-06 17:44:28
  */
 import { _createElementJson } from '../vDom/createElement'
 import updateElement from '../diff/index'
@@ -278,13 +278,13 @@ function getFram (isNeedDiv = false) {
     this.$dom = document.createDocumentFragment() || document.createElement('div')
   }
   // this.$dom.setAttribute('dom', this._cid)
-  try {
-    this[$vdomSymbol] = getRenderData(this)// .render()
-    // console.log(this[$vdomSymbol])
-    this[$vdomSymbol]._rootId = this._rootId
-  } catch (e) {
-    // log('e', e)
-  }
+  // try { 移除trycatch
+  this[$vdomSymbol] = getRenderData(this)// .render()
+  // console.log(this[$vdomSymbol])
+  this[$vdomSymbol]._rootId = this._rootId
+  // } catch (e) {
+  //   // log('e', e)
+  // }
   // this.$dom._childrenOri = this._childrenOri
   this.$dom._parentElement = this.__shadowRoot
   this.$dom._parentNode = this.__shadowRoot

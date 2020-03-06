@@ -1,12 +1,11 @@
 /*
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
- * @LastEditors  : xuxueliang
- * @LastEditTime : 2020-01-05 23:43:07
+ * @LastEditors: xuxueliang
+ * @LastEditTime: 2020-03-06 16:40:09
  */
 import Yam, { Component } from '../lib/index'
 // var style = require('./myTimers.styl')
-// eslint-disable-next-line no-unused-vars
 import Hour from './timers/hour'
 @Component({
   tagName: 'my-timer',

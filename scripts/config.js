@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-13 18:50:38
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-02-29 20:35:30
+ * @LastEditTime: 2020-03-06 17:45:04
  */
 const json = require('rollup-plugin-json')
 const babel = require('rollup-plugin-babel')
@@ -55,14 +55,28 @@ const builds = {
   //   plugins: [cjs()],
   //   banner
   // },
-  'prod-common': {
+  // 'common:dev': {
+  //   entry: resolve('lib/index.js'),
+  //   dest: resolve('dist/yam.common.js'),
+  //   format: 'cjs',
+  //   env: 'development',
+  //   banner
+  // },
+  'common:prod': {
     entry: resolve('lib/index.js'),
     dest: resolve('dist/yam.common.min.js'),
     format: 'cjs',
     env: 'production',
     banner
   },
-  'prod-esm-min': {
+  // 'esm:dev': {
+  //   entry: resolve('lib/index.js'),
+  //   dest: resolve('dist/yam.esm.js'),
+  //   format: 'es',
+  //   env: 'development',
+  //   banner
+  // },
+  'esm:prod': {
     entry: resolve('lib/index.js'),
     dest: resolve('dist/yam.esm.min.js'),
     format: 'es',
@@ -76,7 +90,15 @@ const builds = {
   //   env: 'production',
   //   banner
   // },
-  'prod': {
+  // 'umd:dev': {
+  //   entry: resolve('lib/index.js'),
+  //   dest: resolve('dist/yam.js'),
+  //   format: 'umd',
+  //   env: 'development',
+  //   // alias: {he: './entity-decoder'},
+  //   banner
+  // },
+  'umd:prod': {
     entry: resolve('lib/index.js'),
     dest: resolve('dist/yam.min.js'),
     format: 'umd',

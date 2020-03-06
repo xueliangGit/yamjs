@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-02-29 12:01:34
+ * @LastEditTime: 2020-03-06 17:12:11
  */
 import nodeOps from '../utils/nodeOps'
 // import { renderElement } from '../vDom/createElement'
@@ -50,11 +50,19 @@ function insert (parent, elm, ref, isFirst) {
     if (ref) {
       if (ref.parentNode === parent) {
         // nodeOps.insertBefore(parent, elm, ref, !isFirst)
-        taskLine.addMicTask(() => { nodeOps.insertBefore(parent, elm, ref, !isFirst) })
+        if (parent.nodeType === 11) {
+          nodeOps.insertBefore(parent, elm, ref, !isFirst)
+        } else {
+          taskLine.addMicTask(() => { nodeOps.insertBefore(parent, elm, ref, !isFirst) })
+        }
       }
     } else {
       // nodeOps.appendChild(parent, elm, !isFirst)
-      taskLine.addMicTask(() => { nodeOps.appendChild(parent, elm, !isFirst) })
+      if (parent.nodeType === 11) {
+        nodeOps.appendChild(parent, elm, !isFirst)
+      } else {
+        taskLine.addMicTask(() => { nodeOps.appendChild(parent, elm, !isFirst) })
+      }
     }
   }
 }

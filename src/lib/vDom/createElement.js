@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-02-19 12:33:43
+ * @LastEditTime: 2020-03-06 17:47:16
  */
 /** @jsx createElement */
 import { HTML_TAGS, GLOBAL_ATTRIBUTES, EVENT_HANDLERS } from './creatConfig'
@@ -111,58 +111,59 @@ class Element {
       // 在下一级组件 添加样式
       domFlag && el.setAttribute(domFlag, '')
     } else {
-      if (this.tagName === 'slot') {
-        el = document.createDocumentFragment()
-      } else {
-        el = document.createElement(this.tagType)
-        domFlag && el.setAttribute(domFlag, '')
-      }
+      // 没有slot了
+      // if (this.tagName === 'slot') {
+      //   el = document.createDocumentFragment()
+      // } else {
+      el = document.createElement(this.tagType)
+      domFlag && el.setAttribute(domFlag, '')
+      // }
       // 处理 slot 更新
-      if (this.tagName === 'slot') {
-        // 不需要再 处理solt
-        // 20191114
-        // 处理slot新的形式
-        // let mark = getparentCom(parentELm)
-        // // console.log(mark)
-        // let slotKey = this.props.name || 'default'
-        // el.setAttribute('tag', 'slot')
-        // 切换为新的方式
-        // if (mark[$slotSymbol] && mark[$slotSymbol][slotKey]) {
-        //   // forEach(mark[$slotSymbol][slotKey], (v) => {
-        //   //   if (v instanceof Element) {
-        //   //     el.appendChild(v.render())
-        //   //   } else {
-        //   //     // if (v._isComponent) {
-        //   //     //   el.appendChild(v.cloneNode(true))
-        //   //     // } else {
-        //   //     el.appendChild(v)
-        //   //     // }
-        //   //   }
-        //   // })
-        // }
-        // 埋点 slottHooks
-        // mark.__hooks_slot[slotKey] = function (slotKeys) {
-        //   // patch(el)
-        //   forEach(mark[$slotSymbol][slotKeys], (v) => {
-        //     console.log('__hooks_slot', v, el)
-        //     if (v instanceof Element) {
-        //       el.appendChild(v.render())
-        //     } else {
-        //       // if (v._isComponent) {
-        //       //   el.appendChild(v.cloneNode(true))
-        //       // } else {
-        //       el.appendChild(v)
-        //       // }
-        //     }
-        //   })
-        // }
-        // el.isBelong = mark._name
-        // doAfterSlotUpdate(el, this, mark.elm.rand, mark)
-        // 添加 移除时的事件
-        // el.disconnectedCallback = () => {
-        //   setSlotState(mark, this.props.name, false)
-        // }
-      }
+      // if (this.tagName === 'slot') {
+      // 不需要再 处理solt
+      // 20191114
+      // 处理slot新的形式
+      // let mark = getparentCom(parentELm)
+      // // console.log(mark)
+      // let slotKey = this.props.name || 'default'
+      // el.setAttribute('tag', 'slot')
+      // 切换为新的方式
+      // if (mark[$slotSymbol] && mark[$slotSymbol][slotKey]) {
+      //   // forEach(mark[$slotSymbol][slotKey], (v) => {
+      //   //   if (v instanceof Element) {
+      //   //     el.appendChild(v.render())
+      //   //   } else {
+      //   //     // if (v._isComponent) {
+      //   //     //   el.appendChild(v.cloneNode(true))
+      //   //     // } else {
+      //   //     el.appendChild(v)
+      //   //     // }
+      //   //   }
+      //   // })
+      // }
+      // 埋点 slottHooks
+      // mark.__hooks_slot[slotKey] = function (slotKeys) {
+      //   // patch(el)
+      //   forEach(mark[$slotSymbol][slotKeys], (v) => {
+      //     console.log('__hooks_slot', v, el)
+      //     if (v instanceof Element) {
+      //       el.appendChild(v.render())
+      //     } else {
+      //       // if (v._isComponent) {
+      //       //   el.appendChild(v.cloneNode(true))
+      //       // } else {
+      //       el.appendChild(v)
+      //       // }
+      //     }
+      //   })
+      // }
+      // el.isBelong = mark._name
+      // doAfterSlotUpdate(el, this, mark.elm.rand, mark)
+      // 添加 移除时的事件
+      // el.disconnectedCallback = () => {
+      //   setSlotState(mark, this.props.name, false)
+      // }
+      // }
       el._parentNode = parentELm
       el._parentElement = parentELm
     }
@@ -279,16 +280,16 @@ class Element {
         }
       }
     })
-    if (this.tagName === 'slot') {
-      this.elm = el.childNodes[0]
-      this.elmSize = el.childNodes.length
-      if (parentELm) {
-        // 设置slot 标示
-        parentELm.hasslot = true
-      }
-    } else {
-      this.elm = el
-    }
+    // if (this.tagName === 'slot') {
+    //   this.elm = el.childNodes[0]
+    //   this.elmSize = el.childNodes.length
+    //   if (parentELm) {
+    //     // 设置slot 标示
+    //     parentELm.hasslot = true
+    //   }
+    // } else {
+    this.elm = el
+    // }
     return el
   }
 }
