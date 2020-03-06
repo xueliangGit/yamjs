@@ -2,13 +2,14 @@
  * @Author: xuxueliang
  * @Date: 2020-02-18 15:13:32
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-02-29 20:07:17
+ * @LastEditTime: 2020-03-06 16:02:13
  */
 // import Yam, { Component } from 'yamjs'
 import Yam, { Component } from '../../lib/index'
 import img from './but-jubaozhaoshanchu@2x.png'
 import style from './index.stylus'
 
+let num = 0
 @Component({
   tagName: 'multi-upimg',
   style: style,
@@ -20,6 +21,7 @@ class App extends Yam {
       // your data
       max: 5,
       title: '213',
+      num: ++num,
       imgs: [],
       imgKeys: []
     }
@@ -32,11 +34,21 @@ class App extends Yam {
     this.update()
     this.updateEmitImgs()
   }
+  $mounted () {
+    console.log(document.getElementById('upimg'))
+  }
   updateEmitImgs () {
     this.emitProp('uploadok', this.imgs, this.imgKeys)
   }
   $beforeUpdate () {
     console.log(this)
+  }
+  getList () {
+    console.log('getList,=', this.num)
+    if (num < 49) {
+      return <multi-upImg />
+    }
+    return this.num
   }
   render () {
     return <div className='img-divs'>
@@ -49,7 +61,8 @@ class App extends Yam {
         </div>
       ))
       }
-      <up-img selelctOnly={ true } className={ `img-show ${ this.imgs.length >= this.max ? 'hide' : '' }` } style={ { 'width': this.width + 'px', height: this.height + 'px' } } type={ this.type } suffix={ this.suffix } serverurl={ this.serverurl } uploadok={ this.uploadok.bind(this) } title="上传图片"></up-img>
+      <up-img id='upimg' selelctOnly={ true } className={ `img-show ${ this.imgs.length >= this.max ? 'hide' : '' }` } style={ { 'width': this.width + 'px', height: this.height + 'px' } } type={ this.type } suffix={ this.suffix } serverurl={ this.serverurl } uploadok={ this.uploadok.bind(this) } title="上传图片"></up-img>
+      { this.getList() }
     </div >
   }
 }

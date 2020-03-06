@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-02-29 22:27:06
+ * @LastEditTime: 2020-03-06 16:27:44
  */
 import './utils/Polyfill.js'
 import init, { initConfig } from './init/index'
@@ -16,7 +16,7 @@ import BaseCustomElements from './BaseCustomElements'
 import { HTML_TAGS } from './vDom/creatConfig'
 import domOnLoad from './utils/domLoad'
 import forNotsupportMutationObserver from './utils/forNotsupportMutationObserver.js'
-import { versionBate } from '../../package.json'
+import { version } from '../../package.json'
 var comps = (window.comps = {})
 let hasCompsName = []
 let compsIds = 0
@@ -239,7 +239,7 @@ export function store (Config) {
 }
 console.log(`
     
-    Bate-${versionBate } for this version of yamjs, 
+    Bate-${version } for this version of yamjs, 
     
     that is a baseComponet for html and can run in html or Vue or reactjs
     
