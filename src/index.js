@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-13 16:13:59
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-02-18 20:11:18
+ * @LastEditTime: 2020-03-08 02:05:58
  */
 
 import './components/common'
@@ -27,5 +27,5 @@ import './components/test.2'
 // console.log(Component)
 // export default Yam
 // export { Component }
-import './components/upfile/upimg'
+// import './components/upfile/upimg'
 import './components/multiUpImg/index'

@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-03-06 17:47:16
+ * @LastEditTime: 2020-03-09 12:23:40
  */
 /** @jsx createElement */
 import { HTML_TAGS, GLOBAL_ATTRIBUTES, EVENT_HANDLERS } from './creatConfig'
@@ -18,6 +18,25 @@ Array.prototype.flat = Array.prototype.flat || function () {
 // let i = 0
 class Element {
   constructor(tagName, props = {}, childNodes, _root, isText) {
+    // if (typeof tagName === 'function' && tagName._isLazyLoad) {
+    //   this._isloading = true
+    //   this._renderTask = []
+    //   tagName(res => {
+    //     this._init(res, props, childNodes, _root, isText)
+    //     this._isloading = false
+    //     this._runRenderTask()
+    //   })
+    // } else {
+    this._init(tagName, props, childNodes, _root, isText)
+    // }
+  }
+  // _runRenderTask () {
+  //   if (this._renderTask.length) {
+  //     this._render(...this._renderTask.shift())
+  //     this._runRenderTask()
+  //   }
+  // }
+  _init (tagName, props = {}, childNodes, _root, isText) {
     if (isText) {
       this.tagName = tagName
       this.props = props
@@ -69,6 +88,13 @@ class Element {
     this._root = _root // 带搞根结点
   }
   render (key = null, parentELm = null, domFlag) {
+    // if (this._isloading) {
+    //   this._renderTask.push([key, parentELm, domFlag])
+    // } else {
+    return this._render(key, parentELm, domFlag)
+    // }
+  }
+  _render (key = null, parentELm = null, domFlag) {
     if (this.isText) {
       this.elm = document.createTextNode(this.text)
       return this.elm

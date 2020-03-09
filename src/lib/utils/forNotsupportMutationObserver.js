@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2020-02-29 16:15:59
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-03-02 12:24:16
+ * @LastEditTime: 2020-03-06 18:11:05
  */
 /*
 * 针对不支持MutationObserver  做法，添加 appendYamNode 方法
@@ -122,6 +122,9 @@ function initHTMLEvent () {
   }
   HTMLElementPrototype._setAttribute = HTMLElementPrototype.setAttribute
   HTMLElementPrototype.setAttribute = function (key, val) {
+    if (Array.isArray(val)) {
+      val = val.join(key === 'class' ? ' ' : ',')
+    }
     let returnFlag = this._setAttribute(key, val)
     if (this.isComponent) {
       let comp = getComponentByElm(this)

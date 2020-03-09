@@ -2,14 +2,15 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-03-06 16:27:44
+ * @LastEditTime: 2020-03-07 20:15:25
  */
 import './utils/Polyfill.js'
 import init, { initConfig } from './init/index'
 import { canUseCustomElements } from './init/bolConf'
 import lifeCycle from './init/lifeCycle'
 import { Mix } from './init/mix'
-import { getStyleStr, guid2, toCamelCase, forEach, getCid } from './utils/index' // supportMutationObserver
+// getStyleStr 使用loader后使用这个了
+import { guid2, toCamelCase, forEach, getCid } from './utils/index' // supportMutationObserver
 import { getCallFnName, getClosetParentCom } from './utils/componentUtil'
 import cacheLib from './utils/cacheLib'
 import BaseCustomElements from './BaseCustomElements'
@@ -183,7 +184,7 @@ export function Component (Config) {
       this._canBeCalledExt =
         typeof canBeCalledExt === 'boolean' ? canBeCalledExt : false
       this._cid = getCid(tagName)
-      this._style = getStyleStr(this._cid, style)
+      this._style = style // getStyleStr(this._cid, style) 使用了loader 后不需要这个了
       // store
       this.$store = {}
       if (store && store.add) {

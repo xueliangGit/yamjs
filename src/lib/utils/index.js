@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-06-25 13:56:05
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-02-29 23:40:35
+ * @LastEditTime: 2020-03-07 12:04:10
  */
 import { global as window } from './global'
 import { $slotSymbol } from '../symbol'
@@ -105,46 +105,75 @@ function isForDirective (str) {
 
 }
 // 获取styleStr
+let getStyleStrCache = {}
+
 function getStyleStr (_id, style) {
   if (!style) return ''
+  if (getStyleStrCache[_id]) return getStyleStrCache[_id]
+
   if (!Array.isArray(style)) {
     style = [style]
   }
-  return style.map(v => _getStrByStyle(_id, v, styleIsScope(v))).join('')
+  return (getStyleStrCache[_id] = style.map(v => _getStrByStyle(_id, v)).join(''))
 }
 function getDomStyleFlag (_id, attr) {
   return attr ? _id : '[' + _id + ']'
 }
-function styleIsScope (style) {
-  if (typeof style === 'string') {
-    return !!~style.indexOf('[scope]')
-  } else if (style) {
-    return !!~style[0][1].indexOf('[scope]')
-  }
-  return false
-}
-function _getStrByStyle (_id, style, isScope) {
+
+function _getStrByStyle (_id, style) {
   if (style) {
-    let str = (typeof style === 'string' ? style : style[1]).split('\n')
-    let isScope = !!~str[0].indexOf('scope')
-    if (isScope) {
-      str.shift()
+    var str = (typeof style === 'string' ? style : style[1]).split('\n')
+    let styleConfig = {}
+    if (~str[0].indexOf('[config]')) {
+      // 获取配置信息
+      try {
+        let getConf = findStyleConfig(str, 1)
+        styleConfig = getConf.config || {}
+        str.splice(0, getConf.index + 1)
+      } catch (e) {
+        console.error(e)
+      }
     }
-    return map(str, v => {
+    return map(str, function (v) {
       if (~v.indexOf('{')) {
         if (~v.indexOf('[root]')) {
-          // if (isScope) {
-          //   v = v.replace('[root]', '')
-          // } else {
-          return v.replace('[root]', getDomStyleFlag(_id + '-root'))
-          // }
+          return v.replace('[root]', getDomStyleFlag(_id + '-root')) // }
         }
-        return isScope ? v.replace(' {', '').replace('{', '') + getDomStyleFlag(_id) + '{' : v
+        return styleConfig.scope ? getIdStyle(v.replace(' {', '').replace('{', ''), getDomStyleFlag(_id)) + '{' : v
       }
       return v
     }).join('\n')
   }
   return ''
+}
+function findStyleConfig (arr, index, str = []) {
+  if (~arr[index].indexOf('}')) {
+    return {
+      index,
+      config: Object.assign.apply(null, map(str, v => {
+        var vp = v.split(':')
+        return {
+          [vp[0]]: vp[1]
+        }
+      }))
+    }
+  } else {
+    str.push(arr[index].replace(/ /g, '').replace(/;/g, ''))
+    return findStyleConfig(arr, index + 1, str)
+  }
+}
+function getIdStyle (str, id) {
+  if (~str.indexOf('keyframes') ||
+    ~str.indexOf('%') ||
+    (str.indexOf('.') === -1 && (~str.indexOf('from') || ~str.indexOf('to')))) {
+    return str
+  }
+  if (~str.indexOf(':')) {
+    let strArr = str.split(':')
+    strArr[0] = strArr[0] + id
+    return strArr.join(':')
+  }
+  return str + id
 }
 function isUndef (v) {
   return v === undefined || v === null

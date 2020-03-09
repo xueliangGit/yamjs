@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-16 15:06:26
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-02-29 17:59:46
+ * @LastEditTime: 2020-03-08 01:57:36
  */
 
 let tasks = {
@@ -14,8 +14,8 @@ export default {
     tasks.mac.push(fn)
   },
   addMicTask (fn = () => { }) {
-    fn()
-    // tasks.mic.push(fn)
+    // fn()
+    tasks.mic.push(fn)
   },
   runMacTack () {
     runTash('mac')

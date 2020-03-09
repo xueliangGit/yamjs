@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-06-25 13:56:05
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-02-29 22:42:11
+ * @LastEditTime: 2020-03-06 17:53:18
  */
 import { doc as document } from './global'
 import { requestAnimationFrame } from './index'
@@ -27,6 +27,7 @@ function createComment (text) {
   return document.createComment(text)
 }
 function insertBefore (parentNode, newNode, referenceNode, isNeed) {
+  if (!parentNode || !newNode) return
   // 针对内部node 处理 加flag
   requestAnimationFrame(() => {
     // 针对内部node 处理 加flag
@@ -36,6 +37,7 @@ function insertBefore (parentNode, newNode, referenceNode, isNeed) {
   }, isNeed)
 }
 function removeChild (node, child) {
+  if (!child || !node) return
   requestAnimationFrame(() => {
     // 移除事件 触发
     if (child.beforeDisconnectedCallback && !child.isRemovedBySlot) {
@@ -51,10 +53,10 @@ function removeChild (node, child) {
   })
 }
 function appendChild (node, child, isNeed) {
+  if (!node || !child) {
+    return false
+  }
   requestAnimationFrame(() => {
-    if (!node) {
-      return false
-    }
     // 针对内部node 处理 加flag
     child.isYamjsInnerNode = true
     node.appendChild(child)

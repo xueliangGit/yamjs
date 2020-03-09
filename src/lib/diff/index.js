@@ -2,14 +2,14 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-03-06 17:12:11
+ * @LastEditTime: 2020-03-08 02:03:41
  */
 import nodeOps from '../utils/nodeOps'
 // import { renderElement } from '../vDom/createElement'
 //
 import { isDef, requestIdleCallback } from '../utils/index'
 import { getComponentByElm } from '../utils/componentUtil'
-import taskLine from './taskLine'
+import taskLine from '../utils/taskLine'
 // import { $ComponentSymbol } from '../symbol/index'
 // import _ from 'lodash'
 /**

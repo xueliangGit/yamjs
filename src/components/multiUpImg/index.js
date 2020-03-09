@@ -2,13 +2,15 @@
  * @Author: xuxueliang
  * @Date: 2020-02-18 15:13:32
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-03-06 16:02:13
+ * @LastEditTime: 2020-03-09 12:24:46
  */
 // import Yam, { Component } from 'yamjs'
 import Yam, { Component } from '../../lib/index'
+// import lazyLoader from '../../lib/plugins/asncyComponents'
 import img from './but-jubaozhaoshanchu@2x.png'
+import Upimg from '../upfile/upimg'
 import style from './index.stylus'
-
+// let Upimg = lazyLoader('../upfile/upimg')
 let num = 0
 @Component({
   tagName: 'multi-upimg',
@@ -45,7 +47,7 @@ class App extends Yam {
   }
   getList () {
     console.log('getList,=', this.num)
-    if (num < 49) {
+    if (num < 1) {
       return <multi-upImg />
     }
     return this.num
@@ -61,7 +63,7 @@ class App extends Yam {
         </div>
       ))
       }
-      <up-img id='upimg' selelctOnly={ true } className={ `img-show ${ this.imgs.length >= this.max ? 'hide' : '' }` } style={ { 'width': this.width + 'px', height: this.height + 'px' } } type={ this.type } suffix={ this.suffix } serverurl={ this.serverurl } uploadok={ this.uploadok.bind(this) } title="上传图片"></up-img>
+      <Upimg id='upimg' selelctOnly={ true } className={ `img-show ${ this.imgs.length >= this.max ? 'hide' : '' }` } style={ { 'width': this.width + 'px', height: this.height + 'px' } } type={ this.type } suffix={ this.suffix } serverurl={ this.serverurl } uploadok={ this.uploadok.bind(this) } title="上传图片"></Upimg>
       { this.getList() }
     </div >
   }

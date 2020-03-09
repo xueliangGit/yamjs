@@ -2,13 +2,14 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-03-06 17:44:28
+ * @LastEditTime: 2020-03-07 12:09:15
  */
 import { _createElementJson } from '../vDom/createElement'
 import updateElement from '../diff/index'
 import { creatMutationObserser, setAttributes, forEach, isFalse, getDomStyleFlag, addSlot } from '../utils/index' // log,
 import { getCallFnName, syncComponentMark, setComponentForElm, getComponentByElm, setClosetParentCom } from '../utils/componentUtil'
 import nodeOps from '../utils/nodeOps'
+import taskLine from '../utils/taskLine'
 import lifeCycle from './lifeCycle'
 import Destory from './destory'
 import ChildComponentsManage from './childComponentsManage'
@@ -25,8 +26,10 @@ function _init () {
   lifeCycle.beforeMount(this)
   setClosetParentCom(this)
   createdComponent.call(this)
-  initRefs.call(this)
-  lifeCycle.mounted(this)
+  taskLine.addMicTask(() => {
+    initRefs.call(this)
+    lifeCycle.mounted(this)
+  })
   this.update = () => {
     _update(this)
   }
@@ -34,6 +37,7 @@ function _init () {
     _update(this)
     delete this.isbyUsedByuser
   }
+  taskLine.runMicTask()
 }
 function initSolt (childNodes) {
   this[$slotSymbol] = {}
