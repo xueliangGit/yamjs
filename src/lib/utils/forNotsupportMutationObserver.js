@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2020-02-29 16:15:59
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-03-06 18:11:05
+ * @LastEditTime: 2020-03-11 16:23:14
  */
 /*
 * 针对不支持MutationObserver  做法，添加 appendYamNode 方法
@@ -93,6 +93,9 @@ function removeChild (node) {
 initHTMLEvent()
 function initHTMLEvent () {
   let HTMLElementPrototype = HTMLElement.prototype
+  if (HTMLElementPrototype._appendChild) {
+    return
+  }
   HTMLElementPrototype._appendChild = HTMLElementPrototype.appendChild
   HTMLElementPrototype.appendChild = function (node) {
     let returnFlag = this._appendChild(node)

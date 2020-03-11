@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-13 18:50:38
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-03-06 21:45:00
+ * @LastEditTime: 2020-03-10 16:41:29
  */
 const json = require('rollup-plugin-json')
 const babel = require('rollup-plugin-babel')
@@ -12,7 +12,7 @@ const alias = require('rollup-plugin-alias')
 const cjs = require('rollup-plugin-commonjs')
 const replace = require('rollup-plugin-replace')
 const node = require('rollup-plugin-node-resolve')
-
+const fs = require('fs-extra')
 // const flow = require('rollup-plugin-flow-no-whitespace')
 const version = process.env.VERSION || require('../package.json').version
 const weexVersion = true || process.env.WEEX_VERSION || require('../packages/weex-vue-framework/package.json').version
@@ -26,35 +26,67 @@ const banner =
   ` * lastTime:${ new Date() }.\n` +
   ' */'
 
-const weexFactoryPlugin = {
-  intro () {
-    return 'module.exports = function weexFactory (exports, document) {'
-  },
-  outro () {
-    return '}'
-  }
-}
+// const weexFactoryPlugin = {
+//   intro () {
+//     return 'module.exports = function weexFactory (exports, document) {'
+//   },
+//   outro () {
+//     return '}'
+//   }
+// }
 
 const aliases = require('./alias')
 const resolve = p => {
   const base = p.split('/')[0]
+  let uri = ''
   if (aliases[base]) {
-    return path.resolve(aliases[base], p.slice(base.length + 1))
+    uri = path.resolve(aliases[base], p.slice(base.length + 1))
   } else {
-    return path.resolve(__dirname, '../', p)
+    uri = path.resolve(__dirname, '../', p)
   }
+  fs.ensureDirSync(path.dirname(uri))
+  return uri
 }
 
 const builds = {
-  // Runtime only (CommonJS). Used by bundlers e.g. Webpack & Browserify
-  // 'prod-common-dev': {
-  //   entry: resolve('lib/index.js'),
-  //   dest: resolve('dist/yam.common.dev.js'),
-  //   format: 'cjs',
-  //   env: 'development',
-  //   plugins: [cjs()],
-  //   banner
-  // },
+  // user yamjs-laoder
+  'common:dev:loader': {
+    entry: resolve('lib/enters/index.use.loader.js'),
+    dest: resolve('dist/loader/yam.common.js'),
+    format: 'cjs',
+    env: 'development',
+    banner
+  },
+  'common:prod:loader': {
+    entry: resolve('lib/enters/index.use.loader.js'),
+    dest: resolve('dist/loader/yam.common.min.js'),
+    format: 'cjs',
+    env: 'production',
+    banner
+  },
+  'esm:prod:loader': {
+    entry: resolve('lib/enters/index.use.loader.js'),
+    dest: resolve('dist/loader/yam.esm.min.js'),
+    format: 'es',
+    env: 'production',
+    banner
+  },
+  'esm:dev:loader': {
+    entry: resolve('lib/enters/index.use.loader.js'),
+    dest: resolve('dist/loader/yam.esm.js'),
+    format: 'es',
+    env: 'development',
+    banner
+  },
+  'umd:prod:loader': {
+    entry: resolve('lib/enters/index.use.loader.js'),
+    dest: resolve('dist/loader/yam.min.js'),
+    format: 'umd',
+    env: 'production',
+    // alias: {he: './entity-decoder'},
+    banner
+  },
+  // normal
   'common:dev': {
     entry: resolve('lib/index.js'),
     dest: resolve('dist/yam.common.js'),
@@ -93,6 +125,14 @@ const builds = {
   'umd:dev': {
     entry: resolve('lib/index.js'),
     dest: resolve('dist/yam.js'),
+    format: 'umd',
+    env: 'development',
+    // alias: {he: './entity-decoder'},
+    banner
+  },
+  'umd:dev:loader': {
+    entry: resolve('lib/enters/index.use.loader.js'),
+    dest: resolve('dist/loader/yam.js'),
     format: 'umd',
     env: 'development',
     // alias: {he: './entity-decoder'},
@@ -320,6 +360,7 @@ function genConfig (name) {
       file: opts.dest,
       format: opts.format,
       banner: opts.banner,
+      exports: 'named',
       name: opts.moduleName || 'Yam'
     },
     onwarn: (msg, warn) => {

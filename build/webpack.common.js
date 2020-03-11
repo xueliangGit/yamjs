@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-04-09 14:52:29
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-03-07 15:27:29
+ * @LastEditTime: 2020-03-10 17:08:34
  */
 // webpack.common.js
 const path = require('path')
@@ -29,7 +29,7 @@ module.exports = {
   },
   resolve: {
     modules: ['node_modules', 'src/lib'],
-    extensions: ['.js', '.vue', '.json', '.css', '.scss', 'styl'], // 添加在此的后缀所对应的文件可以省略后缀
+    extensions: ['.js', '.json', '.css', '.scss', 'styl'], // 添加在此的后缀所对应的文件可以省略后缀
     alias: {
       // 'vue$': 'vue/dist/vue.esm.js',
       '@': resolve('src')

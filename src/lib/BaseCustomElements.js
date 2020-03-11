@@ -2,18 +2,27 @@
  * @Author: xuxueliang
  * @Date: 2019-06-25 13:56:05
  * @LastEditors: xuxueliang
- * @LastEditTime: 2019-06-25 13:56:05
+ * @LastEditTime: 2020-03-11 18:10:34
  */
 import { getComponentByElm, setComponentForElm } from './utils/componentUtil'
-export default function getCustom (Target) {
+import { HTML_TAGS } from './vDom/creatConfig'
+
+export default function getCustom () {
   // eslint-disable-next-line
   class ElmApp extends HTMLElement {
     connectedCallback () {
       // onReadyElmFn(this)
-      let comps = new Target()
-      comps.renderAt(this)
-      setComponentForElm(this, comps)
-      comps = null
+      try {
+        let Target = HTML_TAGS[this.nodeName.toLocaleLowerCase()].class
+        if (Target) {
+          let comps = new Target()
+          comps.renderAt(this)
+          setComponentForElm(this, comps)
+          comps = null
+        }
+      } catch (e) {
+        console.warn('组件【' + this.nodeName + '】渲染错误')
+      }
     }
     disconnectedCallback () {
       if (!this.isUnset && !this.isRemovedBySlot) {

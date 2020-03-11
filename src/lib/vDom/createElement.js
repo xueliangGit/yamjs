@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-03-09 12:23:40
+ * @LastEditTime: 2020-03-11 18:09:53
  */
 /** @jsx createElement */
 import { HTML_TAGS, GLOBAL_ATTRIBUTES, EVENT_HANDLERS } from './creatConfig'
@@ -72,7 +72,7 @@ class Element {
         return v
       })
       // console.log(this[$slotSymbol])
-      const tag = HTML_TAGS[this.tagName] || this.tagName
+      const tag = typeof this.tagName === 'function' && this.tagName._tagName ? HTML_TAGS[this.tagName._tagName] : (HTML_TAGS[this.tagName] || this.tagName)
       const object = typeof tag === 'object'
       const tagClass = typeof tag === 'function'
       const localAttrs = object ? tag.attributes || {} : {}

@@ -2,14 +2,12 @@
  * @Author: xuxueliang
  * @Date: 2019-07-03 16:00:17
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-03-10 16:17:58
+ * @LastEditTime: 2020-03-10 16:31:55
  */
 // not use laoder
-import Yam, { Component } from './Yam'
-import tools from './plugins/tools'
-import { getStyleStr } from './utils/index'
+import Yam, { Component } from '../Yam'
+import tools from '../plugins/tools'
 Yam.use(tools)
-Yam._gSS = getStyleStr
 export default Yam
 export { Component }
 // fix 外环境组件嵌套组件

@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2019-09-16 16:52:33
+ * @LastEditTime: 2020-03-11 17:38:43
  */
 
 declare class Yam {
@@ -56,7 +56,7 @@ declare class Yam {
   /**
     * 销毁之前调用
     */ 
-  $beforeDestroyed (): void
+  $beforeDestroy (): void
   /**
     * 销毁之后调用
     */ 

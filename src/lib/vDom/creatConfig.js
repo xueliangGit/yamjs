@@ -1,10 +1,24 @@
 /*
  * @Author: xuxueliang
  * @Date: 2019-06-25 13:56:05
- * @LastEditors  : xuxueliang
- * @LastEditTime : 2020-01-05 21:49:32
+ * @LastEditors: xuxueliang
+ * @LastEditTime: 2020-03-10 17:12:35
  */
-export const HTML_TAGS = {
+// const translateTpLow = (input) => {
+//   if (!Array.isArray(input)) {
+//     input = [input]
+//   }
+//   return Object.assign.apply(null, input.map(v => {
+//     let str = v.toLowerCase()
+//     if (str.substr(0, 2) === 'on') {
+//       str = str.substr(2)
+//     }
+//     return {
+//       [v]: str
+//     }
+//   }))
+// }
+export const HTML_TAGS = {} /* {
   a: {
     name: 'a',
     attributes: {
@@ -382,6 +396,7 @@ export const HTML_TAGS = {
     }
   }
 }
+*/
 export const GLOBAL_ATTRIBUTES = {
   accessKey: 'accesskey',
   className: 'class',

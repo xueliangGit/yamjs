@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2020-02-18 15:13:32
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-03-09 12:24:46
+ * @LastEditTime: 2020-03-10 17:29:00
  */
 // import Yam, { Component } from 'yamjs'
 import Yam, { Component } from '../../lib/index'
@@ -63,7 +63,8 @@ class App extends Yam {
         </div>
       ))
       }
-      <Upimg id='upimg' selelctOnly={ true } className={ `img-show ${ this.imgs.length >= this.max ? 'hide' : '' }` } style={ { 'width': this.width + 'px', height: this.height + 'px' } } type={ this.type } suffix={ this.suffix } serverurl={ this.serverurl } uploadok={ this.uploadok.bind(this) } title="上传图片"></Upimg>
+      <a href='123as/a'></a>
+      <Upimg href='asd' id='upimg' selelctOnly={ true } className={ `img-show ${ this.imgs.length >= this.max ? 'hide' : '' }` } style={ { 'width': this.width + 'px', height: this.height + 'px' } } type={ this.type } suffix={ this.suffix } serverurl={ this.serverurl } uploadok={ this.uploadok.bind(this) } title="上传图片"></Upimg>
       { this.getList() }
     </div >
   }

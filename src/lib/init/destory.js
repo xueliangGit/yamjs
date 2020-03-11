@@ -8,33 +8,33 @@ import cacheLib from '../utils/cacheLib'
 import { guid2 } from '../utils/index'
 let destoryId = 0
 class Destory {
-  constructor (context) {
-    this.id = 'beforeDestroyedCall' + '-' + (context._eid || guid2())
+  constructor(context) {
+    this.id = 'beforeDestroyCall' + '-' + (context._eid || guid2())
     cacheLib.set(this.id, {})
   }
   get () {
     return cacheLib.get(this.id)
   }
   add (fn) {
-    let beforeDestroyedCall = this.get()
+    let beforeDestroyCall = this.get()
     let guid = ++destoryId
-    beforeDestroyedCall[guid] = fn
-    beforeDestroyedCall = null
+    beforeDestroyCall[guid] = fn
+    beforeDestroyCall = null
     return guid
   }
   del (eventId) {
-    let beforeDestroyedCall = this.get()
-    let fn = beforeDestroyedCall[eventId]
-    delete beforeDestroyedCall[eventId]
-    beforeDestroyedCall = null
+    let beforeDestroyCall = this.get()
+    let fn = beforeDestroyCall[eventId]
+    delete beforeDestroyCall[eventId]
+    beforeDestroyCall = null
     return fn
   }
   run () {
-    let beforeDestroyedCall = this.get()
-    for (let i in beforeDestroyedCall) {
-      typeof beforeDestroyedCall[i] === 'function' && beforeDestroyedCall[i]()
+    let beforeDestroyCall = this.get()
+    for (let i in beforeDestroyCall) {
+      typeof beforeDestroyCall[i] === 'function' && beforeDestroyCall[i]()
     }
-    beforeDestroyedCall = null
+    beforeDestroyCall = null
     cacheLib.del(this.id)
   }
 }

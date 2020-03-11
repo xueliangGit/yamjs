@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-03-07 20:15:25
+ * @LastEditTime: 2020-03-11 18:57:31
  */
 import './utils/Polyfill.js'
 import init, { initConfig } from './init/index'
@@ -21,7 +21,7 @@ import { version } from '../../package.json'
 var comps = (window.comps = {})
 let hasCompsName = []
 let compsIds = 0
-let lifeCycleArray = Object.keys(lifeCycle)
+// let lifeCycleArray = Object.keys(lifeCycle)
 @Mix()
 class Yam {
   constructor() {
@@ -56,7 +56,7 @@ class Yam {
   }
   __beforeDisconnectedCallback () {
     if (this.isDestoryed) return
-    lifeCycle.beforeDestroyed(this)
+    lifeCycle.beforeDestroy(this)
     // 取消 监听
     this.mutation && this.mutation.disconnect()
     this.Destory && this.Destory.run()
@@ -139,24 +139,24 @@ class Yam {
   delDestory (eventId) {
     return this.Destory && this.Destory.del(eventId)
   }
-  // 添加声明周期回调函数
-  addLifeCycleCallFn (lifeCycle, fn) {
-    if (~lifeCycleArray.indexOf(lifeCycle)) {
-      if (typeof fn === 'function') {
-        this.lifeCycleCall = this.lifeCycleCall || {};
-        (this.lifeCycleCall[lifeCycle + '_callfn'] =
-          this.lifeCycleCall[lifeCycle + '_callfn'] || []).push(fn)
-      } else {
-        console.warn(`
-        要添加的组件周期回调必须是函数
-        `)
-      }
-    } else {
-      console.warn(`
-      要添加的组件周期回调的参数，只能是${lifeCycle.join(',') }，请检查
-      `)
-    }
-  }
+  // // 添加声明周期回调函数
+  // addLifeCycleCallFn (lifeCycle, fn) {
+  //   if (~lifeCycleArray.indexOf(lifeCycle)) {
+  //     if (typeof fn === 'function') {
+  //       this.lifeCycleCall = this.lifeCycleCall || {};
+  //       (this.lifeCycleCall[lifeCycle + '_callfn'] =
+  //         this.lifeCycleCall[lifeCycle + '_callfn'] || []).push(fn)
+  //     } else {
+  //       console.warn(`
+  //       要添加的组件周期回调必须是函数
+  //       `)
+  //     }
+  //   } else {
+  //     console.warn(`
+  //     要添加的组件周期回调的参数，只能是${lifeCycle.join(',') }，请检查
+  //     `)
+  //   }
+  // }
 }
 Yam.getComsName = () => hasCompsName
 export default Yam
@@ -174,6 +174,7 @@ export function Component (Config) {
   } = Config
   hasCompsName.push(tagName)
   return function (Target) {
+    if (Target._classIsInitedOk) return
     Target._tagName = tagName
     Target._shadow = !!shadow
     Target.prototype._config = function () {
@@ -184,7 +185,7 @@ export function Component (Config) {
       this._canBeCalledExt =
         typeof canBeCalledExt === 'boolean' ? canBeCalledExt : false
       this._cid = getCid(tagName)
-      this._style = style // getStyleStr(this._cid, style) 使用了loader 后不需要这个了
+      this._style = (Yam._gSS ? Yam._gSS(this._cid, style) : style).toString() // getStyleStr(this._cid, style) 使用了loader 后不需要这个了
       // store
       this.$store = {}
       if (store && store.add) {
@@ -196,16 +197,19 @@ export function Component (Config) {
         router.add(this)
       }
     }
-    if (!HTML_TAGS[tagName]) {
-      HTML_TAGS[tagName] = {
-        name: tagName,
-        isComponent: true,
-        class: Target
-      }
+    // 允许覆盖 ；使用最新的组件去渲染
+    // if (!HTML_TAGS[tagName]) {
+    // 都把组件存在 HTML_TAGS 里面
+    HTML_TAGS[tagName] = {
+      name: tagName,
+      isComponent: true,
+      class: Target
     }
-    if (!cacheLib.get('com-' + tagName)) {
-      cacheLib.set('com-' + tagName, Target)
-    }
+    // }
+    // 允许覆盖 ；使用最新的组件去渲染
+    // if (!cacheLib.get('com-' + tagName)) {
+    cacheLib.set('com-' + tagName, Target)
+    // }
     if (
       (customElements || typeof customElements === 'undefined') &&
       canUseCustomElements && window.customElements
@@ -214,7 +218,7 @@ export function Component (Config) {
       try {
         window.customElements.define(tagName, BaseCustomElements(Target))
       } catch (e) {
-        console.log('e' + tagName, e)
+        // console.log('e' + tagName, e)
       }
     } else {
       Target.customElements = false
@@ -223,7 +227,6 @@ export function Component (Config) {
       // }
       domOnLoad(() => {
         let doms = document.querySelectorAll(tagName)
-        console.log(tagName, doms)
         forEach(doms, node => {
           if (!node.isInited) {
             new Target().renderAt(node)
@@ -231,6 +234,7 @@ export function Component (Config) {
         })
       })
     }
+    Target._classIsInitedOk = true
     return Target
   }
 }

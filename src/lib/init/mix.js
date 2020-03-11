@@ -2,13 +2,15 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-02-23 12:32:16
+ * @LastEditTime: 2020-03-11 17:51:09
  */
 import { _createElementJson } from '../vDom/createElement'
 import { forEach } from '../utils/index'
+import lifeCycle, { addGlobalLife } from './lifeCycle'
+let lifeCycleArray = Object.keys(lifeCycle).map(v => '$' + v)
 // 注解
 // 预留字段
-var reserved = 'constructor __createElement connectedCallback $connectedCallback disconnectedCallback $disconnectedCallback $config $data mutation render $beforeCreate $created $beforeMount $mounted $beforeDestroyed $destroyed $beforeUpdate $updated renderAt emit emitProp __connectedCallback __disconnectedCallback __beforeDisconnectedCallback _config __isWillupdate'
+var reserved = 'constructor __createElement connectedCallback $connectedCallback disconnectedCallback $disconnectedCallback $config $data mutation render $beforeCreate $created $beforeMount $mounted $beforeDestroy $destroyed $beforeUpdate $updated renderAt emit emitProp __connectedCallback __disconnectedCallback __beforeDisconnectedCallback _config __isWillupdate'
 // 安装的扩展
 var installed = []
 window.parant = []
@@ -111,6 +113,26 @@ function addPrototype (Target, name) {
           自动执行的方法名：${name } 已存在，请查看是否重复注册该方法
           `)
         }
+      }
+    },
+    /**
+     * @summary 给各个执行生命周期加方法
+     * @param {lifeCycleName} 周期方法名
+     * @param {fn} 回调方法
+     */
+    addLifeCycleCall (lifeCycleName, fn) {
+      if (~lifeCycleArray.indexOf(lifeCycleName)) {
+        if (typeof fn === 'function') {
+          addGlobalLife(lifeCycleName, fn)
+        } else {
+          console.warn(`
+          要添加的组件周期回调必须是函数
+          `)
+        }
+      } else {
+        console.warn(`
+        要添加的组件周期回调的参数[${lifeCycleName }]，只能是 ${ lifeCycleArray.join(',') } ，请检查
+        `)
       }
     }
   }

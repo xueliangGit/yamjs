@@ -2,9 +2,11 @@
  * @Author: xuxueliang
  * @Date: 2019-06-25 13:56:05
  * @LastEditors: xuxueliang
- * @LastEditTime: 2019-09-18 13:20:14
+ * @LastEditTime: 2020-03-11 19:09:23
  */
-let { $ComponentSymbol, $closestParentSymbol } = require('../symbol')
+import { isDev } from '../env'
+
+import { $ComponentSymbol, $closestParentSymbol } from '../symbol'
 // 设置组件标示
 const syncComponentMark = (context) => {
   context.elm.isComponent = true
@@ -25,13 +27,13 @@ const getComponentMark = (dom) => {
   }
   return oldelm
 }
-const getCallFnName = (context, prop) => `${context.tagType || context._tagName}_${prop}_fn`
+const getCallFnName = (context, prop) => `${ context.tagType || context._tagName }_${ prop }_fn`
 // 获取component
 function getComponentByElm (elm) {
   if (!elm.isComponent) {
     return getComponentMark(elm)
   }
-  if (process.env.NODE_ENV === 'development' || elm[$ComponentSymbol]) {
+  if (isDev || elm[$ComponentSymbol]) {
     return elm[$ComponentSymbol]
   }
   if (elm.getApp) {
@@ -41,7 +43,7 @@ function getComponentByElm (elm) {
 }
 // setGet getComponentByElm
 function setComponentForElm (elm, context) {
-  if (process.env.NODE_ENV === 'development' || context.env === 'development') {
+  if (isDev || context.env === 'development') {
     elm[$ComponentSymbol] = context
   } else {
     elm.getApp = function () {
@@ -83,7 +85,7 @@ function runOnReadyElmFn (elm) {
     }
   }
 }
-module.exports = {
+export {
   getCallFnName,
   syncComponentMark,
   getComponentMark,

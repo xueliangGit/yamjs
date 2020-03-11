@@ -1,6 +1,10 @@
 # YamJS - a baseComponents for html
 
+[![NPM version](https://img.shields.io/npm/v/yamjs.svg?style=flat)](https://npmjs.com/package/yamjs) [![NPM downloads](https://img.shields.io/npm/dm/yamjs.svg?style=flat)](https://npmjs.com/package/yamjs) [![donate](https://img.shields.io/badge/$-donate-ff69b4.svg?maxAge=2592000&style=flat)](https://github.com/egoist/donate)
+
 > YamJS 一个 webComponent 的渲染函数组件;兼容非 webComponent 渲染组件基类
+
+> 从 0.5.0 版本开始已经支持使用[yamjs-loader](https://www.npmjs.com/package/yamjs-loader)去编辑代码；
 
 [看实例](https://yamjs.bestsloth.top/dist/index.html)
 

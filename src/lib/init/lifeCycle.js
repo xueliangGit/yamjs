@@ -2,11 +2,15 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2019-08-21 15:48:08
+ * @LastEditTime: 2020-03-11 17:38:50
  */
 import { $ComponentSymbol, $vdomSymbol } from '../symbol/index'
 import { forEach } from '../utils/index'
 // import { runOnReadyElmFn } from '../utils/componentUtil'
+let cacheLifeCycCleFn = {}
+export let addGlobalLife = function (lifeCycleName, fn) {
+  (cacheLifeCycCleFn[lifeCycleName] = cacheLifeCycCleFn[lifeCycleName] || []).push(fn)
+}
 export default {
   // 初始化前
   beforeInit (context) {
@@ -52,9 +56,9 @@ export default {
     return _run(context, '$updated') || void 0
   },
   // 即将销毁
-  beforeDestroyed (context) {
+  beforeDestroy (context) {
     if (context.$router && context.$router.keepLive) return
-    _run(context, '$beforeDestroyed')
+    _run(context, '$beforeDestroy')
   },
   // 销毁后
   destroyed (context) {
@@ -72,8 +76,8 @@ export default {
 }
 function _run (context, name) {
   try {
-    if (context['lifeCycleCall'] && context.lifeCycleCall[name.substr(1, name.length) + '_callfn']) {
-      forEach(context.lifeCycleCall[name.substr(1, name.length) + '_callfn'], (v) => v())
+    if (cacheLifeCycCleFn && cacheLifeCycCleFn[name]) {
+      forEach(cacheLifeCycCleFn[name], (v) => v.call(context))
     }
   } catch (e) {
 

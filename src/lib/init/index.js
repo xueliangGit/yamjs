@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-03-07 12:09:15
+ * @LastEditTime: 2020-03-11 19:05:37
  */
 import { _createElementJson } from '../vDom/createElement'
 import updateElement from '../diff/index'
@@ -15,7 +15,7 @@ import Destory from './destory'
 import ChildComponentsManage from './childComponentsManage'
 import { HTML_TAGS } from '../vDom/creatConfig'
 import { $vdomSymbol, $componentDataSymbol, $closestParentSymbol, $slotSymbol } from '../symbol/index'
-
+import { isDev } from '../env'
 // 初始化 init
 let componenesSize = {}
 let styleIsInstalled = {}
@@ -38,6 +38,13 @@ function _init () {
     delete this.isbyUsedByuser
   }
   taskLine.runMicTask()
+  // this._getAllData = () => {
+  //   return {
+  //     $slot: this[$slotSymbol],
+  //     props: this.props,
+  //     _props: this._props
+  //   }
+  // }
 }
 function initSolt (childNodes) {
   this[$slotSymbol] = {}
@@ -246,7 +253,7 @@ function bindElmentEvent (context) {
 // 删除标示
 // eslint-disable-next-line no-unused-vars
 function delFlag (context, key) {
-  if (process.env.NODE_ENV === 'development' || context.env === 'development') {
+  if (isDev || context.env === 'development') {
     return
   }
   delete context[key]

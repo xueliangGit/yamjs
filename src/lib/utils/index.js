@@ -2,11 +2,11 @@
  * @Author: xuxueliang
  * @Date: 2019-06-25 13:56:05
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-03-07 12:04:10
+ * @LastEditTime: 2020-03-11 19:05:04
  */
 import { global as window } from './global'
 import { $slotSymbol } from '../symbol'
-
+import { isDev } from '../env'
 /**
  * [def 定义对象属性]
  * @param  {Object}  obj        对象
@@ -229,7 +229,7 @@ function getStackTrace () {
   return obj.stack
 }
 const log = function (...arg) {
-  if (process.env.NODE_ENV !== 'development') {
+  if (isDev) {
     return null
   }
   var stack = getStackTrace() || ''

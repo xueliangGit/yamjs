@@ -2,10 +2,12 @@
  * @Author: xuxueliang
  * @Date: 2019-06-25 13:56:05
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-02-23 12:29:25
+ * @LastEditTime: 2020-03-11 19:07:03
  */
 // $Component Symbol
-let SymbolFlag = window.Symbol || ((s) => (s + 'Symbol'))
+import { isDev } from '../env'
+let SymbolFlag = (!isDev && window.Symbol) || ((s) => (s + 'Symbol'))
+// if(process.env.NODE_ENV==='')
 export const $ComponentSymbol = SymbolFlag('$Component')
 // $vdom Symbol
 export const $vdomSymbol = SymbolFlag('$vdom')
