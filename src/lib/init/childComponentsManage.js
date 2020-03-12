@@ -2,12 +2,12 @@
  * @Author: xuxueliang
  * @Date: 2019-06-25 13:56:05
  * @LastEditors: xuxueliang
- * @LastEditTime: 2019-09-18 14:20:27
+ * @LastEditTime: 2020-03-12 14:17:13
  */
 import cacheLib from '../utils/cacheLib'
 import { guid2 } from '../utils/index'
 class ChildComponentsManage {
-  constructor (context) {
+  constructor(context) {
     this.id = 'childComponents' + '-' + (context._eid || guid2())
     cacheLib.set(this.id, {})
   }
@@ -20,6 +20,9 @@ class ChildComponentsManage {
   }
   add (App) {
     let Apps = this.get()
+    App.Destory && App.Destory.add(() => {
+      delete Apps[App._eid]
+    })
     Apps[App._eid] = App
   }
   del (index) {
@@ -38,8 +41,8 @@ class ChildComponentsManage {
     let Apps = this.get()
     this.isDestorying = true
     for (let i in Apps) {
-      Apps[i].__beforeDisconnectedCallback()
-      Apps[i].__disconnectedCallback()
+      Apps[i] && Apps[i].__beforeDisconnectedCallback()
+      Apps[i] && Apps[i].__disconnectedCallback()
       delete Apps[i]
     }
     this.isDestorying = false

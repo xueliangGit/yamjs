@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-03-11 19:05:37
+ * @LastEditTime: 2020-03-12 15:35:08
  */
 import { _createElementJson } from '../vDom/createElement'
 import updateElement from '../diff/index'
@@ -96,45 +96,47 @@ function create () {
       data[v] = typeof propVal === 'number' || typeof propVal === 'string' ? propVal : propVal || data[v] || null
       // setAttributes(this, v, this.getAttribute(v))
     })
-    if (!this.props) {
+    if (!this.props && this.elm.nodeType !== 11) {
       // 处理外环境的情况
-      this.mutation = creatMutationObserser(this.elm, (record) => {
+      let elm = this.elm
+      this.mutation = creatMutationObserser(elm, function (record) {
         if (record.type === 'attributes') {
-          setAttributes(this, record.attributeName, this.elm.getAttribute(record.attributeName) || data[record.attributeName] || null)
-          _update(this)
+          let comps = getComponentByElm(elm)
+          setAttributes(comps, record.attributeName, elm.getAttribute(record.attributeName) || data[record.attributeName] || null)
+          _update(comps)
         }
       }, { attributeFilter: this._props })
       // 绑定 原生元素上的方法
-      forEach(this.elm.attributes, (v) => {
+      forEach(elm.attributes, (v) => {
         if (typeof window[v.value] === 'function') {
-          this.elm._runfn_ = this.elm._runfn_ || {}
-          this.elm._runfn_[getCallFnName(this, v.name)] = window[v.value]
-          this.elm.removeAttribute(v.name)
+          elm._runfn_ = elm._runfn_ || {}
+          elm._runfn_[getCallFnName(this, v.name)] = window[v.value]
+          elm.removeAttribute(v.name)
         }
       })
       // 添加 监听事件， 适配三方框架
-      this.addWatcher = this.elm.addWatcher = (names, fn = () => { }) => {
+      this.addWatcher = elm.addWatcher = (names, fn = () => { }) => {
         // 添加监听方法
-        this.elm._runfn_ = this.elm._runfn_ || {}
-        this.elm._runfn_[getCallFnName(this, names)] = fn
+        elm._runfn_ = elm._runfn_ || {}
+        elm._runfn_[getCallFnName(this, names)] = fn
       }
       let handle = (e) => {
         // console.log('DOMNodeRemoved', e)
-        if (this.elm) {
-          if (e.target._eid && e.target._eid === this.elm._eid) {
-            this.elm.parentNode.removeEventListener('DOMNodeRemoved', handle, false)
-            if (this.elm.disconnectedCallback) {
-              if (!this.elm.isRemovedBySlot) {
-                this.elm.beforeDisconnectedCallback()
-                this.elm.disconnectedCallback()
+        if (elm) {
+          if (e.target._eid && e.target._eid === elm._eid && e.target === elm) {
+            elm.parentNode.removeEventListener('DOMNodeRemoved', handle, false)
+            if (elm.disconnectedCallback) {
+              if (!elm.isRemovedBySlot) {
+                elm.beforeDisconnectedCallback()
+                elm.disconnectedCallback()
               }
             }
           }
         }
       }
       // 绑定 移除事件
-      if (this.elm.parentNode) {
-        this.elm.parentNode.addEventListener('DOMNodeRemoved', handle, false)
+      if (elm.parentNode) {
+        elm.parentNode.addEventListener('DOMNodeRemoved', handle, false)
       } else {
         // console.log(this.elm)
       }

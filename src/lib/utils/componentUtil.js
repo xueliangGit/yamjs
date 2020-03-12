@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-06-25 13:56:05
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-03-11 19:09:23
+ * @LastEditTime: 2020-03-12 13:28:47
  */
 import { isDev } from '../env'
 
@@ -62,7 +62,7 @@ function getparentCom (elm) {
 }
 // 设定上一个自定义组件
 function setClosetParentCom (context) {
-  context[$closestParentSymbol] = context.elm._parentNode ? getparentCom(context.elm._parentNode) : null
+  context[$closestParentSymbol] = context.elm._parentNode ? getparentCom(context.elm._parentNode) : (context[$closestParentSymbol] || null)
 }
 // 获取上一个自定义组件
 function getClosetParentCom (context) {

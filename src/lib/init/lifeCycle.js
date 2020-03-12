@@ -2,9 +2,9 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-03-11 17:38:50
+ * @LastEditTime: 2020-03-12 13:29:51
  */
-import { $ComponentSymbol, $vdomSymbol } from '../symbol/index'
+import { $ComponentSymbol, $vdomSymbol, $closestParentSymbol } from '../symbol/index'
 import { forEach } from '../utils/index'
 // import { runOnReadyElmFn } from '../utils/componentUtil'
 let cacheLifeCycCleFn = {}
@@ -32,19 +32,21 @@ export default {
   mounted (context) {
     _run(context, '$mounted')
     // runOnReadyElmFn(context.elm)
-    if (context.elm && context.elm.onReady) {
-      typeof context.elm.onReady === 'function' && context.elm.onReady()
-    } else {
-      Object.defineProperty(context.elm, 'onReady', {
-        configurable: false,
-        enumerable: true,
-        get: function proxyGetter () {
-          return function () { }
-        },
-        set: function proxySetter (newVal) {
-          typeof newVal === 'function' && newVal.call(context.elm)
-        }
-      })
+    if (!context[$closestParentSymbol]) {
+      if (context.elm && context.elm.onReady) {
+        typeof context.elm.onReady === 'function' && context.elm.onReady()
+      } else {
+        Object.defineProperty(context.elm, 'onReady', {
+          configurable: false,
+          enumerable: true,
+          get: function proxyGetter () {
+            return function () { }
+          },
+          set: function proxySetter (newVal) {
+            typeof newVal === 'function' && newVal.call(context.elm)
+          }
+        })
+      }
     }
   },
   // 更新之前

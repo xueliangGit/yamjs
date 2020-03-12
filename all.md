@@ -647,6 +647,10 @@ Yam.use(store)
 
 > 更新
 
+- 0.5.0 (2020-03-12)
+
+  - 支持使用 [yamjs-loader](https://www.npmjs.com/package/yamjs-loader) webpack 加载器，并且已加入热更新
+
 - 0.4.0 (2020-02-29)
 
   - 优化 ie 系列加载（支持 ie9+）

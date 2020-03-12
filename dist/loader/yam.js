@@ -2,7 +2,7 @@
  * Yam.js v0.5.0
  * (c) 2019-2020 xuxueliang
  * Released under the MIT License.
- * lastTime:Wed Mar 11 2020 19:09:27 GMT+0800 (GMT+08:00).
+ * lastTime:Thu Mar 12 2020 15:44:07 GMT+0800 (GMT+08:00).
  */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
@@ -960,7 +960,7 @@
    * @Author: xuxueliang
    * @Date: 2019-06-25 13:56:05
    * @LastEditors: xuxueliang
-   * @LastEditTime: 2020-03-11 19:09:23
+   * @LastEditTime: 2020-03-12 13:28:47
    */
 
   var syncComponentMark = function syncComponentMark(context) {
@@ -1022,7 +1022,7 @@
 
 
   function setClosetParentCom(context) {
-    context[$closestParentSymbol] = context.elm._parentNode ? getparentCom(context.elm._parentNode) : null;
+    context[$closestParentSymbol] = context.elm._parentNode ? getparentCom(context.elm._parentNode) : context[$closestParentSymbol] || null;
   } // 获取上一个自定义组件
 
 
@@ -1610,12 +1610,24 @@
     // )
     // tagType 代替tagName
     return (// a.key === b.key &&  暂时去掉
-      a.tagName === b.tagName && sameInputType(a, b) && editProp(a, b) // &&
+      a.tagName === b.tagName && sameInputType(a, b) && sameComponents(a, b) && editProp(a, b) // &&
       //   // a.isComment === b.isComment &&
       //   // (!!a.data) === (!!b.data) &&
       //   sameInputType(a, b)
 
     );
+  }
+
+  function sameComponents(a, b) {
+    if (a.class) {
+      if (a.class === b.class) {
+        return true;
+      }
+
+      return false;
+    }
+
+    return true;
   }
 
   function editProp(a, b) {
@@ -1914,7 +1926,7 @@
    * @Author: xuxueliang
    * @Date: 2019-08-01 15:22:48
    * @LastEditors: xuxueliang
-   * @LastEditTime: 2020-03-11 17:38:50
+   * @LastEditTime: 2020-03-12 13:29:51
    */
 
   var cacheLifeCycCleFn = {};
@@ -1943,19 +1955,21 @@
       _run(context, '$mounted'); // runOnReadyElmFn(context.elm)
 
 
-      if (context.elm && context.elm.onReady) {
-        typeof context.elm.onReady === 'function' && context.elm.onReady();
-      } else {
-        Object.defineProperty(context.elm, 'onReady', {
-          configurable: false,
-          enumerable: true,
-          get: function proxyGetter() {
-            return function () {};
-          },
-          set: function proxySetter(newVal) {
-            typeof newVal === 'function' && newVal.call(context.elm);
-          }
-        });
+      if (!context[$closestParentSymbol]) {
+        if (context.elm && context.elm.onReady) {
+          typeof context.elm.onReady === 'function' && context.elm.onReady();
+        } else {
+          Object.defineProperty(context.elm, 'onReady', {
+            configurable: false,
+            enumerable: true,
+            get: function proxyGetter() {
+              return function () {};
+            },
+            set: function proxySetter(newVal) {
+              typeof newVal === 'function' && newVal.call(context.elm);
+            }
+          });
+        }
       }
     },
     // 更新之前
@@ -2090,6 +2104,9 @@
       key: "add",
       value: function add(App) {
         var Apps = this.get();
+        App.Destory && App.Destory.add(function () {
+          delete Apps[App._eid];
+        });
         Apps[App._eid] = App;
       }
     }, {
@@ -2116,10 +2133,8 @@
         this.isDestorying = true;
 
         for (var i in Apps) {
-          Apps[i].__beforeDisconnectedCallback();
-
-          Apps[i].__disconnectedCallback();
-
+          Apps[i] && Apps[i].__beforeDisconnectedCallback();
+          Apps[i] && Apps[i].__disconnectedCallback();
           delete Apps[i];
         }
 
@@ -2229,45 +2244,45 @@
         data[v] = typeof propVal === 'number' || typeof propVal === 'string' ? propVal : propVal || data[v] || null; // setAttributes(this, v, this.getAttribute(v))
       });
 
-      if (!this.props) {
+      if (!this.props && this.elm.nodeType !== 11) {
         // 处理外环境的情况
-        this.mutation = creatMutationObserser(this.elm, function (record) {
+        var elm = this.elm;
+        this.mutation = creatMutationObserser(elm, function (record) {
           if (record.type === 'attributes') {
-            setAttributes(_this3, record.attributeName, _this3.elm.getAttribute(record.attributeName) || data[record.attributeName] || null);
+            var comps = getComponentByElm(elm);
+            setAttributes(comps, record.attributeName, elm.getAttribute(record.attributeName) || data[record.attributeName] || null);
 
-            _update(_this3);
+            _update(comps);
           }
         }, {
           attributeFilter: this._props
         }); // 绑定 原生元素上的方法
 
-        forEach(this.elm.attributes, function (v) {
+        forEach(elm.attributes, function (v) {
           if (typeof window[v.value] === 'function') {
-            _this3.elm._runfn_ = _this3.elm._runfn_ || {};
-            _this3.elm._runfn_[getCallFnName(_this3, v.name)] = window[v.value];
-
-            _this3.elm.removeAttribute(v.name);
+            elm._runfn_ = elm._runfn_ || {};
+            elm._runfn_[getCallFnName(_this3, v.name)] = window[v.value];
+            elm.removeAttribute(v.name);
           }
         }); // 添加 监听事件， 适配三方框架
 
-        this.addWatcher = this.elm.addWatcher = function (names) {
+        this.addWatcher = elm.addWatcher = function (names) {
           var fn = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
           // 添加监听方法
-          _this3.elm._runfn_ = _this3.elm._runfn_ || {};
-          _this3.elm._runfn_[getCallFnName(_this3, names)] = fn;
+          elm._runfn_ = elm._runfn_ || {};
+          elm._runfn_[getCallFnName(_this3, names)] = fn;
         };
 
         var handle = function handle(e) {
           // console.log('DOMNodeRemoved', e)
-          if (_this3.elm) {
-            if (e.target._eid && e.target._eid === _this3.elm._eid) {
-              _this3.elm.parentNode.removeEventListener('DOMNodeRemoved', handle, false);
+          if (elm) {
+            if (e.target._eid && e.target._eid === elm._eid && e.target === elm) {
+              elm.parentNode.removeEventListener('DOMNodeRemoved', handle, false);
 
-              if (_this3.elm.disconnectedCallback) {
-                if (!_this3.elm.isRemovedBySlot) {
-                  _this3.elm.beforeDisconnectedCallback();
-
-                  _this3.elm.disconnectedCallback();
+              if (elm.disconnectedCallback) {
+                if (!elm.isRemovedBySlot) {
+                  elm.beforeDisconnectedCallback();
+                  elm.disconnectedCallback();
                 }
               }
             }
@@ -2275,8 +2290,8 @@
         }; // 绑定 移除事件
 
 
-        if (this.elm.parentNode) {
-          this.elm.parentNode.addEventListener('DOMNodeRemoved', handle, false);
+        if (elm.parentNode) {
+          elm.parentNode.addEventListener('DOMNodeRemoved', handle, false);
         }
       }
     }
@@ -3227,7 +3242,11 @@
         if (this.isDestoryed) { return; }
         lifeCycle.beforeDestroy(this); // 取消 监听
 
-        this.mutation && this.mutation.disconnect();
+        if (!this._is_hot_update) {
+          // 如果是热更新造成的 不移除这个监听
+          this.mutation && this.mutation.disconnect();
+        }
+
         this.Destory && this.Destory.run(); // 取消 内部组件的 方法
 
         this.ChildComponentsManage && this.ChildComponentsManage.destory(); //
@@ -3256,8 +3275,11 @@
     }, {
       key: "renderAt",
       value: function renderAt(el) {
+        var props = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+
         if (!this.isCustomElements) {
           // if(el).
+          this.props = this.props || props;
           this.elm = typeof el === 'string' ? document.querySelector(el) : el;
           if (!this.elm || this.elm.isInited) { return; }
           this.elm.isInited = true;

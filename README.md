@@ -77,8 +77,8 @@ class App extends Yam {
   $mounted() {
     console.log('-----mounted')
   }
-  $beforeDestroyed() {
-    console.log('-----beforeMount')
+  $beforeDestroy() {
+    console.log('-----beforeDestroy')
   }
   $destroyed() {
     console.log('-----destroyed')

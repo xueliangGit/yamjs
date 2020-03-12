@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-03-08 02:03:41
+ * @LastEditTime: 2020-03-12 11:41:28
  */
 import nodeOps from '../utils/nodeOps'
 // import { renderElement } from '../vDom/createElement'
@@ -169,12 +169,22 @@ function sameVnode (a, b) {
     // a.key === b.key &&  暂时去掉
     a.tagName === b.tagName &&
     sameInputType(a, b) &&
+    sameComponents(a, b) &&
     editProp(a, b)
     // &&
     //   // a.isComment === b.isComment &&
     //   // (!!a.data) === (!!b.data) &&
     //   sameInputType(a, b)
   )
+}
+function sameComponents (a, b) {
+  if (a.class) {
+    if (a.class === b.class) {
+      return true
+    }
+    return false
+  }
+  return true
 }
 function editProp (a, b) {
   let newProp = Object.keys(Object.assign({}, a.props || {}, b.props || {}))

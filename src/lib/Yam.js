@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-03-11 18:57:31
+ * @LastEditTime: 2020-03-12 15:44:05
  */
 import './utils/Polyfill.js'
 import init, { initConfig } from './init/index'
@@ -58,7 +58,10 @@ class Yam {
     if (this.isDestoryed) return
     lifeCycle.beforeDestroy(this)
     // 取消 监听
-    this.mutation && this.mutation.disconnect()
+    if (!this._is_hot_update) {
+      // 如果是热更新造成的 不移除这个监听
+      this.mutation && this.mutation.disconnect()
+    }
     this.Destory && this.Destory.run()
     // 取消 内部组件的 方法
     this.ChildComponentsManage && this.ChildComponentsManage.destory()
@@ -79,9 +82,10 @@ class Yam {
   // 会被覆盖的方法
   $updated () { }
   // 渲染
-  renderAt (el) {
+  renderAt (el, props = null) {
     if (!this.isCustomElements) {
       // if(el).
+      this.props = this.props || props
       this.elm = typeof el === 'string' ? document.querySelector(el) : el
       if (!this.elm || this.elm.isInited) return
       this.elm.isInited = true
