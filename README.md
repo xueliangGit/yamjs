@@ -1,6 +1,8 @@
 # YamJS - a baseComponents for html
 
-[![NPM version](https://img.shields.io/npm/v/yamjs.svg?style=flat)](https://npmjs.com/package/yamjs) [![NPM downloads](https://img.shields.io/npm/dm/yamjs.svg?style=flat)](https://npmjs.com/package/yamjs) [![donate](https://img.shields.io/badge/$-donate-ff69b4.svg?maxAge=2592000&style=flat)](https://github.com/egoist/donate)
+[![NPM version](https://img.shields.io/npm/v/yamjs.svg?style=flat)](https://npmjs.com/package/yamjs) [![NPM downloads](https://img.shields.io/npm/dm/yamjs.svg?style=flat)](https://npmjs.com/package/yamjs)
+
+<!-- [![donate](https://img.shields.io/badge/$-donate-ff69b4.svg?maxAge=2592000&style=flat)](https://npmjs.com/package/yamjs) -->
 
 > YamJS 一个 webComponent 的渲染函数组件;兼容非 webComponent 渲染组件基类
 
@@ -140,6 +142,10 @@ export default App
 IE9+
 
 > 更新
+
+- 0.5.0 (2020-03-12)
+
+  - 支持使用 [yamjs-loader](https://www.npmjs.com/package/yamjs-loader) webpack 加载器，并且已加入热更新
 
 - 0.4.0 (2020-02-29)
 
