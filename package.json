@@ -1,6 +1,6 @@
 {
   "name": "yamjs",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "versionBate": "0.5.0",
   "description": "yamjs is a basecomponents for html,it can make your can write a components and run any where such as html,vue,react eg.",
   "main": "./dist/yam.common.min.js",
