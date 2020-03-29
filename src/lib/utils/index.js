@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-06-25 13:56:05
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-03-11 19:05:04
+ * @LastEditTime: 2020-03-29 18:01:59
  */
 import { global as window } from './global'
 import { $slotSymbol } from '../symbol'
@@ -209,7 +209,7 @@ function setProp (obj, el) {
 }
 
 const toCamelCase = str => str.replace(/-(\w)/g, (x) => { return x.slice(1).toUpperCase() })
-
+const toKebabCase = str => str ? str.replace(/([A-Z])/g, '-$1').toLowerCase() : str
 /**
  * @summary 获取guid
  * @returns [guid]
@@ -291,6 +291,7 @@ export {
   map,
   setProp,
   toCamelCase,
+  toKebabCase,
   guid,
   guid2,
   log,

@@ -1,8 +1,8 @@
 /*
- * Yam.js v0.5.0
+ * Yam.js v0.5.1
  * (c) 2019-2020 xuxueliang
  * Released under the MIT License.
- * lastTime:Thu Mar 12 2020 15:44:07 GMT+0800 (GMT+08:00).
+ * lastTime:Sun Mar 29 2020 21:22:48 GMT+0800 (GMT+08:00).
  */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
@@ -936,7 +936,7 @@
    * @Author: xuxueliang
    * @Date: 2019-06-25 13:56:05
    * @LastEditors: xuxueliang
-   * @LastEditTime: 2020-03-06 17:53:18
+   * @LastEditTime: 2020-03-29 17:45:19
    */
 
   function createElement$1(tagName, vnode) {
@@ -1131,6 +1131,34 @@
     return context[$closestParentSymbol];
   }
 
+  /*
+   * @Author: xuxueliang
+   * @Date: 2020-03-29 17:08:56
+   * @LastEditors: xuxueliang
+   * @LastEditTime: 2020-03-29 21:22:35
+   */
+  function renderAsync (el, context, parent) {
+    // 获取的是 ()=>import(/**/)
+    try {
+      context.tagName().then(function (res) {
+        var Components = res.default;
+        var parentElm = parent || el.parentNode;
+        HTML_TAGS[context.asyncComponent.name] = {
+          name: Components._tagName,
+          isComponent: true,
+          class: Components
+        };
+        context.isAsyncComponent = false;
+
+        context._init(Components, context.props, context.childNodes, context._root, context.isText);
+
+        var app = context.render(null, parentElm);
+        nodeOps.insertBefore(parentElm, app, el);
+        nodeOps.removeChild(parentElm, el);
+      });
+    } catch (e) {}
+  }
+
   // import cacheLib from '../utils/cacheLib'
   // eslint-disable-next-line no-extend-native
 
@@ -1189,7 +1217,7 @@
           this.isText = true;
         } else {
 
-          this.tagName = tagName;
+          this.tagName = this.asyncComponent || tagName;
           this.props = props || {};
           this.childNodes = Array.isArray(childNodes) ? childNodes.flat(3) : [childNodes];
           this.childNodes = this.childNodes.map(function (v, key) {
@@ -1216,19 +1244,27 @@
 
             return v;
           }); // console.log(this[$slotSymbol])
+          // 异步的组件
 
-          var tag = typeof this.tagName === 'function' && this.tagName._tagName ? HTML_TAGS[this.tagName._tagName] : HTML_TAGS[this.tagName] || this.tagName;
+          if (typeof this.tagName === 'function' && !this.tagName._tagName && !HTML_TAGS[this.tagName.name]) {
+            // maybe is a async component
+            this.isAsyncComponent = true;
+            this.asyncComponent = this.tagName;
+          } // 正常的component
+
+
+          var tag = typeof this.tagName === 'function' && this.tagName._tagName ? HTML_TAGS[this.tagName._tagName] : HTML_TAGS[this.tagName] || HTML_TAGS[this.tagName.name] || this.tagName;
           var object = _typeof_1(tag) === 'object';
-          var tagClass = typeof tag === 'function';
+          var tagClass = typeof tag === 'function' && this.tagName._tagName;
           var localAttrs = object ? tag.attributes || {} : {};
           var attrs = Object.assign({}, GLOBAL_ATTRIBUTES, localAttrs);
           var tagType = object ? tag.name : tagClass ? tag._tagName : tag;
           this.isElement = tagClass ? tag.customElements : true;
-          this.tagType = tagType;
+          this.tagType = this.asyncComponent ? this.asyncComponent.name : tagType;
           this.needClass = tagClass || object && tag.isComponent;
           this.class = this.needClass && (tag.class || tag);
           this.attrs = attrs;
-          this._name = toCamelCase(tagType);
+          this._name = toCamelCase(this.isAsyncComponent ? 'div' : tagType);
         }
 
         this._root = _root; // 带搞根结点
@@ -1251,6 +1287,13 @@
         var parentELm = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
         var domFlag = arguments.length > 2 ? arguments[2] : undefined;
 
+        if (this.isAsyncComponent) {
+          // 异步组件
+          this.elm = document.createElement('div');
+          renderAsync(this.elm, this, parentELm);
+          return this.elm;
+        }
+
         if (this.isText) {
           this.elm = document.createTextNode(this.text);
           return this.elm;
@@ -1260,6 +1303,7 @@
         domFlag = domFlag || (this._root ? getCid(this._root) : (mark = getComponentMark(parentELm), mark && getCid(mark._tagName)));
         var el = null; // let slot = []
         // 自定义webcomponent
+        // console.log()
 
         if (this.needClass) {
           var cacheDom = document.createElement('div'); // 回调
@@ -3290,7 +3334,7 @@
 
   }
 
-  var version = "0.5.0";
+  var version = "0.5.1";
 
   var _dec, _class;
   var comps = window.comps = {};

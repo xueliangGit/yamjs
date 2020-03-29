@@ -1,8 +1,8 @@
 /*
  * @Author: xuxueliang
  * @Date: 2019-04-09 14:57:14
- * @LastEditors  : xuxueliang
- * @LastEditTime : 2019-12-19 15:33:39
+ * @LastEditors: xuxueliang
+ * @LastEditTime: 2020-03-29 18:48:27
  */
 // webpack.prod.js
 const merge = require('webpack-merge')
@@ -21,11 +21,12 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPl
 
 module.exports = merge(common, {
   mode: 'production',
-  
+
   output: {
     // filename: 'js/[name].[chunkhash].bundle.js',
-    filename: 'js/yam.min.js',
-    libraryTarget: 'umd',
+    filename: utils.assetsPath('js/[name].[chunkhash].js'),
+    chunkFilename: utils.assetsPath('js/[name].[chunkhash].js'),
+    // libraryTarget: 'umd',
     path: path.resolve(__dirname, '../dist') // 定义输出文件夹dist路径
   },
   plugins: [
@@ -36,8 +37,11 @@ module.exports = merge(common, {
 
     new UglifyJsPlugin({
       uglifyOptions: {
+        warnings: false,
+        parallel: true,
+        cache: true,
         compress: {
-          warnings: false
+          // warnings: false,
         }
       },
       sourceMap: config.build.productionSourceMap,
@@ -53,7 +57,7 @@ lastTime:${new Date() }`, // 要输出的注释内容
       }),
     // extract css into its own file
     new ExtractTextPlugin({
-      filename: utils.assetsPath('css/[name].[contenthash].css'),
+      filename: utils.assetsPath('css/[name].[md5:contenthash:hex:8].css'),
       // Setting the following option to `false` will not extract CSS from codesplit chunks.
       // Their CSS will instead be inserted dynamically with style-loader when the codesplit chunk has been loaded by webpack.
       // It's currently set to `true` because we are seeing that sourcemaps are included in the codesplit bundle as well when it's `false`,

@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-06-25 13:56:05
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-03-06 17:53:18
+ * @LastEditTime: 2020-03-29 17:45:19
  */
 import { doc as document } from './global'
 import { requestAnimationFrame } from './index'

@@ -2,13 +2,14 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-03-11 18:09:53
+ * @LastEditTime: 2020-03-29 18:36:09
  */
 /** @jsx createElement */
 import { HTML_TAGS, GLOBAL_ATTRIBUTES, EVENT_HANDLERS } from './creatConfig'
 import nodeOps from '../utils/nodeOps'
 import { forEach, toCamelCase, getCid, addSlot } from '../utils/index'
 import { getCallFnName, getComponentMark, setComponentForElm, getComponentByElm, getparentCom } from '../utils/componentUtil'
+import renderAsync from './renderAsync'
 // import { $slotSymbol } from '../symbol/index'
 // import cacheLib from '../utils/cacheLib'
 // eslint-disable-next-line no-extend-native
@@ -47,7 +48,7 @@ class Element {
       if (typeof tagName !== 'string') {
         // console.log('tagName', typeof tagName, tagName._tagName)
       }
-      this.tagName = tagName
+      this.tagName = this.asyncComponent || tagName
       this.props = props || {}
       this.childNodes = Array.isArray(childNodes) ? childNodes.flat(3) : [childNodes]
       this.childNodes = this.childNodes.map((v, key) => {
@@ -72,18 +73,25 @@ class Element {
         return v
       })
       // console.log(this[$slotSymbol])
-      const tag = typeof this.tagName === 'function' && this.tagName._tagName ? HTML_TAGS[this.tagName._tagName] : (HTML_TAGS[this.tagName] || this.tagName)
+      // 异步的组件
+      if (typeof this.tagName === 'function' && !this.tagName._tagName && !HTML_TAGS[this.tagName.name]) {
+        // maybe is a async component
+        this.isAsyncComponent = true
+        this.asyncComponent = this.tagName
+      }
+      // 正常的component
+      const tag = typeof this.tagName === 'function' && this.tagName._tagName ? HTML_TAGS[this.tagName._tagName] : (HTML_TAGS[this.tagName] || HTML_TAGS[this.tagName.name] || this.tagName)
       const object = typeof tag === 'object'
-      const tagClass = typeof tag === 'function'
+      const tagClass = typeof tag === 'function' && this.tagName._tagName
       const localAttrs = object ? tag.attributes || {} : {}
       const attrs = Object.assign({}, GLOBAL_ATTRIBUTES, localAttrs)
       const tagType = object ? tag.name : tagClass ? tag._tagName : tag
       this.isElement = tagClass ? tag.customElements : true
-      this.tagType = tagType
+      this.tagType = this.asyncComponent ? this.asyncComponent.name : tagType
       this.needClass = tagClass || (object && tag.isComponent)
       this.class = this.needClass && (tag.class || tag)
       this.attrs = attrs
-      this._name = toCamelCase(tagType)
+      this._name = toCamelCase(this.isAsyncComponent ? 'div' : tagType)
     }
     this._root = _root // 带搞根结点
   }
@@ -95,6 +103,12 @@ class Element {
     // }
   }
   _render (key = null, parentELm = null, domFlag) {
+    if (this.isAsyncComponent) {
+      // 异步组件
+      this.elm = document.createElement('div')
+      renderAsync(this.elm, this, parentELm)
+      return this.elm
+    }
     if (this.isText) {
       this.elm = document.createTextNode(this.text)
       return this.elm
@@ -104,7 +118,7 @@ class Element {
     let el = null
     // let slot = []
     // 自定义webcomponent
-
+    // console.log()
     if (this.needClass) {
       let cacheDom = document.createElement('div')
       // 回调

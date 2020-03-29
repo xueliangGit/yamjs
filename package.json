@@ -11,6 +11,7 @@
     "dev": "npm run start",
     "start": "webpack-dev-server --open --config build/webpack.dev.js",
     "build": "node scripts/build.js",
+    "build:test": "node build/build.js",
     "analyz": "cross-env analyz=true npm run build"
   },
   "keywords": [
