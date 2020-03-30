@@ -141,6 +141,20 @@ IE9+
 
 > 更新
 
+- 0.5.4 (2020-03-30)
+
+  - 支持使用异步组件
+
+    ```js
+      const app=()=>import('./b.js')
+
+      render(){
+        return <div>
+        <app></app>
+        </div>
+      }
+    ```
+
 - 0.5.0 (2020-03-12)
 
   - 支持使用 [yamjs-loader](https://www.npmjs.com/package/yamjs-loader) webpack 加载器，并且已加入热更新
