@@ -1,8 +1,8 @@
 /*
- * Yam.js v0.5.1
+ * Yam.js v0.5.5
  * (c) 2019-2020 xuxueliang
  * Released under the MIT License.
- * lastTime:Sun Mar 29 2020 21:22:48 GMT+0800 (GMT+08:00).
+ * lastTime:Mon Mar 30 2020 11:46:17 GMT+0800 (GMT+08:00).
  */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
@@ -3233,7 +3233,7 @@
 
   }
 
-  var version = "0.5.1";
+  var version = "0.5.5";
 
   var _dec, _class;
   var comps = window.comps = {};
