@@ -1,0 +1,65 @@
+/*
+ * @Author: xuxueliang
+ * @Date: 2020-06-22 17:20:53
+ * @LastEditors: xuxueliang
+ * @LastEditTime: 2020-07-31 17:35:05
+ */
+import Yam, { Component } from 'yamjs'
+import store from '../store2'
+let mixin = {
+  $data () {
+    return {
+      showInfo: '12312'
+    }
+  },
+  $mounted () {
+    console.log('common_$mouned', this)
+  }
+}
+
+@Component({
+  shadow: true,
+  tagName: 'lazy-img',
+  style: '',
+  mixin,
+  store,
+  props: ['src', 'width', 'height', 'loadingsrc']
+})
+class App extends Yam {
+  $data () {
+    return {
+      // your data
+      isReady: false
+    }
+  }
+  $mounted () {
+    if (this.src) {
+      this.loadimg()
+    }
+  }
+  loadimg () {
+    let img = new Image()
+    img.src = this.src
+    img.onload = () => {
+      setTimeout(() => {
+        this.isReady = true
+        console.log(this)
+      }, 5000)
+    }
+    img.onerror = () => {
+      if (!img._isTry) {
+        img._isTry = true
+        img.src = ''
+        setTimeout(() => {
+          img.src = this.src
+        }, 200)
+      }
+    }
+  }
+  render () {
+    return <div >
+      { this.isReady ? this.src : this.loadingsrc }
+      <img aaaa={ this.isReady ? this.src : this.loadingsrc } src={ this.isReady ? this.src : this.loadingsrc } /></div>
+  }
+}
+export default App

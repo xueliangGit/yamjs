@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-03-12 11:41:28
+ * @LastEditTime: 2020-06-22 20:08:37
  */
 import nodeOps from '../utils/nodeOps'
 // import { renderElement } from '../vDom/createElement'
@@ -251,7 +251,7 @@ function setProp (keys, attrs, props, elm) {
       }
     }
   } else if (typeof props !== 'function') {
-    // elm.setAttribute(keys, props)
+    elm.setAttribute(keys, props)
   }
   if (typeof props === 'function') return
   if (elm.isComponent) {

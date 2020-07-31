@@ -2,13 +2,15 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-03-12 15:44:05
+ * @LastEditTime: 2020-07-31 18:07:27
  */
 import './utils/Polyfill.js'
 import init, { initConfig } from './init/index'
 import { canUseCustomElements } from './init/bolConf'
-import lifeCycle from './init/lifeCycle'
+import lifeCycle from './init/lifeCycle' // , { addLifeCycle }
 import { Mix } from './init/mix'
+import _mixin from './init/_mixin'
+
 // getStyleStr 使用loader后使用这个了
 import { guid2, toCamelCase, forEach, getCid } from './utils/index' // supportMutationObserver
 import { getCallFnName, getClosetParentCom } from './utils/componentUtil'
@@ -26,6 +28,7 @@ let compsIds = 0
 class Yam {
   constructor() {
     this._eid = guid2()
+    // this.addLifeCycle = addLifeCycle.bind(this)
     initConfig.call(this)
     this._config && this._config()
     lifeCycle.beforeInit(this)
@@ -72,10 +75,6 @@ class Yam {
     }
   }
   // 会被覆盖的方法
-  $config () {
-    return {}
-  }
-  // 会被覆盖的方法
   $data () {
     return {}
   }
@@ -106,7 +105,7 @@ class Yam {
     return typeof this[fnName] === 'function'
       ? this[fnName](...params)
       : (() => {
-        console.warn(`该组件【${ this._tagName }】没有这个方法:【${ fnName }】`)
+        console.warn(`该组件【${this._tagName}】没有这个方法:【${fnName}】`)
       })(...params)
   }
   // 触发父级方法
@@ -143,24 +142,6 @@ class Yam {
   delDestory (eventId) {
     return this.Destory && this.Destory.del(eventId)
   }
-  // // 添加声明周期回调函数
-  // addLifeCycleCallFn (lifeCycle, fn) {
-  //   if (~lifeCycleArray.indexOf(lifeCycle)) {
-  //     if (typeof fn === 'function') {
-  //       this.lifeCycleCall = this.lifeCycleCall || {};
-  //       (this.lifeCycleCall[lifeCycle + '_callfn'] =
-  //         this.lifeCycleCall[lifeCycle + '_callfn'] || []).push(fn)
-  //     } else {
-  //       console.warn(`
-  //       要添加的组件周期回调必须是函数
-  //       `)
-  //     }
-  //   } else {
-  //     console.warn(`
-  //     要添加的组件周期回调的参数，只能是${lifeCycle.join(',') }，请检查
-  //     `)
-  //   }
-  // }
 }
 Yam.getComsName = () => hasCompsName
 export default Yam
@@ -173,15 +154,19 @@ export function Component (Config) {
     props,
     customElements,
     canBeCalledExt,
-    store,
-    router
-  } = Config
+    // store,
+    // router,
+    mixin = [],
+    ...params // ...params
+  } = (Config || {})
   hasCompsName.push(tagName)
   return function (Target) {
     if (Target._classIsInitedOk) return
     Target._tagName = tagName
+    // Target._$config = Config
     Target._shadow = !!shadow
     Target.prototype._config = function () {
+      this.$config = Config
       this._tagName = tagName
       this._name = toCamelCase(tagName)
       this._shadow = !!shadow || false
@@ -190,16 +175,20 @@ export function Component (Config) {
         typeof canBeCalledExt === 'boolean' ? canBeCalledExt : false
       this._cid = getCid(tagName)
       this._style = (Yam._gSS ? Yam._gSS(this._cid, style) : style).toString() // getStyleStr(this._cid, style) 使用了loader 后不需要这个了
-      // store
-      this.$store = {}
-      if (store && store.add) {
-        store.add(this)
+      // plugins
+      let keys = Object.keys(params)
+      forEach(keys, v => {
+        let vv = params[v]
+        if (typeof vv === 'function') {
+          return vv(this)
+        } else {
+          typeof vv === 'object' && typeof vv.apply === 'function' && typeof vv.apply === 'function' && vv.apply(this)
+        }
+      })
+      if (!Array.isArray(mixin)) {
+        mixin = [mixin]
       }
-      // router
-      this.$router = {}
-      if (router) {
-        router.add(this)
-      }
+      forEach(mixin, v => _mixin(v, this))
     }
     // 允许覆盖 ；使用最新的组件去渲染
     // if (!HTML_TAGS[tagName]) {
@@ -243,12 +232,12 @@ export function Component (Config) {
   }
 }
 // 适配器 store
-export function store (Config) {
-  return function (Target) { }
-}
+// export function store (Config) {
+//   return function (Target) { }
+// }
 console.log(`
     
-    Bate-${version } for this version of yamjs, 
+    Bate-${version} for this version of yamjs, 
     
     that is a baseComponet for html and can run in html or Vue or reactjs
     

@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-06-25 13:56:05
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-03-11 18:10:34
+ * @LastEditTime: 2020-07-31 16:35:26
  */
 import { getComponentByElm, setComponentForElm } from './utils/componentUtil'
 import { HTML_TAGS } from './vDom/creatConfig'
@@ -21,7 +21,7 @@ export default function getCustom () {
           comps = null
         }
       } catch (e) {
-        console.warn('组件【' + this.nodeName + '】渲染错误')
+        console.warn('组件【' + this.nodeName + '】渲染错误', e)
       }
     }
     disconnectedCallback () {

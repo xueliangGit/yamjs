@@ -1,9 +1,71 @@
 /*
- * Yam.js v0.5.5
+ * Yam.js v0.5.6
  * (c) 2019-2020 xuxueliang
  * Released under the MIT License.
- * lastTime:Mon Mar 30 2020 11:46:17 GMT+0800 (GMT+08:00).
+ * lastTime:Fri Jul 31 2020 18:01:11 GMT+0800 (GMT+08:00).
  */
+function createCommonjsModule(fn, module) {
+	return module = { exports: {} }, fn(module, module.exports), module.exports;
+}
+
+var _typeof_1 = createCommonjsModule(function (module) {
+function _typeof(obj) {
+  "@babel/helpers - typeof";
+
+  if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
+    module.exports = _typeof = function _typeof(obj) {
+      return typeof obj;
+    };
+  } else {
+    module.exports = _typeof = function _typeof(obj) {
+      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+    };
+  }
+
+  return _typeof(obj);
+}
+
+module.exports = _typeof;
+});
+
+function _objectWithoutPropertiesLoose(source, excluded) {
+  if (source == null) { return {}; }
+  var target = {};
+  var sourceKeys = Object.keys(source);
+  var key, i;
+
+  for (i = 0; i < sourceKeys.length; i++) {
+    key = sourceKeys[i];
+    if (excluded.indexOf(key) >= 0) { continue; }
+    target[key] = source[key];
+  }
+
+  return target;
+}
+
+var objectWithoutPropertiesLoose = _objectWithoutPropertiesLoose;
+
+function _objectWithoutProperties(source, excluded) {
+  if (source == null) { return {}; }
+  var target = objectWithoutPropertiesLoose(source, excluded);
+  var key, i;
+
+  if (Object.getOwnPropertySymbols) {
+    var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
+
+    for (i = 0; i < sourceSymbolKeys.length; i++) {
+      key = sourceSymbolKeys[i];
+      if (excluded.indexOf(key) >= 0) { continue; }
+      if (!Object.prototype.propertyIsEnumerable.call(source, key)) { continue; }
+      target[key] = source[key];
+    }
+  }
+
+  return target;
+}
+
+var objectWithoutProperties = _objectWithoutProperties;
+
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
     throw new TypeError("Cannot call a class as a function");
@@ -154,30 +216,6 @@ function _toConsumableArray(arr) {
 }
 
 var toConsumableArray = _toConsumableArray;
-
-function createCommonjsModule(fn, module) {
-	return module = { exports: {} }, fn(module, module.exports), module.exports;
-}
-
-var _typeof_1 = createCommonjsModule(function (module) {
-function _typeof(obj) {
-  "@babel/helpers - typeof";
-
-  if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
-    module.exports = _typeof = function _typeof(obj) {
-      return typeof obj;
-    };
-  } else {
-    module.exports = _typeof = function _typeof(obj) {
-      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
-    };
-  }
-
-  return _typeof(obj);
-}
-
-module.exports = _typeof;
-});
 
 /*
  * @Author: xuxueliang
@@ -1839,6 +1877,8 @@ function setProp(keys, attrs, props, elm) {
         elm.setAttribute(attrs[keys], props);
       }
     }
+  } else if (typeof props !== 'function') {
+    elm.setAttribute(keys, props);
   }
 
   if (typeof props === 'function') { return; }
@@ -2061,17 +2101,43 @@ function createKeyToOldIdx(children, beginIdx, endIdx) {
   return map;
 }
 
-/*
- * @Author: xuxueliang
- * @Date: 2019-08-01 15:22:48
- * @LastEditors: xuxueliang
- * @LastEditTime: 2020-03-12 13:29:51
- */
+var lifeCycleCallFn = {};
 
-var cacheLifeCycCleFn = {};
-var addGlobalLife = function addGlobalLife(lifeCycleName, fn) {
-  (cacheLifeCycCleFn[lifeCycleName] = cacheLifeCycCleFn[lifeCycleName] || []).push(fn);
-};
+var CreatLifeCycleCall = /*#__PURE__*/function () {
+  function CreatLifeCycleCall(context) {
+    classCallCheck(this, CreatLifeCycleCall);
+
+    this._cid = context._cid;
+    this.target = context;
+    lifeCycleCallFn[context._cid] = {};
+  }
+
+  createClass(CreatLifeCycleCall, [{
+    key: "add",
+    value: function add(lcName, fn) {
+      var fns = lifeCycleCallFn[this._cid];
+      (fns[lcName] || (fns[lcName] = [])).push(fn);
+    }
+  }, {
+    key: "get",
+    value: function get(lcName) {
+      return lifeCycleCallFn[this._cid][lcName];
+    }
+  }, {
+    key: "run",
+    value: function run(lcName) {
+      var _this = this;
+
+      var fns = lifeCycleCallFn[this._cid];
+      forEach(fns[lcName], function (v) {
+        return v.call(_this.target);
+      });
+    }
+  }]);
+
+  return CreatLifeCycleCall;
+}();
+
 var lifeCycle = {
   // 初始化前
   beforeInit: function beforeInit(context) {
@@ -2141,6 +2207,10 @@ var lifeCycle = {
     context.ChildComponentsManage = null;
   }
 };
+var lifeCycleArray = Object.keys(lifeCycle).map(function (v) {
+  return '$' + v;
+});
+var cacheLifeCycCleFn = {};
 
 function _run(context, name) {
   try {
@@ -2149,9 +2219,44 @@ function _run(context, name) {
         return v.call(context);
       });
     }
+
+    if (context._lifeCycleCall) {
+      context._lifeCycleCall.run(name);
+    }
   } catch (e) {}
 
   return context[name] && typeof context[name] === 'function' ? context[name]() : undefined;
+} // 增加全局的生命周期调用函数
+
+
+var addGlobalLife = function addGlobalLife(lifeCycleName, fn) {
+  // if (lifeCycleName[0] !== '$') {
+  //   lifeCycleName = '$' + lifeCycleName
+  // }
+  if (~lifeCycleArray.indexOf(lifeCycleName)) {
+    (cacheLifeCycCleFn[lifeCycleName] = cacheLifeCycCleFn[lifeCycleName] || []).push(fn);
+    return true;
+  }
+
+  return false;
+}; // 增加单个单例的生命周期作用
+
+function addLifeCycle(lifeCycle, fn) {
+  if (~lifeCycleArray.indexOf(lifeCycle)) {
+    if (typeof fn === 'function') {
+      if (!this._lifeCycleCall) {
+        this._lifeCycleCall = new CreatLifeCycleCall(this);
+      }
+
+      this._lifeCycleCall.add(lifeCycle, fn);
+
+      return true; // (context.lifeCycleCall.add(lifeCycle + '_callfn'] = context.lifeCycleCall[lifeCycle + '_callfn'] || []).push(fn)
+    } else {
+      console.warn("\n      \u8981\u6DFB\u52A0\u7684\u7EC4\u4EF6\u5468\u671F\u56DE\u8C03\u5FC5\u987B\u662F\u51FD\u6570\n      ");
+    }
+  }
+
+  return false;
 }
 
 /*
@@ -2291,6 +2396,53 @@ var ChildComponentsManage = /*#__PURE__*/function () {
   return ChildComponentsManage;
 }();
 
+/*
+ * @Author: xuxueliang
+ * @Date: 2020-07-31 15:32:13
+ * @LastEditors: xuxueliang
+ * @LastEditTime: 2020-07-31 17:51:14
+ */
+var baseConfig = {
+  $data: [],
+  extend: {}
+};
+var _localConfig = {};
+
+function _getMixinConfig() {
+  var cId = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'x';
+  return _localConfig[cId] || (_localConfig[cId] = Object.assign({}, baseConfig));
+}
+
+function mixin(config) {
+  var context = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+
+  var contextData = _getMixinConfig(context ? context._cid : 'x');
+
+  forEach(Object.keys(config), function (v) {
+    if (!_addLifeCycle(v, config[v], context)) {
+      _mixin(v, config[v], contextData);
+
+      console.log(v, context);
+    }
+  });
+}
+
+function _mixin(v, conf, data) {
+  if (v === '$data') {
+    data.$data.push(conf);
+  } else {
+    data.extend[v] = conf;
+  }
+}
+
+var getMixinConfig = function getMixinConfig(context) {
+  return context ? _getMixinConfig(context._cid) : _getMixinConfig();
+};
+
+function _addLifeCycle(v, config, context) {
+  return context ? addLifeCycle.call(context, v, config) : addGlobalLife(v, config);
+}
+
 var componenesSize = {};
 var styleIsInstalled = {};
 
@@ -2318,13 +2470,7 @@ function _init() {
     delete this.isbyUsedByuser;
   }
 
-  taskLine.runMicTask(); // this._getAllData = () => {
-  //   return {
-  //     $slot: this[$slotSymbol],
-  //     props: this.props,
-  //     _props: this._props
-  //   }
-  // }
+  taskLine.runMicTask();
 }
 
 function initSolt(childNodes) {
@@ -2342,12 +2488,9 @@ function create() {
   var _this3 = this;
 
   if (this.elm) {
-    this._initSoltHooks = initSolt; // this._initSolt()
-    // // 新的处理slot
+    this._initSoltHooks = initSolt; // // 新的处理slot
 
-    this[$slotSymbol] = this[$slotSymbol] || {}; // this.__hooks_slot = {}
-    // 处理是和否有keeplive - 保持组件的内部的协调性
-    // console.log('keeplive', this)
+    this[$slotSymbol] = this[$slotSymbol] || {}; // 处理是和否有keeplive - 保持组件的内部的协调性
 
     getChildSlot.call(this, this.elm);
     this[$slotSymbol]['length'] = Object.keys(this[$slotSymbol]).length; // this.elm.children = []
@@ -2374,8 +2517,11 @@ function create() {
 
 
   this.elm._eid = this._eid; // _extends(this.$config(), this)
+  // mixin
 
-  var data = this[$componentDataSymbol] = this.$data();
+  var data = this[$componentDataSymbol] = Object.assign.apply(Object, toConsumableArray(getMixinConfig().$data.map(function (v) {
+    return v();
+  })).concat([this.$data()]));
 
   if (this._props) {
     this._props.forEach(function (v) {
@@ -2501,14 +2647,7 @@ function createdComponent() {
       nodeOps.appendChild(shadowRoot, getFram.call(this, true));
     } else {
       this.__shadowRoot = this.elm;
-      nodeOps.appendChild(this.elm, getFram.call(this)); // // let parent = this.elm
-      // console.log(this[$closestParentSymbol], this)
-      // ori
-      // while ((parent.parentElement || parent._parentElement) && parent.nodeType !== 11) {
-      //   parent = parent.parentNode || parent._parentNode
-      // }
-      // new wati
-
+      nodeOps.appendChild(this.elm, getFram.call(this));
       var parentS = this[$closestParentSymbol];
       if (!parentS) { parentS = getComponentByElm(this.elm); }
 
@@ -2746,9 +2885,9 @@ var canUseCustomElements = !!(window.customElements && window.customElements.def
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-03-11 17:51:09
+ * @LastEditTime: 2020-07-31 18:01:04
  */
-var lifeCycleArray = Object.keys(lifeCycle).map(function (v) {
+var lifeCycleArray$1 = Object.keys(lifeCycle).map(function (v) {
   return '$' + v;
 }); // 注解
 // 预留字段
@@ -2814,11 +2953,31 @@ function Mix() {
         Config.install(addPrototype(Target, name));
       }
     };
+
+    Target.mixin = function () {
+      var config = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+      mixin(config);
+    };
   };
 }
 
 function addPrototype(Target, name) {
   return {
+    mixin: function mixin$1() {
+      var config = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+      mixin(config);
+    },
+    mixinPrototype: function mixinPrototype() {
+      var _this = this;
+
+      var config = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+      forEach(Object.keys(config), function (v) {
+        _this.addPrototype(v, config[v]);
+      });
+    },
+
     /**
      * @summary 获取原有的方法
      * @param {type} 方法名
@@ -2852,7 +3011,7 @@ function addPrototype(Target, name) {
      * @summary 添加自动执行方法,将在mounted时
      * @param {type} 方法名
      */
-    addAuto: function addAuto(name, fn) {
+    addAuto: function addAuto(name, fn, lifeCycle) {
       if (typeof fn === 'function') {
         Target.prototype._autoDo = Target.prototype._autoDo || {};
 
@@ -2869,15 +3028,15 @@ function addPrototype(Target, name) {
      * @param {lifeCycleName} 周期方法名
      * @param {fn} 回调方法
      */
-    addLifeCycleCall: function addLifeCycleCall(lifeCycleName, fn) {
-      if (~lifeCycleArray.indexOf(lifeCycleName)) {
+    addGlobalLife: function addGlobalLife$1(lifeCycleName, fn) {
+      if (~lifeCycleArray$1.indexOf(lifeCycleName)) {
         if (typeof fn === 'function') {
           addGlobalLife(lifeCycleName, fn);
         } else {
           console.warn("\n          \u8981\u6DFB\u52A0\u7684\u7EC4\u4EF6\u5468\u671F\u56DE\u8C03\u5FC5\u987B\u662F\u51FD\u6570\n          ");
         }
       } else {
-        console.warn("\n        \u8981\u6DFB\u52A0\u7684\u7EC4\u4EF6\u5468\u671F\u56DE\u8C03\u7684\u53C2\u6570[".concat(lifeCycleName, "]\uFF0C\u53EA\u80FD\u662F ").concat(lifeCycleArray.join(','), " \uFF0C\u8BF7\u68C0\u67E5\n        "));
+        console.warn("\n        \u8981\u6DFB\u52A0\u7684\u7EC4\u4EF6\u5468\u671F\u56DE\u8C03\u7684\u53C2\u6570[".concat(lifeCycleName, "]\uFF0C\u53EA\u80FD\u662F ").concat(lifeCycleArray$1.join(','), " \uFF0C\u8BF7\u68C0\u67E5\n        "));
       }
     }
   };
@@ -3047,7 +3206,7 @@ function getCustom() {
             comps = null;
           }
         } catch (e) {
-          console.warn('组件【' + this.nodeName + '】渲染错误');
+          console.warn('组件【' + this.nodeName + '】渲染错误', e);
         }
       }
     }, {
@@ -3328,7 +3487,7 @@ function initHTMLEvent() {
 
 }
 
-var version = "0.5.5";
+var version = "0.5.6";
 
 var _dec, _class;
 var comps = window.comps = {};
@@ -3339,7 +3498,8 @@ var Yam = (_dec = Mix(), _dec(_class = /*#__PURE__*/function () {
   function Yam() {
     classCallCheck(this, Yam);
 
-    this._eid = guid2();
+    this._eid = guid2(); // this.addLifeCycle = addLifeCycle.bind(this)
+
     initConfig.call(this);
     this._config && this._config();
     lifeCycle.beforeInit(this); // console.log(new.target)
@@ -3393,12 +3553,6 @@ var Yam = (_dec = Mix(), _dec(_class = /*#__PURE__*/function () {
       if (getClosetParentCom(this)) {
         getClosetParentCom(this).ChildComponentsManage && getClosetParentCom(this).ChildComponentsManage.del(this._eid);
       }
-    } // 会被覆盖的方法
-
-  }, {
-    key: "$config",
-    value: function $config() {
-      return {};
     } // 会被覆盖的方法
 
   }, {
@@ -3501,25 +3655,7 @@ var Yam = (_dec = Mix(), _dec(_class = /*#__PURE__*/function () {
     key: "delDestory",
     value: function delDestory(eventId) {
       return this.Destory && this.Destory.del(eventId);
-    } // // 添加声明周期回调函数
-    // addLifeCycleCallFn (lifeCycle, fn) {
-    //   if (~lifeCycleArray.indexOf(lifeCycle)) {
-    //     if (typeof fn === 'function') {
-    //       this.lifeCycleCall = this.lifeCycleCall || {};
-    //       (this.lifeCycleCall[lifeCycle + '_callfn'] =
-    //         this.lifeCycleCall[lifeCycle + '_callfn'] || []).push(fn)
-    //     } else {
-    //       console.warn(`
-    //       要添加的组件周期回调必须是函数
-    //       `)
-    //     }
-    //   } else {
-    //     console.warn(`
-    //     要添加的组件周期回调的参数，只能是${lifeCycle.join(',') }，请检查
-    //     `)
-    //   }
-    // }
-
+    }
   }]);
 
   return Yam;
@@ -3530,21 +3666,28 @@ Yam.getComsName = function () {
 };
 
 function Component(Config) {
-  var tagName = Config.tagName,
-      shadow = Config.shadow,
-      style = Config.style,
-      props = Config.props,
-      customElements = Config.customElements,
-      canBeCalledExt = Config.canBeCalledExt,
-      store = Config.store,
-      router = Config.router;
+  var _ref = Config || {},
+      tagName = _ref.tagName,
+      shadow = _ref.shadow,
+      style = _ref.style,
+      props = _ref.props,
+      customElements = _ref.customElements,
+      canBeCalledExt = _ref.canBeCalledExt,
+      _ref$mixin = _ref.mixin,
+      mixin$1 = _ref$mixin === void 0 ? [] : _ref$mixin,
+      params = objectWithoutProperties(_ref, ["tagName", "shadow", "style", "props", "customElements", "canBeCalledExt", "mixin"]);
+
   hasCompsName.push(tagName);
   return function (Target) {
     if (Target._classIsInitedOk) { return; }
-    Target._tagName = tagName;
+    Target._tagName = tagName; // Target._$config = Config
+
     Target._shadow = !!shadow;
 
     Target.prototype._config = function () {
+      var _this2 = this;
+
+      this._$config = Config;
       this._tagName = tagName;
       this._name = toCamelCase(tagName);
       this._shadow = !!shadow || false;
@@ -3552,20 +3695,26 @@ function Component(Config) {
       this._canBeCalledExt = typeof canBeCalledExt === 'boolean' ? canBeCalledExt : false;
       this._cid = getCid(tagName);
       this._style = (Yam._gSS ? Yam._gSS(this._cid, style) : style).toString(); // getStyleStr(this._cid, style) 使用了loader 后不需要这个了
-      // store
+      // plugins
 
-      this.$store = {};
+      var keys = Object.keys(params);
+      forEach(keys, function (v) {
+        var vv = params[v];
 
-      if (store && store.add) {
-        store.add(this);
-      } // router
+        if (typeof vv === 'function') {
+          return vv(_this2);
+        } else {
+          _typeof_1(vv) === 'object' && typeof vv.apply === 'function' && typeof vv.apply === 'function' && vv.apply(_this2);
+        }
+      });
 
-
-      this.$router = {};
-
-      if (router) {
-        router.add(this);
+      if (!Array.isArray(mixin$1)) {
+        mixin$1 = [mixin$1];
       }
+
+      forEach(mixin$1, function (v) {
+        return mixin(v, _this2);
+      });
     }; // 允许覆盖 ；使用最新的组件去渲染
     // if (!HTML_TAGS[tagName]) {
     // 都把组件存在 HTML_TAGS 里面
@@ -3607,6 +3756,10 @@ function Component(Config) {
     return Target;
   };
 } // 适配器 store
+// export function store (Config) {
+//   return function (Target) { }
+// }
+
 console.log("\n    \n    Bate-".concat(version, " for this version of yamjs, \n    \n    that is a baseComponet for html and can run in html or Vue or reactjs\n    \n"));
 
 /*

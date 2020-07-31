@@ -2,11 +2,12 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-03-11 17:51:09
+ * @LastEditTime: 2020-07-31 18:01:04
  */
 import { _createElementJson } from '../vDom/createElement'
 import { forEach } from '../utils/index'
 import lifeCycle, { addGlobalLife } from './lifeCycle'
+import mixin from './_mixin'
 let lifeCycleArray = Object.keys(lifeCycle).map(v => '$' + v)
 // 注解
 // 预留字段
@@ -51,21 +52,32 @@ export function Mix () {
         }
         forEach(needs, v => {
           if (!~installed.indexOf(v)) {
-            console.info(`%c 该扩展【 ${ name } 】需要依赖 【${ v }】扩展`, 'background:#ff0')
+            console.info(`%c 该扩展【 ${name} 】需要依赖 【${v}】扩展`, 'background:#ff0')
           }
         })
       }
       if (~installed.indexOf(name)) {
-        console.info(`已经注册此扩展:${ name }`)
+        console.info(`已经注册此扩展:${name}`)
       } else {
         installed.push(name)
         Config.install(addPrototype(Target, name))
       }
     }
+    Target.mixin = (config = {}) => {
+      mixin(config)
+    }
   }
 }
 function addPrototype (Target, name) {
   return {
+    mixin (config = {}) {
+      mixin(config)
+    },
+    mixinPrototype (config = {}) {
+      forEach(Object.keys(config), (v) => {
+        this.addPrototype(v, config[v])
+      })
+    },
     /**
      * @summary 获取原有的方法
      * @param {type} 方法名
@@ -83,15 +95,15 @@ function addPrototype (Target, name) {
         if (isCovered) {
           console.info(`
           ============
-          方法名：${type } 已存在，将被【${ name }插件】中的 ${ type } 方法覆盖
-          该覆盖方法将影响到【${Target.prototype[type]['pluginsName'] ? Target.prototype[type]['pluginsName'] + ' 插件' : '框架' }】中使用，请谨慎处理
+          方法名：${type} 已存在，将被【${name}插件】中的 ${type} 方法覆盖
+          该覆盖方法将影响到【${Target.prototype[type]['pluginsName'] ? Target.prototype[type]['pluginsName'] + ' 插件' : '框架'}】中使用，请谨慎处理
           ============
           `)
         } else {
           console.info(`
-          方法名：${type } 已存在，请修改
+          方法名：${type} 已存在，请修改
           
-          该方法是出现在 【${Target.prototype[type]['pluginsName'] ? Target.prototype[type]['pluginsName'] + ' 插件' : '框架' }】中，请修改方法再次安装使用
+          该方法是出现在 【${Target.prototype[type]['pluginsName'] ? Target.prototype[type]['pluginsName'] + ' 插件' : '框架'}】中，请修改方法再次安装使用
           `)
           return false
         }
@@ -103,14 +115,14 @@ function addPrototype (Target, name) {
      * @summary 添加自动执行方法,将在mounted时
      * @param {type} 方法名
      */
-    addAuto (name, fn) {
+    addAuto (name, fn, lifeCycle) {
       if (typeof fn === 'function') {
         Target.prototype._autoDo = Target.prototype._autoDo || {}
         if (!Target.prototype._autoDo[name]) {
           Target.prototype._autoDo[name] = fn
         } else {
           console.info(`
-          自动执行的方法名：${name } 已存在，请查看是否重复注册该方法
+          自动执行的方法名：${name} 已存在，请查看是否重复注册该方法
           `)
         }
       }
@@ -120,7 +132,7 @@ function addPrototype (Target, name) {
      * @param {lifeCycleName} 周期方法名
      * @param {fn} 回调方法
      */
-    addLifeCycleCall (lifeCycleName, fn) {
+    addGlobalLife (lifeCycleName, fn) {
       if (~lifeCycleArray.indexOf(lifeCycleName)) {
         if (typeof fn === 'function') {
           addGlobalLife(lifeCycleName, fn)
@@ -131,7 +143,7 @@ function addPrototype (Target, name) {
         }
       } else {
         console.warn(`
-        要添加的组件周期回调的参数[${lifeCycleName }]，只能是 ${ lifeCycleArray.join(',') } ，请检查
+        要添加的组件周期回调的参数[${lifeCycleName}]，只能是 ${lifeCycleArray.join(',')} ，请检查
         `)
       }
     }

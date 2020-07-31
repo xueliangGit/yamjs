@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-03-12 15:35:08
+ * @LastEditTime: 2020-07-31 17:50:42
  */
 import { _createElementJson } from '../vDom/createElement'
 import updateElement from '../diff/index'
@@ -16,6 +16,7 @@ import ChildComponentsManage from './childComponentsManage'
 import { HTML_TAGS } from '../vDom/creatConfig'
 import { $vdomSymbol, $componentDataSymbol, $closestParentSymbol, $slotSymbol } from '../symbol/index'
 import { isDev } from '../env'
+import { getMixinConfig } from './_mixin'
 // 初始化 init
 let componenesSize = {}
 let styleIsInstalled = {}
@@ -38,13 +39,6 @@ function _init () {
     delete this.isbyUsedByuser
   }
   taskLine.runMicTask()
-  // this._getAllData = () => {
-  //   return {
-  //     $slot: this[$slotSymbol],
-  //     props: this.props,
-  //     _props: this._props
-  //   }
-  // }
 }
 function initSolt (childNodes) {
   this[$slotSymbol] = {}
@@ -58,12 +52,9 @@ function initSolt (childNodes) {
 function create () {
   if (this.elm) {
     this._initSoltHooks = initSolt
-    // this._initSolt()
     // // 新的处理slot
     this[$slotSymbol] = this[$slotSymbol] || {}
-    // this.__hooks_slot = {}
     // 处理是和否有keeplive - 保持组件的内部的协调性
-    // console.log('keeplive', this)
     getChildSlot.call(this, this.elm)
     this[$slotSymbol]['length'] = Object.keys(this[$slotSymbol]).length
     // this.elm.children = []
@@ -89,7 +80,8 @@ function create () {
   // 设置元素信息
   this.elm._eid = this._eid
   // _extends(this.$config(), this)
-  let data = this[$componentDataSymbol] = this.$data()
+  // mixin
+  let data = this[$componentDataSymbol] = Object.assign(...getMixinConfig().$data.map(v => v()), this.$data())
   if (this._props) {
     this._props.forEach(v => {
       let propVal = (this.props ? this.props[v] : this.elm.getAttribute(v))
@@ -200,13 +192,6 @@ function createdComponent () {
     } else {
       this.__shadowRoot = this.elm
       nodeOps.appendChild(this.elm, getFram.call(this))
-      // // let parent = this.elm
-      // console.log(this[$closestParentSymbol], this)
-      // ori
-      // while ((parent.parentElement || parent._parentElement) && parent.nodeType !== 11) {
-      //   parent = parent.parentNode || parent._parentNode
-      // }
-      // new wati
       let parentS = this[$closestParentSymbol]
       if (!parentS) parentS = getComponentByElm(this.elm)
       while (!parentS._shadow && parentS[$closestParentSymbol]) {

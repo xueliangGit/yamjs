@@ -2,8 +2,9 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-02-29 23:40:10
+ * @LastEditTime: 2020-07-31 17:43:07
  */
+
 export default function StoreFactory (conf) {
   // 一个时间记录器
   let timeTool = {
@@ -65,6 +66,9 @@ export default function StoreFactory (conf) {
           storeData.methods[v] = conf.methods[v]
         })
       }
+      if (conf.children) {
+        // 子组件也进行
+      }
     }
     commit (fnNameOrstate, ...params) {
       timeTool.commits.push([fnNameOrstate, ...params])
@@ -84,9 +88,14 @@ export default function StoreFactory (conf) {
       })
     }
     install (target) {
+      // target.add
       target.addAuto('store', (context) => {
-        context.$store = this.add(context)
+        target.$store = this.add(context)
       })
+    }
+    apply (context) {
+      console.log('apply', context)
+      context.$store = this.add(context)
     }
     // 重播
     replay () {

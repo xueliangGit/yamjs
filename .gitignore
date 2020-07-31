@@ -3,3 +3,4 @@ node_modules
 *.patch
 .svn/
 .git/
+dist/

@@ -2,16 +2,33 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-03-12 13:29:51
+ * @LastEditTime: 2020-07-31 17:52:24
  */
 import { $ComponentSymbol, $vdomSymbol, $closestParentSymbol } from '../symbol/index'
 import { forEach } from '../utils/index'
+
 // import { runOnReadyElmFn } from '../utils/componentUtil'
-let cacheLifeCycCleFn = {}
-export let addGlobalLife = function (lifeCycleName, fn) {
-  (cacheLifeCycCleFn[lifeCycleName] = cacheLifeCycCleFn[lifeCycleName] || []).push(fn)
+
+let lifeCycleCallFn = {}
+class CreatLifeCycleCall {
+  constructor(context) {
+    this._cid = context._cid
+    this.target = context
+    lifeCycleCallFn[context._cid] = {}
+  }
+  add (lcName, fn) {
+    let fns = lifeCycleCallFn[this._cid];
+    (fns[lcName] || (fns[lcName] = [])).push(fn)
+  }
+  get (lcName) {
+    return lifeCycleCallFn[this._cid][lcName]
+  }
+  run (lcName) {
+    let fns = lifeCycleCallFn[this._cid]
+    forEach(fns[lcName], v => v.call(this.target))
+  }
 }
-export default {
+const lifeCycle = {
   // 初始化前
   beforeInit (context) {
     _run(context, '$beforeInit')
@@ -76,13 +93,48 @@ export default {
     context.ChildComponentsManage = null
   }
 }
+const lifeCycleArray = Object.keys(lifeCycle).map(v => '$' + v)
+let cacheLifeCycCleFn = {}
 function _run (context, name) {
   try {
     if (cacheLifeCycCleFn && cacheLifeCycCleFn[name]) {
       forEach(cacheLifeCycCleFn[name], (v) => v.call(context))
+    }
+    if (context._lifeCycleCall) {
+      context._lifeCycleCall.run(name)
     }
   } catch (e) {
 
   }
   return context[name] && typeof context[name] === 'function' ? context[name]() : undefined
 }
+// 增加全局的生命周期调用函数
+export let addGlobalLife = function (lifeCycleName, fn) {
+  // if (lifeCycleName[0] !== '$') {
+  //   lifeCycleName = '$' + lifeCycleName
+  // }
+  if (~lifeCycleArray.indexOf(lifeCycleName)) {
+    (cacheLifeCycCleFn[lifeCycleName] = cacheLifeCycCleFn[lifeCycleName] || []).push(fn)
+    return true
+  }
+  return false
+}
+// 增加单个单例的生命周期作用
+export function addLifeCycle (lifeCycle, fn) {
+  if (~lifeCycleArray.indexOf(lifeCycle)) {
+    if (typeof fn === 'function') {
+      if (!this._lifeCycleCall) {
+        this._lifeCycleCall = new CreatLifeCycleCall(this)
+      }
+      this._lifeCycleCall.add(lifeCycle, fn)
+      return true
+      // (context.lifeCycleCall.add(lifeCycle + '_callfn'] = context.lifeCycleCall[lifeCycle + '_callfn'] || []).push(fn)
+    } else {
+      console.warn(`
+      要添加的组件周期回调必须是函数
+      `)
+    }
+  }
+  return false
+}
+export default lifeCycle
