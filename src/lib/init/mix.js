@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-09-10 20:05:23
+ * @LastEditTime: 2020-09-10 20:24:15
  */
 import { _createElementJson } from '../vDom/createElement'
 import { forEach, isFunc, isStr } from '../utils/index'
@@ -147,9 +147,6 @@ function addPrototype (Target, name) {
         要添加的组件周期回调的参数[${lifeCycleName}]，只能是 ${lifeCycleArray.join(',')} ，请检查
         `)
       }
-    },
-    addLifeCycleCall (n, f) {
-      this.addGlobalLife(n, f)
     }
   }
 }

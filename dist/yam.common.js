@@ -1,8 +1,8 @@
 /*
- * Yam.js v0.6.2
+ * Yam.js v0.6.3
  * (c) 2019-2020 xuxueliang
  * Released under the MIT License.
- * lastTime:Thu Sep 10 2020 20:05:31 GMT+0800 (GMT+08:00).
+ * lastTime:Thu Sep 10 2020 20:24:20 GMT+0800 (GMT+08:00).
  */
 'use strict';
 
@@ -3041,7 +3041,7 @@ function initConfig() {
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-09-10 20:05:23
+ * @LastEditTime: 2020-09-10 20:24:15
  */
 var lifeCycleArray$1 = Object.keys(lifeCycle).map(function (v) {
   return '$' + v;
@@ -3194,9 +3194,6 @@ function addPrototype(Target, name) {
       } else {
         console.warn("\n        \u8981\u6DFB\u52A0\u7684\u7EC4\u4EF6\u5468\u671F\u56DE\u8C03\u7684\u53C2\u6570[".concat(lifeCycleName, "]\uFF0C\u53EA\u80FD\u662F ").concat(lifeCycleArray$1.join(','), " \uFF0C\u8BF7\u68C0\u67E5\n        "));
       }
-    },
-    addLifeCycleCall: function addLifeCycleCall(n, f) {
-      this.addGlobalLife(n, f);
     }
   };
 }
@@ -3698,7 +3695,7 @@ function initHTMLEvent() {
 
 }
 
-var version = "0.6.3";
+var version = "0.6.4";
 
 var _dec, _class;
 // var isIE = userAgent.indexOf('compatible') > -1 && userAgent.indexOf('MSIE') > -1 // 判断是否IE<11浏览器
