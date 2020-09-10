@@ -1,8 +1,8 @@
 /*
- * Yam.js v0.6.1
+ * Yam.js v0.6.2
  * (c) 2019-2020 xuxueliang
  * Released under the MIT License.
- * lastTime:Thu Sep 10 2020 19:40:28 GMT+0800 (GMT+08:00).
+ * lastTime:Thu Sep 10 2020 20:05:31 GMT+0800 (GMT+08:00).
  */
 function createCommonjsModule(fn, module) {
 	return module = { exports: {} }, fn(module, module.exports), module.exports;
@@ -154,7 +154,7 @@ var defineProperty = _defineProperty;
  * @Author: xuxueliang
  * @Date: 2019-06-25 13:56:05
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-09-10 12:34:08
+ * @LastEditTime: 2020-09-10 20:00:11
  */
 var canUseCustomElements = !!(window.customElements && window.customElements.define);
 var preFixCom = 'com-';
@@ -3037,7 +3037,7 @@ function initConfig() {
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-09-03 13:10:21
+ * @LastEditTime: 2020-09-10 20:05:23
  */
 var lifeCycleArray$1 = Object.keys(lifeCycle).map(function (v) {
   return '$' + v;
@@ -3148,9 +3148,9 @@ function addPrototype(Target, name) {
 
       if (~reserved.indexOf(type) || Target.prototype[type]) {
         if (isCovered) {
-          console.info("\n          ============\n          \u65B9\u6CD5\u540D\uFF1A".concat(type, " \u5DF2\u5B58\u5728\uFF0C\u5C06\u88AB\u3010").concat(name, "\u63D2\u4EF6\u3011\u4E2D\u7684 ").concat(type, " \u65B9\u6CD5\u8986\u76D6\n          \u8BE5\u8986\u76D6\u65B9\u6CD5\u5C06\u5F71\u54CD\u5230\u3010").concat(Target.prototype[type]['pluginsName'] ? Target.prototype[type]['pluginsName'] + ' 插件' : '框架', "\u3011\u4E2D\u4F7F\u7528\uFF0C\u8BF7\u8C28\u614E\u5904\u7406\n          ============\n          "));
+           console.info("\n          ==\n          \u65B9\u6CD5\u540D\uFF1A".concat(type, " \u5DF2\u5B58\u5728\uFF0C\u5C06\u88AB\u3010").concat(name, "\u63D2\u4EF6\u3011\u4E2D\u7684 ").concat(type, " \u65B9\u6CD5\u8986\u76D6\n          \u8BE5\u8986\u76D6\u65B9\u6CD5\u5C06\u5F71\u54CD\u5230\u3010").concat(Target.prototype[type]['pluginsName'] ? Target.prototype[type]['pluginsName'] + ' 插件' : '框架', "\u3011\u4E2D\u4F7F\u7528\uFF0C\u8BF7\u8C28\u614E\u5904\u7406\n          ==\n          "));
         } else {
-          console.info("\n          \u65B9\u6CD5\u540D\uFF1A".concat(type, " \u5DF2\u5B58\u5728\uFF0C\u8BF7\u4FEE\u6539\n          \n          \u8BE5\u65B9\u6CD5\u662F\u51FA\u73B0\u5728 \u3010").concat(Target.prototype[type]['pluginsName'] ? Target.prototype[type]['pluginsName'] + ' 插件' : '框架', "\u3011\u4E2D\uFF0C\u8BF7\u4FEE\u6539\u65B9\u6CD5\u518D\u6B21\u5B89\u88C5\u4F7F\u7528\n          "));
+           console.info("\n          \u65B9\u6CD5\u540D\uFF1A".concat(type, " \u5DF2\u5B58\u5728\uFF0C\u8BF7\u4FEE\u6539\n          \n          \u8BE5\u65B9\u6CD5\u662F\u51FA\u73B0\u5728 \u3010").concat(Target.prototype[type]['pluginsName'] ? Target.prototype[type]['pluginsName'] + ' 插件' : '框架', "\u3011\u4E2D\uFF0C\u8BF7\u4FEE\u6539\u65B9\u6CD5\u518D\u6B21\u5B89\u88C5\u4F7F\u7528\n          "));
           return false;
         }
       }
@@ -3190,6 +3190,9 @@ function addPrototype(Target, name) {
       } else {
         console.warn("\n        \u8981\u6DFB\u52A0\u7684\u7EC4\u4EF6\u5468\u671F\u56DE\u8C03\u7684\u53C2\u6570[".concat(lifeCycleName, "]\uFF0C\u53EA\u80FD\u662F ").concat(lifeCycleArray$1.join(','), " \uFF0C\u8BF7\u68C0\u67E5\n        "));
       }
+    },
+    addLifeCycleCall: function addLifeCycleCall(n, f) {
+      this.addGlobalLife(n, f);
     }
   };
 }
@@ -3691,7 +3694,7 @@ function initHTMLEvent() {
 
 }
 
-var version = "0.6.2";
+var version = "0.6.3";
 
 var _dec, _class;
 // var isIE = userAgent.indexOf('compatible') > -1 && userAgent.indexOf('MSIE') > -1 // 判断是否IE<11浏览器

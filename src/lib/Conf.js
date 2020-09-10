@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-06-25 13:56:05
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-09-10 12:34:08
+ * @LastEditTime: 2020-09-10 20:00:11
  */
 export const canUseCustomElements = !!(window.customElements && window.customElements.define)
 export const preFixCom = 'com-'

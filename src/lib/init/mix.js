@@ -2,12 +2,13 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-09-03 13:10:21
+ * @LastEditTime: 2020-09-10 20:05:23
  */
 import { _createElementJson } from '../vDom/createElement'
 import { forEach, isFunc, isStr } from '../utils/index'
 import lifeCycle, { addGlobalLife } from './lifeCycle'
 import mixin from './_mixin'
+import { isDev } from '../env'
 let lifeCycleArray = Object.keys(lifeCycle).map(v => '$' + v)
 // 注解
 // 预留字段
@@ -93,14 +94,14 @@ function addPrototype (Target, name) {
     addPrototype (type, fn, isCovered = false) {
       if (~reserved.indexOf(type) || Target.prototype[type]) {
         if (isCovered) {
-          console.info(`
-          ============
+          isDev && console.info(`
+          ==
           方法名：${type} 已存在，将被【${name}插件】中的 ${type} 方法覆盖
           该覆盖方法将影响到【${Target.prototype[type]['pluginsName'] ? Target.prototype[type]['pluginsName'] + ' 插件' : '框架'}】中使用，请谨慎处理
-          ============
+          ==
           `)
         } else {
-          console.info(`
+          isDev && console.info(`
           方法名：${type} 已存在，请修改
           
           该方法是出现在 【${Target.prototype[type]['pluginsName'] ? Target.prototype[type]['pluginsName'] + ' 插件' : '框架'}】中，请修改方法再次安装使用
@@ -146,6 +147,9 @@ function addPrototype (Target, name) {
         要添加的组件周期回调的参数[${lifeCycleName}]，只能是 ${lifeCycleArray.join(',')} ，请检查
         `)
       }
+    },
+    addLifeCycleCall (n, f) {
+      this.addGlobalLife(n, f)
     }
   }
 }

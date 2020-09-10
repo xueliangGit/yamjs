@@ -8,7 +8,7 @@
 
 > 若是需要兼容 IE9+ 需要引入`yamjs/dist/polyfill.yam.for.ie.min.js`
 
-> [看实例](https://demo/yamjs.cn/dist/index.html)
+> [看实例](https://demo.yamjs.cn/dist/index.html)
 
 [文档](http://www.yamjs.cn/yamjs/book/)
 
