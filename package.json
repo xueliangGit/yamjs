@@ -30,6 +30,7 @@
   "devDependencies": {
     "@babel/core": "^7.7.7",
     "@babel/plugin-external-helpers": "^7.7.4",
+    "@babel/plugin-proposal-class-properties": "^7.10.4",
     "@babel/plugin-proposal-decorators": "^7.7.4",
     "@babel/plugin-proposal-export-default-from": "^7.7.4",
     "@babel/plugin-proposal-export-namespace-from": "^7.7.4",
@@ -93,7 +94,6 @@
     "webpack-merge": "^4.2.2"
   },
   "dependencies": {
-    "@babel/plugin-proposal-class-properties": "^7.10.4",
     "babel-polyfill": "^6.26.0",
     "eslint-plugin-react": "^7.17.0",
     "jsx-parser": "^1.0.8",

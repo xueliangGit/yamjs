@@ -1,6 +1,5 @@
 # Yam - a baseComponents for html
 
-> _本组件基类即将开源，现在阶段只是内部使用，修复一些 bug，以及一些优化_
 > Yam 一个 webComponent 的渲染函数组件;兼容非 webComponent 渲染
 
 [看实例](https://yamjs.bestsloth.top/dist/index.html)

@@ -2,7 +2,7 @@
  * Yam.js v0.6.0
  * (c) 2019-2020 xuxueliang
  * Released under the MIT License.
- * lastTime:Thu Sep 10 2020 15:47:01 GMT+0800 (GMT+08:00).
+ * lastTime:Thu Sep 10 2020 17:04:54 GMT+0800 (GMT+08:00).
  */
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :

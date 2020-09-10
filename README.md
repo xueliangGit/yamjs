@@ -6,7 +6,9 @@
 
 > 从 0.5.0 版本开始已经支持使用[yamjs-loader](https://www.npmjs.com/package/yamjs-loader)去编辑代码；
 
-[看实例](https://yamjs.bestsloth.top/dist/index.html)
+> 若是需要兼容 IE9+ 需要引入`yamjs/dist/polyfill.yam.for.ie.min.js`
+
+> [看实例](https://demo/yamjs.cn/dist/index.html)
 
 [文档](http://www.yamjs.cn/yamjs/book/)
 
@@ -30,7 +32,7 @@ YamJS 是一个针对 html 的开发的一个组件基类，让你开发一个�
 
 - `yarn dev`开始开发模式
 - `yarn build`打包应用；开发应用时类似`vue,reactjs`的应用
-- `yarn build:all` 打包组件未模块文件，会自动生成`yamComponet.esm.min.js`esModule 类型文件,`yamComponet.common.min` CommoJS 类型文件,`yamComponet.min.js` UMD 文件，三种类型用于其他框架使用
+- `yarn components` 打包组件未模块文件，会自动生成`yamComponet.esm.min.js`esModule 类型文件,`yamComponet.common.min` CommoJS 类型文件,`yamComponet.min.js` UMD 文件，三种类型用于其他框架使用
 
 ## 背景
 
@@ -49,20 +51,20 @@ YamJS 是一个针对 html 的开发的一个组件基类，让你开发一个�
 一个简单的组件构成
 
 ```js
-import Yam, { Component } from '../lib/index'
+import Yam, { Component } from 'yamjs'
 import MyTimer from './myTimer'
 @Component({
   tagName: 'go-top',
   style: require('./goTop.stylus'),
   shadow: true,
   customElements: true,
-  props: ['msg']
+  props: ['msg'],
 })
 class App extends Yam {
   $data() {
     return {
       list: [0, 12, 2, 3],
-      index: 1
+      index: 1,
     }
   }
   $beforeCreate() {
@@ -94,7 +96,7 @@ class App extends Yam {
     // console.log(v)
   }
   showList() {
-    return this.list.map(v => <li>{v}</li>)
+    return this.list.map((v) => <li>{v}</li>)
   }
   switch(i) {
     // this.emit('ad')
@@ -141,6 +143,48 @@ IE9+
 
 > 更新
 
+- 0.6.0 (2020-09)
+
+  - 支持与 vue 混写，嵌套
+  - 优化更新机制，一个组件一个组件的更新
+  - 优化 diff
+  - 支持 function Component,
+
+    - 使用方式，直接函数方式，吧 props 当作参数传入
+    - 支持标签引入 当作普通匿名标签，需要依附`Yamjs`才可以
+
+    ```js
+    function GetList(props) {
+      let { index } = props
+      // this.props = props
+      console.log(this)
+      return (
+        <div $props={props}>
+          {props}
+          <div index={index + 12}>asdads is ACopm</div>
+          IS GETLIST FUNCTION COMPONENTS {index}
+        </div>
+      )
+    }
+    @Component({
+      tagName: 'switch-tab',
+      style: require('./index.stylus'),
+      props: ['tabs'],
+    })
+    class App extends Yam {
+      render() {
+        return (
+          <div>
+          <!-- 方法一 -->
+         GetList({ index: this.active, onClick: () => console.log(222) })}
+         <!-- 方法二 -->
+         <GetList />
+          </div>
+        )
+      }
+    }
+    ```
+
 - 0.5.4 (2020-03-30)
 
   - 支持使用异步组件
@@ -185,7 +229,9 @@ IE9+
   - 优化 ref，支持`ref={(v)=>{this.dom=v}}`写法；直接把 ref 赋值到`this.com`上
   - 优化 slot；在外环镜中嵌套 slot 时，当 slot 渲染组件时，该组件状态会被保存住，不会被销毁；（暂行方法，等待后续优化）
 - 0.2.4 (2019-9-17)
+
   - 添加设置环境 `Yam.setConfig({isdev:true})`
+
 - 0.2.0 (2019-8-1)
   - 优化 slot 加载显示，调成为，若只有一个 slot 并且定了 name，那么要想插入内容需要定义 slot 属性与之对应，否则不予显示
   - 优化`router`插件，当没有匹配到组件时，默认显示内置的 404 页面；也可以使用自定义 404 页面；详见[路由管理]
