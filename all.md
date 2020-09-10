@@ -46,13 +46,13 @@ import MyTimer from './myTimer'
   style: require('./goTop.stylus'),
   shadow: true,
   customElements: true,
-  props: ['msg']
+  props: ['msg'],
 })
 class App extends Yam {
   $data() {
     return {
       list: [0, 12, 2, 3],
-      index: 1
+      index: 1,
     }
   }
   $beforeCreate() {
@@ -84,7 +84,7 @@ class App extends Yam {
     // console.log(v)
   }
   showList() {
-    return this.list.map(v => <li>{v}</li>)
+    return this.list.map((v) => <li>{v}</li>)
   }
   switch(i) {
     // this.emit('ad')
@@ -163,9 +163,7 @@ export default App
           display: inline-block;
         }
       </style>
-      <div dom="com_go-top">
-        ....
-      </div>
+      <div dom="com_go-top">....</div>
       ```
 
     - 若是不带有`[scope]`
@@ -191,9 +189,7 @@ export default App
           display: inline-block;
         }
       </style>
-      <div dom="com_go-top">
-        ....
-      </div>
+      <div dom="com_go-top">....</div>
       ```
 
       - [root]根结点 是\$dom 元素
@@ -281,7 +277,7 @@ dom 数据更新是仅仅在`$data`设定以及注解里`prop`设定的值改变
       // 组件内部
       import Yam, { Component } from '../lib/index'
       @Component({
-        tagName: 'date-picker'
+        tagName: 'date-picker',
       })
       class App extends Yam {
         update() {
@@ -306,17 +302,17 @@ dom 数据更新是仅仅在`$data`设定以及注解里`prop`设定的值改变
         el: 'App',
         mounted: () => {
           if (this.$refs.datePicker.isInited) {
-            this.$refs.datePicker.emit('addWatcher', 'change', e => {
+            this.$refs.datePicker.emit('addWatcher', 'change', (e) => {
               console.log(e)
             })
           } else {
-            this.$refs.datePicker.onReady = function() {
-              this.emit('addWatcher', 'change', e => {
+            this.$refs.datePicker.onReady = function () {
+              this.emit('addWatcher', 'change', (e) => {
                 console.log(e)
               })
             }
           }
-        }
+        },
       })
       // react 类似
     </script>
@@ -324,7 +320,7 @@ dom 数据更新是仅仅在`$data`设定以及注解里`prop`设定的值改变
       // 组件内部
       import Yam, { Component } from '../lib/index'
       @Component({
-        tagName: 'date-picker'
+        tagName: 'date-picker',
       })
       class App extends Yam {
         update() {
@@ -370,22 +366,22 @@ Yam.use(animate)
 export default {
   name: 'animate',
   needs: ['tolls'],
-  install: function(terget) {
-    terget.addPrototype('fadeOut', function(duration = 300) {
+  install: function (terget) {
+    terget.addPrototype('fadeOut', function (duration = 300) {
       const keyframes = [
         { opacity: 1, marginTop: '0' },
-        { opacity: 0, marginTop: '50px' }
+        { opacity: 0, marginTop: '50px' },
       ]
       return _animate.call(this, keyframes, duration).finished
     })
-    terget.addPrototype('fadeIn', function(duration = 300) {
+    terget.addPrototype('fadeIn', function (duration = 300) {
       const keyframes = [
         { opacity: 0, marginTop: '50px' },
-        { opacity: 1, marginTop: '0px' }
+        { opacity: 1, marginTop: '0px' },
       ]
       return _animate.call(this, keyframes, duration).finished
     })
-  }
+  },
 }
 function _animate(keyframes, duration) {
   console.log(this)
@@ -413,9 +409,9 @@ function _animate(keyframes, duration) {
 ```js
 let plugin = {
   name: '',
-  install: target => {
-    terget.addPrototype('fadeIn', function() {})
-  }
+  install: (target) => {
+    terget.addPrototype('fadeIn', function () {})
+  },
 }
 ```
 
@@ -453,14 +449,14 @@ let plugin = {
 import Store from '../lib/plugins/store'
 export default new Store({
   state: {
-    width: 500
+    width: 500,
   },
   methods: {
     updateWidth(state, params) {
       console.log(params)
       state.width = params
-    }
-  }
+    },
+  },
 })
 ```
 
@@ -476,7 +472,7 @@ import store from './store'
   style: require('./myTimers.stylus'),
   canBeCalledExt: false,
   store: store,
-  props: []
+  props: [],
 })
 class App extends Yam {}
 ```
@@ -512,19 +508,19 @@ Yam.use(store)
        {
          name: 'index',
          path: '/',
-         component: 'my-timer'
+         component: 'my-timer',
        },
        {
          path: '/goTop',
          component: 'go-top',
-         name: 'gotop'
+         name: 'gotop',
        },
        {
          path: '/myTimer',
          component: 'my-timer',
-         name: 'myTimer'
-       }
-     ]
+         name: 'myTimer',
+       },
+     ],
    })
    ```
 
@@ -575,7 +571,7 @@ Yam.use(store)
      ```js
      this.$router.push({
        name: 'myTimer', //name
-       query: { a: 1, b: 2 } // 参数
+       query: { a: 1, b: 2 }, // 参数
      })
      ```
 
@@ -590,7 +586,7 @@ Yam.use(store)
 > > @Component({
 > >   tagName: 'page-404',
 > >   style: '',
-> >   props: ['path']
+> >   props: ['path'],
 > > })
 > > class App extends Yam {
 > >   data() {
@@ -646,6 +642,48 @@ Yam.use(store)
 > todo
 
 > 更新
+
+- 0.6.0 (2020-09)
+
+  - 支持与 vue 混写，嵌套
+  - 优化更新机制，一个组件一个组件的更新
+  - 优化 diff
+  - 支持 function Component,
+
+    - 使用方式，直接函数方式，吧 props 当作参数传入
+    - 支持标签引入 当作普通匿名标签，需要依附`Yamjs`才可以
+
+    ```js
+    function GetList(props) {
+      let { index } = props
+      // this.props = props
+      console.log(this)
+      return (
+        <div $props={props}>
+          {props}
+          <div index={index + 12}>asdads is ACopm</div>
+          IS GETLIST FUNCTION COMPONENTS {index}
+        </div>
+      )
+    }
+    @Component({
+      tagName: 'switch-tab',
+      style: require('./index.stylus'),
+      props: ['tabs'],
+    })
+    class App extends Yam {
+      render() {
+        return (
+          <div>
+          <!-- 方法一 -->
+         GetList({ index: this.active, onClick: () => console.log(222) })}
+         <!-- 方法二 -->
+         <GetList />
+          </div>
+        )
+      }
+    }
+    ```
 
 - 0.5.4 (2020-03-30)
 

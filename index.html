@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-06-22 20:00:33
+ * @LastEditTime: 2020-09-10 15:05:25
  -->
 <!DOCTYPE html>
 <html lang="en">
@@ -24,11 +24,11 @@
   </head>
 
   <body>
-    <lazy-img
+    <!-- <lazy-img
       src="http://pws.myhug.cn/npic/w/9/20200616171914_41f8dda46bfa32b56899cfd8fae3b712"
       loadingsrc="https://dss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=1511133483,3206916458&fm=58"
-    ></lazy-img>
-    <multi-upimg
+    ></lazy-img> -->
+    <!-- <multi-upimg
       width="120"
       height="120"
       uploadok="uploadok"
@@ -42,8 +42,9 @@
     <a
       href="http://192.168.10.225:5006/test/UI/yamjs-Component/yamComponents/dist/index.html"
       >去测试页local</a
-    >
+    > -->
     <div id="app">
+      <button @click="show=!show">切换123</button>
       <switch-tab tabs="a,b"></switch-tab>
       <test-show keeplive="true">
         1
@@ -51,29 +52,47 @@
         <div slot="top">大 sad sad sad 说1-1</div>
         2
         <div slot="top">大 sad sad sad 说2-2</div>
-        <test-show slot="top">
-          3
-          <div onclick="showInfo()" slot="top">大 sad sad sad 说3-3</div>
+        <div slot="top">
           <test-show>
-            4
-            <div onclick="showInfo()" slot="top">大 sad sad sad 说4-4</div>
+            3
+            <div onclick="showInfo()">大 sad sad sad 说3-3</div>
+            <div slot="top">
+              <div>
+                <test-show>
+                  4
+                  <div onclick="showInfo()" slot="top">
+                    大 sad sad sad 说4-4
+                  </div>
+                  <div slot="top">
+                    <test-show v-if="show">
+                      5
+                      <div onclick="showInfo()" slot="top">
+                        大 sad sad sad 说5-5
+                      </div>
+                    </test-show>
+                  </div>
+                </test-show>
+              </div>
+            </div>
           </test-show>
-        </test-show>
+        </div>
       </test-show>
-      <!-- <mis-list></mis-list>
-  <div onasd='fun' msg='1111111' id='app'></div>-->
+      <mis-list></mis-list>
+      <!--  <div onasd='fun' msg='1111111' id='app'></div>-->
       <!-- <router-view></router-view> -->
       <!-- <show-demo title="go-top"><go-top msg="{a:123123}"> </go-top></show-demo> -->
-      <go-top msg="{a:123123}">
+      <!-- <go-top msg="{a:123123}">
         <show-demo title="go-top"><div>======</div></show-demo></go-top
-      >
-
+      > -->
       <!-- <my-timer >
     <p slot='bottom'>我的时间</p>
   </my-timer> -->
 
       <div onclick="datePicker.emit('show')">时间</div>
       <p id="showinfo"></p>
+      <test-tag></test-tag>
+      <test-tag></test-tag>
+      <test-tag></test-tag>
       <data-picker id="datePicker" change="fun" showZg="true"></data-picker>
     </div>
 
@@ -88,6 +107,22 @@
       }
       new Vue({
         el: '#app',
+        data: function () {
+          return {
+            show: true,
+          }
+        },
+        mounted: function () {
+          console.log('asd')
+          // setInterval(() => {
+          //   this.switch()
+          // }, 10000)
+        },
+        methods: {
+          switch: function () {
+            this.show = !this.show
+          },
+        },
       })
     </script>
   </body>

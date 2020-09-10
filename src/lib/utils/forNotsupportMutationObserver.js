@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2020-02-29 16:15:59
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-03-11 16:23:14
+ * @LastEditTime: 2020-09-09 17:44:40
  */
 /*
 * 针对不支持MutationObserver  做法，添加 appendYamNode 方法
@@ -10,16 +10,22 @@
 */
 import { setAttributes } from './index' // supportMutationObserver
 import { getComponentByElm } from './componentUtil'
+import { canUseCustomElements } from '../Conf'
+import { getSlotComponentsIsOrInstallState, isSlotComponentsAndRender } from '../helpers/slotHelper'
+// import taskLine from './taskLine' // 暂不做修复
 let __localYamjsElm = {}
 export default function (k, v) {
   __localYamjsElm[k] = v
 }
 function yamjsRender (node, tagName = '') {
-  if (!node.isInited) {
+  if (isSlotComponentsAndRender(node)) {
+    return
+  }
+  if (!node.isInited && getSlotComponentsIsOrInstallState(node, true)) {
     tagName = tagName || (node.tagName ? node.tagName.toLocaleLowerCase() : '')
     if (!tagName) return
     if (__localYamjsElm[tagName]) {
-      new __localYamjsElm[tagName]().renderAt(node)
+      (new __localYamjsElm[tagName]()).renderAt(node)
     }
     // else {
     //   // console.log('没有[', tagName, ']组件')
@@ -68,7 +74,10 @@ window.yamjsRender = function (node, tagName) {
 //     comp = null
 //   }
 // }
-function runRender (node) {
+function runRender (node, isDoChild = true) {
+  if (isDoChild && !canUseCustomElements && node.childNodes.length) {
+    // taskLine.addMacTask(() => checkChildHasComponents(node, false))
+  }
   if (node.isYamjsInnerNode) return
   if (node.parentElement) {
     yamjsRender(node)
@@ -78,18 +87,51 @@ function runRender (node) {
     }, 100)
   }
 }
-function removeChild (node) {
-  if (node.isYamjsInnerNode) return
+function removeChild (node, cb = () => { }) {
+  if (!canUseCustomElements && node.childNodes.length) {
+    // taskLine.addMacTask(() => checkChildHasComponents(node))
+  }
+  if (node.isYamjsInnerNode) return cb()
   if (node.isComponent && !node.isUnset) {
     node.isUnset = true
     let comp = getComponentByElm(node)
     if (comp) {
       comp.__beforeDisconnectedCallback()
+      let rmFlag = cb()
       comp.__disconnectedCallback()
       comp = null
+      return rmFlag
+    } else {
+      return cb()
     }
   }
 }
+// 20200909
+// 修复webcomponent 在不支持的ie中使用时 不能自动注销；
+// 但自动注销后又不能恢复
+// 实现自动注销需要区遍历子节点，费性能
+// 暂不处理
+// function checkChildHasComponents (node, isUnset = true, i = 0) {
+//   console.log('++++---updaye', i)
+//   forEach(node.childNodes, (v) => {
+//     if (isUnset) {
+//       if (v.isComponent && !v.isUnset) {
+//         let comp = getComponentByElm(v)
+//         if (comp) {
+//           comp.__beforeDisconnectedCallback()
+//           comp.__disconnectedCallback()
+//           console.warn(comp)
+//           comp = null
+//         }
+//       }
+//     } else {
+//       console.dir(v)
+//       // runRender(v, false)
+//     }
+//     checkChildHasComponents(v, ++i)
+//   })
+//   console.log('---updaye', i)
+// }
 initHTMLEvent()
 function initHTMLEvent () {
   let HTMLElementPrototype = HTMLElement.prototype
@@ -112,9 +154,8 @@ function initHTMLEvent () {
   }
   HTMLElementPrototype._removeChild = HTMLElementPrototype.removeChild
   HTMLElementPrototype.removeChild = function (node) {
-    let returnFlag = this._removeChild(node)
-    removeChild(node)
-    return returnFlag
+    return removeChild(node, () => this._removeChild(node))
+    //  returnFlag
   }
   HTMLElementPrototype._replaceChild = HTMLElementPrototype.replaceChild
   HTMLElementPrototype.replaceChild = function (newNode, oldNode) {

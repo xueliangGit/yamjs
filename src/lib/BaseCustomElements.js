@@ -2,18 +2,26 @@
  * @Author: xuxueliang
  * @Date: 2019-06-25 13:56:05
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-07-31 16:35:26
+ * @LastEditTime: 2020-09-10 15:26:44
  */
 import { getComponentByElm, setComponentForElm } from './utils/componentUtil'
 import { HTML_TAGS } from './vDom/creatConfig'
+import { isSlotComponentsAndRender } from './helpers/slotHelper'
 
-export default function getCustom () {
+export default function getCustom (target, props) {
   // eslint-disable-next-line
   class ElmApp extends HTMLElement {
+    static get observedAttributes () { return props || [] }
+    attributeChangedCallback (name, oldValue, newValue) {
+      // console.log('Custom square element attributes changed.', this.nodeName, name, oldValue, newValue)
+    }
     connectedCallback () {
       // onReadyElmFn(this)
       try {
-        let Target = HTML_TAGS[this.nodeName.toLocaleLowerCase()].class
+        if (isSlotComponentsAndRender(this)) {
+          return
+        }
+        let Target = target || HTML_TAGS[this.nodeName.toLocaleLowerCase()].class
         if (Target) {
           let comps = new Target()
           comps.renderAt(this)
@@ -28,8 +36,8 @@ export default function getCustom () {
       if (!this.isUnset && !this.isRemovedBySlot) {
         this.isUnset = true
         let comps = getComponentByElm(this)
-        comps.__beforeDisconnectedCallback()
-        comps.__disconnectedCallback()
+        comps.__beforeDisconnectedCallback && comps.__beforeDisconnectedCallback()
+        comps.__disconnectedCallback && comps.__disconnectedCallback()
       }
     }
   }

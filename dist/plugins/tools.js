@@ -2,9 +2,10 @@
  * @Author: xuxueliang
  * @Date: 2019-06-25 13:56:05
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-03-10 16:13:26
+ * @LastEditTime: 2020-09-03 12:52:28
  */
 import { getCss } from './utils'
+import { isFunc } from '../utils/index'
 
 export default {
   name: 'tools',
@@ -20,7 +21,7 @@ export default {
     // 设置延时器
     target.addPrototype('setTimeout', function (fn, ...params) {
       let timeOutId = setTimeout(() => {
-        typeof fn === 'function' && fn()
+        isFunc(fn) && fn()
         this.delDestory(ids)
         timeOutId = null
       }, ...params)
@@ -45,7 +46,7 @@ export default {
     target.addPrototype('setInterval', function (fn, ...params) {
       let intervalId = setInterval((...arg) => {
         // console.log('intervalId,', intervalId)
-        typeof fn === 'function' && fn(...arg)
+        isFunc(fn) && fn(...arg)
       }, ...params)
       let ids = this.addDestory(() => {
         // console.log('intervalId,', intervalId)

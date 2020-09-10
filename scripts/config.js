@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-13 18:50:38
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-03-10 16:41:29
+ * @LastEditTime: 2020-09-10 15:46:53
  */
 const json = require('rollup-plugin-json')
 const babel = require('rollup-plugin-babel')
@@ -20,10 +20,10 @@ const featureFlags = {} || require('./feature-flags')
 
 const banner =
   '/*\n' +
-  ` * Yam.js v${ version }\n` +
-  ` * (c) 2019-${ new Date().getFullYear() } xuxueliang\n` +
+  ` * Yam.js v${version}\n` +
+  ` * (c) 2019-${new Date().getFullYear()} xuxueliang\n` +
   ' * Released under the MIT License.\n' +
-  ` * lastTime:${ new Date() }.\n` +
+  ` * lastTime:${new Date()}.\n` +
   ' */'
 
 // const weexFactoryPlugin = {
@@ -51,39 +51,62 @@ const resolve = p => {
 const builds = {
   // user yamjs-laoder
   'common:dev:loader': {
-    entry: resolve('lib/enters/index.use.loader.js'),
+    entry: resolve('lib/entrys/index.use.loader.js'),
     dest: resolve('dist/loader/yam.common.js'),
     format: 'cjs',
     env: 'development',
     banner
   },
   'common:prod:loader': {
-    entry: resolve('lib/enters/index.use.loader.js'),
+    entry: resolve('lib/entrys/index.use.loader.js'),
     dest: resolve('dist/loader/yam.common.min.js'),
     format: 'cjs',
     env: 'production',
     banner
   },
   'esm:prod:loader': {
-    entry: resolve('lib/enters/index.use.loader.js'),
+    entry: resolve('lib/entrys/index.use.loader.js'),
     dest: resolve('dist/loader/yam.esm.min.js'),
     format: 'es',
     env: 'production',
     banner
   },
   'esm:dev:loader': {
-    entry: resolve('lib/enters/index.use.loader.js'),
+    entry: resolve('lib/entrys/index.use.loader.js'),
     dest: resolve('dist/loader/yam.esm.js'),
     format: 'es',
     env: 'development',
     banner
   },
   'umd:prod:loader': {
-    entry: resolve('lib/enters/index.use.loader.js'),
+    entry: resolve('lib/entrys/index.use.loader.js'),
     dest: resolve('dist/loader/yam.min.js'),
     format: 'umd',
     env: 'production',
     // alias: {he: './entity-decoder'},
+    banner
+  },
+  // user yamjs-laoder-IE-polyfill
+  'common:dev:IE:Porlyfill': {
+    entry: resolve('lib/entrys/polyfill.js'),
+    dest: resolve('dist/polyfill.yam.for.ie.min.js'),
+    format: 'umd',
+    env: 'production',
+    banner
+  },
+  // user yamjs-laoder-IE
+  'common:dev:IE:Porlyfill': {
+    entry: resolve('lib/entrys/index.ie.loader.js'),
+    dest: resolve('dist/ie/yam.ie.js'),
+    format: 'umd',
+    env: 'production',
+    banner
+  },
+  'common:dev:IE:Porlyfill': {
+    entry: resolve('lib/entrys/index.ie.loader.js'),
+    dest: resolve('dist/ie/yam.ie.min.js'),
+    format: 'umd',
+    env: 'production',
     banner
   },
   // normal
@@ -131,7 +154,7 @@ const builds = {
     banner
   },
   'umd:dev:loader': {
-    entry: resolve('lib/enters/index.use.loader.js'),
+    entry: resolve('lib/entrys/index.use.loader.js'),
     dest: resolve('dist/loader/yam.js'),
     format: 'umd',
     env: 'development',
@@ -378,7 +401,7 @@ function genConfig (name) {
   }
   // feature flags
   Object.keys(featureFlags).forEach(key => {
-    vars[`process.env.${ key }`] = featureFlags[key]
+    vars[`process.env.${key}`] = featureFlags[key]
   })
   // build-specific env
   if (opts.env) {

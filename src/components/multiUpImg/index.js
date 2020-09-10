@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2020-02-18 15:13:32
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-03-29 18:39:28
+ * @LastEditTime: 2020-09-08 10:38:05
  */
 // import Yam, { Component } from 'yamjs'
 import Yam, { Component } from '../../lib/index'
@@ -11,7 +11,6 @@ import img from './but-jubaozhaoshanchu@2x.png'
 // import Upimg from '../upfile/upimg'
 import style from './index.stylus'
 let Upimg = () => import(/* webpackChunkName : "uopfile" */'../upfile/upimg')
-console.log(Upimg)
 let num = 0
 @Component({
   tagName: 'multi-upimg',
@@ -38,6 +37,8 @@ class App extends Yam {
     this.updateEmitImgs()
   }
   $mounted () {
+    console.log('multiUpImg')
+    console.log(this)
     console.log(document.getElementById('upimg'))
   }
   updateEmitImgs () {
@@ -65,7 +66,7 @@ class App extends Yam {
       ))
       }
       <a href='123as/a'></a>
-      <Upimg href='asd' id='upimg' selelctOnly={ true } className={ `img-show ${ this.imgs.length >= this.max ? 'hide' : '' }` } style={ { 'width': this.width + 'px', height: this.height + 'px' } } type={ this.type } suffix={ this.suffix } serverurl={ this.serverurl } uploadok={ this.uploadok.bind(this) } title="上传图片"></Upimg>
+      <Upimg href='asd' id='upimg' selelctOnly={ true } className={ `img-show ${this.imgs.length >= this.max ? 'hide' : ''}` } style={ { 'width': this.width + 'px', height: this.height + 'px' } } type={ this.type } suffix={ this.suffix } serverurl={ this.serverurl } uploadok={ this.uploadok.bind(this) } title="上传图片"></Upimg>
       {/* { this.getList() } */ }
     </div >
   }

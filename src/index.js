@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-13 16:13:59
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-06-22 19:57:59
+ * @LastEditTime: 2020-09-03 12:08:13
  */
 
 import './components/common'
@@ -15,7 +15,7 @@ import './components/showDemo.js'
 import './components/test.1'
 import './components/test.2'
 // import './components/mis.js'
-// import './components/switchTab'
+import './components/switchTab'
 // // eslint-disable-next-line no-new
 // (new App()).renderAt('go-top')
 // import Yam, { Component } from './lib/index'

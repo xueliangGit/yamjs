@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-07-31 17:43:07
+ * @LastEditTime: 2020-09-08 14:47:49
  */
 
 export default function StoreFactory (conf) {
@@ -94,7 +94,7 @@ export default function StoreFactory (conf) {
       })
     }
     apply (context) {
-      console.log('apply', context)
+      // console.log('apply', context)
       context.$store = this.add(context)
     }
     // 重播

@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-06-25 13:56:05
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-07-30 18:43:31
+ * @LastEditTime: 2020-09-08 19:47:46
  */
 import cacheLib from '../utils/cacheLib'
 import { guid2 } from '../utils/index'
@@ -41,8 +41,10 @@ class ChildComponentsManage {
     let Apps = this.get()
     this.isDestorying = true
     for (let i in Apps) {
-      Apps[i] && Apps[i].__beforeDisconnectedCallback()
-      Apps[i] && Apps[i].__disconnectedCallback()
+      if (Apps[i]) {
+        Apps[i].__beforeDisconnectedCallback()
+        Apps[i].__disconnectedCallback()
+      }
       delete Apps[i]
     }
     this.isDestorying = false

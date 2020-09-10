@@ -93,6 +93,8 @@
     "webpack-merge": "^4.2.2"
   },
   "dependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.10.4",
+    "babel-polyfill": "^6.26.0",
     "eslint-plugin-react": "^7.17.0",
     "jsx-parser": "^1.0.8",
     "lodash": "^4.17.15",

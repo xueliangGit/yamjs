@@ -2,10 +2,11 @@
  * @Author: xuxueliang
  * @Date: 2019-06-25 13:56:05
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-03-29 17:45:19
+ * @LastEditTime: 2020-09-10 11:39:02
  */
 import { doc as document } from './global'
 import { requestAnimationFrame } from './index'
+// import { canUseCustomElements } from '../Conf'
 function createElement$1 (tagName, vnode) {
   var elm = document.createElement(tagName)
   if (tagName !== 'select') {
@@ -39,6 +40,7 @@ function insertBefore (parentNode, newNode, referenceNode, isNeed) {
 function removeChild (node, child) {
   if (!child || !node) return
   requestAnimationFrame(() => {
+    // console.dir(child)
     // 移除事件 触发
     if (child.beforeDisconnectedCallback && !child.isRemovedBySlot) {
       child.beforeDisconnectedCallback()

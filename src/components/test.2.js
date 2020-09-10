@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-10-25 14:46:07
  * @LastEditors: xuxueliang
- * @LastEditTime: 2019-10-25 14:49:34
+ * @LastEditTime: 2020-09-09 17:33:30
  */
 import Yam, { Component } from '../lib/index'
 @Component({
@@ -11,15 +11,21 @@ import Yam, { Component } from '../lib/index'
   props: []
 })
 class testTag extends Yam {
-  $data () {
-    return {
-      // your data
-
-    }
+  $data = {
+    // your data
+    show: true
+  }
+  clickFn () {
+    this.show = !this.show
   }
   render () {
     return <div>
-      <p>is yam componets</p>
+      <button onClick={ this.clickFn.bind(this) }>
+        test-tag
+      </button>
+      { this.show ? <test-show>
+        <p>is yam componets of test-tag</p>
+      </test-show> : '' }
     </div>
   }
 }

@@ -2,11 +2,12 @@
  * @Author: xuxueliang
  * @Date: 2019-06-25 13:56:05
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-02-29 23:39:08
+ * @LastEditTime: 2020-09-10 11:39:54
  */
 import init from './init'
 import { Mix } from './init/mix'
 import { getStyleStr } from './utils'
+import { getCid } from './utils/index'
 var comps = window.comps = {}
 @Mix()
 // eslint-disable-next-line
@@ -24,7 +25,7 @@ class Yam extends HTMLElement {
   disconnectedCallback () {
     // console.log('disconnectedCallback')
     // 取消 监听
-    this.mutation.disconnect()
+    this.mutation && this.mutation.disconnect()
     this.isUnset = true
   }
   // 会被覆盖的方法
@@ -53,7 +54,7 @@ export function Component (Config) {
       this._tagName = tagName
       this._shadow = !!shadow
       this._props = props || []
-      this._cid = 'com-' + tagName
+      this._cid = getCid(tagName)
       this._style = getStyleStr(this._cid, style)
       // console.log('this._style', this._style)
     }

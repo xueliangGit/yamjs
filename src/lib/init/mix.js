@@ -2,10 +2,10 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-07-31 18:01:04
+ * @LastEditTime: 2020-09-03 13:10:21
  */
 import { _createElementJson } from '../vDom/createElement'
-import { forEach } from '../utils/index'
+import { forEach, isFunc, isStr } from '../utils/index'
 import lifeCycle, { addGlobalLife } from './lifeCycle'
 import mixin from './_mixin'
 let lifeCycleArray = Object.keys(lifeCycle).map(v => '$' + v)
@@ -40,14 +40,14 @@ export function Mix () {
           `)
         return false
       }
-      if (typeof Config.install !== 'function') {
+      if (!isFunc(Config.install)) {
         console.warn(`
             install 必须是个方法
           `)
         return false
       }
       if (needs) {
-        if (typeof needs === 'string') {
+        if (isStr(needs)) {
           needs = [needs]
         }
         forEach(needs, v => {
@@ -116,7 +116,7 @@ function addPrototype (Target, name) {
      * @param {type} 方法名
      */
     addAuto (name, fn, lifeCycle) {
-      if (typeof fn === 'function') {
+      if (isFunc(fn)) {
         Target.prototype._autoDo = Target.prototype._autoDo || {}
         if (!Target.prototype._autoDo[name]) {
           Target.prototype._autoDo[name] = fn
@@ -134,7 +134,7 @@ function addPrototype (Target, name) {
      */
     addGlobalLife (lifeCycleName, fn) {
       if (~lifeCycleArray.indexOf(lifeCycleName)) {
-        if (typeof fn === 'function') {
+        if (isFunc(fn)) {
           addGlobalLife(lifeCycleName, fn)
         } else {
           console.warn(`

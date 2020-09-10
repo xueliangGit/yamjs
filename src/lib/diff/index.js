@@ -2,14 +2,18 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-06-22 20:08:37
+ * @LastEditTime: 2020-09-10 15:43:34
  */
 import nodeOps from '../utils/nodeOps'
+import { initSolt, isSlotTag } from '../helpers/slotHelper'
 // import { renderElement } from '../vDom/createElement'
 //
-import { isDef, requestIdleCallback } from '../utils/index'
+import { isDef, requestIdleCallback, isFunc, isStr, isUndef } from '../utils/index'
 import { getComponentByElm } from '../utils/componentUtil'
 import taskLine from '../utils/taskLine'
+import { renderFunctionComponent } from '../vDom/renderAsync'
+import { isFunctionComponent } from '../Conf'
+
 // import { $ComponentSymbol } from '../symbol/index'
 // import _ from 'lodash'
 /**
@@ -38,7 +42,7 @@ export default function patch (parentElm, vnode, oldVnode) {
       addVnodes(parentElm, null, vnode, 0, vnode.length - 1)
     }
   }
-  taskLine.runMicTask()
+  // taskLine.runMicTask()
   // console.log('---runMicTask--')
 }
 /**
@@ -49,20 +53,20 @@ function insert (parent, elm, ref, isFirst) {
   if (parent) {
     if (ref) {
       if (ref.parentNode === parent) {
-        // nodeOps.insertBefore(parent, elm, ref, !isFirst)
-        if (parent.nodeType === 11) {
-          nodeOps.insertBefore(parent, elm, ref, !isFirst)
-        } else {
-          taskLine.addMicTask(() => { nodeOps.insertBefore(parent, elm, ref, !isFirst) })
-        }
+        nodeOps.insertBefore(parent, elm, ref, !isFirst)
+        // if (parent.nodeType === 11) {
+        //   nodeOps.insertBefore(parent, elm, ref, !isFirst)
+        // } else {
+        //   taskLine.addMicTask(() => { nodeOps.insertBefore(parent, elm, ref, !isFirst) })
+        // }
       }
     } else {
+      nodeOps.appendChild(parent, elm, !isFirst)
+      // if (parent.nodeType === 11) {
       // nodeOps.appendChild(parent, elm, !isFirst)
-      if (parent.nodeType === 11) {
-        nodeOps.appendChild(parent, elm, !isFirst)
-      } else {
-        taskLine.addMicTask(() => { nodeOps.appendChild(parent, elm, !isFirst) })
-      }
+      // } else {
+      // taskLine.addMicTask(() => { nodeOps.appendChild(parent, elm, !isFirst) })
+      // }
     }
   }
 }
@@ -177,16 +181,75 @@ function sameVnode (a, b) {
     //   sameInputType(a, b)
   )
 }
+function CompareObj (objA, objB, flag) {
+  for (var key in objA) {
+    if (!flag) { // 跳出整个循环
+      break
+    }
+    if (!objB.hasOwnProperty(key)) {
+      flag = false
+      break
+    }
+    if (!Array.isArray(objA[key])) { // 子级不是数组时,比较属性值
+      if (objB[key] !== objA[key]) {
+        flag = false
+        break
+      }
+    } else {
+      if (!Array.isArray(objB[key])) {
+        flag = false
+        break
+      }
+      let oA = objA[key]
+      let oB = objB[key]
+      if (oA.length !== oB.length) {
+        flag = false
+        break
+      }
+      for (var k in oA) {
+        if (!flag) {
+          break
+        } // 这里跳出循环是为了不让递归继续
+        flag = CompareObj(oA[k], oB[k], flag)
+      }
+    }
+  }
+  return flag
+}
 function sameComponents (a, b) {
   if (a.class) {
     if (a.class === b.class) {
+      taskLine.addMicTask(() => {
+        // 如果是 class TODO a
+        let elmCom = getComponentByElm(a.elm)
+        // a.childNodes = b.childNodes
+        initSolt(elmCom, b.childNodes)
+      })
+      // elmCom._initSoltHooks()
+      return true
+    }
+    return false
+  } else if (a[isFunctionComponent]) {
+    if (b.asyncComponent && a.asyncComponent === b.asyncComponent) {
+      if (!CompareObj(a.props, b.props, true)) {
+        // a.props = b.props
+        editProp(a, b, true)
+        b._isFinishPatch = true
+        taskLine.addMicTask(() => {
+          renderFunctionComponent(b)
+          updateChildren(a.elm, a.childNodes, b.childNodes)
+        })
+      }
       return true
     }
     return false
   }
   return true
 }
-function editProp (a, b) {
+function editProp (a, b, isFCUpdate = false) {
+  if (!isFCUpdate && b._isFinishPatch) {
+    return true
+  }
   let newProp = Object.keys(Object.assign({}, a.props || {}, b.props || {}))
   // eslint-disable-next-line no-cond-assign
   for (let i = 0, keys; keys = newProp[i]; i++) {
@@ -197,14 +260,14 @@ function editProp (a, b) {
           const value = styles[prop]
           if (typeof value === 'number') {
             if (prop !== 'zIndex') {
-              a.elm.style[prop] = `${ value }px`
+              a.elm.style[prop] = `${value}px`
             } else {
-              a.elm.style[prop] = `${ value }`
+              a.elm.style[prop] = `${value}`
             }
-          } else if (typeof value === 'string') {
+          } else if (isStr(value)) {
             a.elm.style[prop] = value
           } else {
-            throw new Error(`Expected "number" or "string" but received "${ typeof value }"`)
+            throw new Error(`Expected "number" or "string" but received "${typeof value}"`)
           }
         })
       } else {
@@ -228,17 +291,12 @@ function editProp (a, b) {
       }
     }
   }
-  // 如果是 class TODO a
-  if (a.class && b.class) {
-    let elmCom = getComponentByElm(a.elm)
-    a.childNodes = b.childNodes
-    elmCom._initSoltHooks(a.childNodes)
-  }
+
   return true
 }
 function setProp (keys, attrs, props, elm) {
   if (keys in attrs) {
-    if (typeof props === 'function') {
+    if (isFunc(props)) {
       // 优化ref 被输出的情况
       if (keys === 'ref') {
         // props(getComponentByElm(elm))
@@ -250,10 +308,10 @@ function setProp (keys, attrs, props, elm) {
         elm.setAttribute(attrs[keys], props)
       }
     }
-  } else if (typeof props !== 'function') {
+  } else if (!isFunc(props)) {
     elm.setAttribute(keys, props)
   }
-  if (typeof props === 'function') return
+  if (isFunc(props)) return
   if (elm.isComponent) {
     let elmCom = getComponentByElm(elm)
     if (elmCom[keys] !== props) {
@@ -279,15 +337,14 @@ function sameInputType (a, b) {
 function patchVnode (oldVnode, vnode) {
   requestIdleCallback(() => {
     // 如果这个是个组件，那么跳过该组件的patch
-    if (vnode.tagName === 'slot') {
+    if (isSlotTag(vnode)) {
       vnode.elmSize = oldVnode.elmSize
       vnode.elm = oldVnode.elm
       // return
     }
-    if (oldVnode.class || (oldVnode.elm && oldVnode.elm.isComponent)) {
+    if (oldVnode[isFunctionComponent] || oldVnode.class || (oldVnode.elm && oldVnode.elm.isComponent)) {
       vnode.elm = oldVnode.elm
       vnode.componentInstance = oldVnode.componentInstance
-      // console.log(vnode)
       return
     }
     /* 两个节点全等，不做改变，直接 return  */
@@ -302,11 +359,11 @@ function patchVnode (oldVnode, vnode) {
     }
 
     /* 当新老节点都是静态节点且 key 都相同时，直接将 componentInstance 与 elm 从老 VNode 节点“拿过来”即可 */
-    if (vnode.isStatic && oldVnode.isStatic && vnode.key === oldVnode.key) {
-      vnode.elm = oldVnode.elm
-      vnode.componentInstance = oldVnode.componentInstance
-      return
-    }
+    // if (vnode.isStatic && oldVnode.isStatic && vnode.key === oldVnode.key) {
+    //   vnode.elm = oldVnode.elm
+    //   vnode.componentInstance = oldVnode.componentInstance
+    //   return
+    // }
 
     /* 取新老节点的 elm ，以及它们的孩子节点集合 */
     const elm = vnode.elm = oldVnode.elm
@@ -395,8 +452,8 @@ function updateChildren (parentElm, oldCh, newCh) {
       if (!oldKeyToIdx) oldKeyToIdx = createKeyToOldIdx(oldCh, oldStartIdx, oldEndIdx)
       /* 取出对应 key 的节点索引，不存在则为 null  */
       /// / console.log('oldKeyToIdx', oldKeyToIdx)
-      idxInOld = newStartVnode.key ? oldKeyToIdx[newStartVnode.key] : null
-      if (!idxInOld) {
+      idxInOld = isUndef(newStartVnode.key) ? null : oldKeyToIdx[newStartVnode.key]
+      if (isUndef(idxInOld)) {
         /* 索引不存在，直接创建一个新的节点 */
         createElm(newStartVnode, parentElm)
         newStartVnode = newCh[++newStartIdx]
@@ -421,7 +478,6 @@ function updateChildren (parentElm, oldCh, newCh) {
   /* 终止条件， oldStartIdx > oldEndIdx 说明 newCh 中还有剩余节点，直接批量添加 */
   if (oldStartIdx > oldEndIdx) {
     // console.log('updateChildren', 'oldStartIdx:', oldStartIdx, 'newStartIdx:', newStartIdx, 'oldEndIdx', oldEndIdx, 'newEndIdx', newEndIdx)
-    // console.log('============')
     // console.log('', newStartIdx, newEndIdx, newCh)
     refElm = (newCh[newEndIdx + 1]) ? newCh[newEndIdx + 1].elm : null
     // let fgm = document.createDocumentFragment()

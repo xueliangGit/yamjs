@@ -2,18 +2,19 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-07-31 17:50:42
+ * @LastEditTime: 2020-09-09 17:34:52
  */
-import { _createElementJson } from '../vDom/createElement'
+// import { _createElementJson } from '../vDom/createElement'
 import updateElement from '../diff/index'
-import { creatMutationObserser, setAttributes, forEach, isFalse, getDomStyleFlag, addSlot } from '../utils/index' // log,
+import { creatMutationObserser, setAttributes, forEach, isFalse, getDomStyleFlag, isFunc, isStr } from '../utils/index' // log,
+import { getChildSlot, isSlotTag } from '../helpers/slotHelper'
 import { getCallFnName, syncComponentMark, setComponentForElm, getComponentByElm, setClosetParentCom } from '../utils/componentUtil'
 import nodeOps from '../utils/nodeOps'
-import taskLine from '../utils/taskLine'
+// import taskLine from '../utils/taskLine'
 import lifeCycle from './lifeCycle'
 import Destory from './destory'
 import ChildComponentsManage from './childComponentsManage'
-import { HTML_TAGS } from '../vDom/creatConfig'
+// import { HTML_TAGS } from '../vDom/creatConfig'
 import { $vdomSymbol, $componentDataSymbol, $closestParentSymbol, $slotSymbol } from '../symbol/index'
 import { isDev } from '../env'
 import { getMixinConfig } from './_mixin'
@@ -27,10 +28,10 @@ function _init () {
   lifeCycle.beforeMount(this)
   setClosetParentCom(this)
   createdComponent.call(this)
-  taskLine.addMicTask(() => {
-    initRefs.call(this)
-    lifeCycle.mounted(this)
-  })
+  // taskLine.addMicTask(() => {
+  initRefs.call(this)
+  lifeCycle.mounted(this)
+  // })
   this.update = () => {
     _update(this)
   }
@@ -38,24 +39,15 @@ function _init () {
     _update(this)
     delete this.isbyUsedByuser
   }
-  taskLine.runMicTask()
-}
-function initSolt (childNodes) {
-  this[$slotSymbol] = {}
-  childNodes.forEach(v => {
-    addSlot.call(this, v, (v.attributes ? v.getAttribute('slot') : v.props && v.props.slot) || 'default')
-  })
-  this[$slotSymbol]['length'] = Object.keys(this[$slotSymbol]).length
-  this.update()
-  // console.log('initSolt', this)
+  // taskLine.runMicTask()
 }
 function create () {
   if (this.elm) {
-    this._initSoltHooks = initSolt
+    // this._initSoltHooks = initSolt
     // // 新的处理slot
     this[$slotSymbol] = this[$slotSymbol] || {}
     // 处理是和否有keeplive - 保持组件的内部的协调性
-    getChildSlot.call(this, this.elm)
+    getChildSlot(this, this.elm)
     this[$slotSymbol]['length'] = Object.keys(this[$slotSymbol]).length
     // this.elm.children = []
     // 现在都走这个
@@ -81,11 +73,11 @@ function create () {
   this.elm._eid = this._eid
   // _extends(this.$config(), this)
   // mixin
-  let data = this[$componentDataSymbol] = Object.assign(...getMixinConfig().$data.map(v => v()), this.$data())
+  let data = this[$componentDataSymbol] = Object.assign(...getMixinConfig().$data.map(v => v()), isFunc(this.$data) ? this.$data() : this.$data || {})
   if (this._props) {
     this._props.forEach(v => {
       let propVal = (this.props ? this.props[v] : this.elm.getAttribute(v))
-      data[v] = typeof propVal === 'number' || typeof propVal === 'string' ? propVal : propVal || data[v] || null
+      data[v] = typeof propVal === 'number' || isStr(propVal) ? propVal : propVal || data[v] || null
       // setAttributes(this, v, this.getAttribute(v))
     })
     if (!this.props && this.elm.nodeType !== 11) {
@@ -100,7 +92,7 @@ function create () {
       }, { attributeFilter: this._props })
       // 绑定 原生元素上的方法
       forEach(elm.attributes, (v) => {
-        if (typeof window[v.value] === 'function') {
+        if (isFunc(window[v.value])) {
           elm._runfn_ = elm._runfn_ || {}
           elm._runfn_[getCallFnName(this, v.name)] = window[v.value]
           elm.removeAttribute(v.name)
@@ -258,7 +250,7 @@ function setRootName (element, tagName, context) {
       let v = element.childNodes[i]
       // element.childNodes.forEach((v, i) => {
       setRootName(v, tagName, context)
-      if (v.tagName === 'slot') {
+      if (isSlotTag(v)) {
         let slotelm = (context[$slotSymbol][v.props.name || 'default']) || []
         element.childNodes.splice(i, 1, ...slotelm)
         // v.childNodes = context[$slotSymbol][v.props.name || 'default']
@@ -351,50 +343,4 @@ export default function init (context, isRenderIn) {
 export function initConfig () {
   this.Destory = new Destory(this)
   this.ChildComponentsManage = new ChildComponentsManage(this)
-}
-
-// 获取el com
-function getNewElment (child, tagname) {
-  let props = {}
-  // let a = { child }
-  // console.log(a)
-  // if (child.getAttributeNames) {
-  //   child.getAttributeNames().forEach(v => {
-  //     props[v] = child.getAttribute(v)
-  //   })
-  // } else if (child.attributes) {
-  forEach(child.attributes, (v) => {
-    props[v.name] = v.value
-  })
-  // }
-  tagname = tagname || (child.tagName && child.tagName.toLowerCase())
-
-  return _createElementJson(tagname, props, ...getChildSlot(child, false))
-}
-function getChildSlot (elm, isAddToContext = true) {
-  let newChildNodes = []
-  if (elm.childNodes.length) {
-    // eslint-disable-next-line no-cond-assign
-    for (var j = 0, child; child = elm.childNodes[j];) {
-      let slotAttr = (child.getAttribute && child.getAttribute('slot')) || undefined
-      let tagname = child.tagName && child.tagName.toLowerCase()
-      // console.log('getChildSlot', this, child, child.tagName, tagname, HTML_TAGS[tagname])
-      if ((tagname && HTML_TAGS[tagname] && typeof HTML_TAGS[tagname] === 'object' && HTML_TAGS[tagname].isComponent)) {
-        let newCom = getNewElment.call(this, child, tagname)
-        newCom._ori = child
-        newCom._isComponent = true
-        child = newCom
-        // console.log('getAttributeNames1', newCom._ori.childNodes)
-      }
-      if (isAddToContext) {
-        addSlot.call(this, child, slotAttr)
-      } else {
-        newChildNodes.push(child)
-      }
-      // 设置 isRemovedBySlot 处理外环境使用slot嵌套组件
-      // child.isRemovedBySlot = true
-      nodeOps.removeChild(elm, child._ori || child)
-    }
-  }
-  return newChildNodes
 }

@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2020-06-22 17:20:53
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-07-31 17:35:05
+ * @LastEditTime: 2020-09-08 10:37:35
  */
 import Yam, { Component } from 'yamjs'
 import store from '../store2'
@@ -33,6 +33,8 @@ class App extends Yam {
     }
   }
   $mounted () {
+    console.log('------------')
+    console.log(this.$refs)
     if (this.src) {
       this.loadimg()
     }
@@ -59,7 +61,7 @@ class App extends Yam {
   render () {
     return <div >
       { this.isReady ? this.src : this.loadingsrc }
-      <img aaaa={ this.isReady ? this.src : this.loadingsrc } src={ this.isReady ? this.src : this.loadingsrc } /></div>
+      <img ref='img' aaaa={ this.isReady ? this.src : this.loadingsrc } src={ this.isReady ? this.src : this.loadingsrc } /></div>
   }
 }
 export default App

@@ -2,24 +2,30 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-07-31 18:07:27
+ * @LastEditTime: 2020-09-10 11:40:16
  */
-import './utils/Polyfill.js'
+// import './polyfill.js'
 import init, { initConfig } from './init/index'
-import { canUseCustomElements } from './init/bolConf'
+import { canUseCustomElements } from './Conf'
 import lifeCycle from './init/lifeCycle' // , { addLifeCycle }
 import { Mix } from './init/mix'
 import _mixin from './init/_mixin'
-
 // getStyleStr 使用loader后使用这个了
-import { guid2, toCamelCase, forEach, getCid } from './utils/index' // supportMutationObserver
-import { getCallFnName, getClosetParentCom } from './utils/componentUtil'
+import { guid2, toCamelCase, forEach, getCid, isFunc, isStr } from './utils/index' // supportMutationObserver
+import { getCallFnName } from './utils/componentUtil' //, getClosetParentCom
 import cacheLib from './utils/cacheLib'
 import BaseCustomElements from './BaseCustomElements'
 import { HTML_TAGS } from './vDom/creatConfig'
 import domOnLoad from './utils/domLoad'
 import forNotsupportMutationObserver from './utils/forNotsupportMutationObserver.js'
 import { version } from '../../package.json'
+import { getSlotComponentsIsOrInstallState, syncSlotComponentsState, isSlotComponentsAndRender, isRerenderSlotElment } from './helpers/slotHelper.js'
+// var userAgent = navigator.userAgent // 取得浏览器的userAgent字符串
+// var isIE = userAgent.indexOf('compatible') > -1 && userAgent.indexOf('MSIE') > -1 // 判断是否IE<11浏览器
+// var isIE11 = userAgent.indexOf('Trident') > -1 && userAgent.indexOf('rv:11.0') > -1
+// if (isIE || isIE11) {
+//   import('./polyfill').then(() => { })
+// }
 var comps = (window.comps = {})
 let hasCompsName = []
 let compsIds = 0
@@ -32,11 +38,9 @@ class Yam {
     initConfig.call(this)
     this._config && this._config()
     lifeCycle.beforeInit(this)
-    // console.log(new.target)
     comps[this._cid + '-' + ++compsIds] = this
     this._rootId = compsIds
     // 自动启动函数
-    // console.log(this._autoDo)
     if (this._autoDo) {
       for (const key in this._autoDo) {
         if (this._autoDo.hasOwnProperty(key)) {
@@ -54,6 +58,8 @@ class Yam {
   }
   __disconnectedCallback () {
     if (this.isDestoryed) return
+    // 调整this.Destroy 时机，从移除之前转移到移除的时候，
+    this.Destory && this.Destory.run()
     lifeCycle.destroyed(this)
     this.isUnset = true
   }
@@ -65,14 +71,14 @@ class Yam {
       // 如果是热更新造成的 不移除这个监听
       this.mutation && this.mutation.disconnect()
     }
-    this.Destory && this.Destory.run()
     // 取消 内部组件的 方法
     this.ChildComponentsManage && this.ChildComponentsManage.destory()
     //
-    if (getClosetParentCom(this)) {
-      getClosetParentCom(this).ChildComponentsManage &&
-        getClosetParentCom(this).ChildComponentsManage.del(this._eid)
-    }
+    // let ClosetParentCom = getClosetParentCom(this)
+    // if (ClosetParentCom) {
+    //   ClosetParentCom.ChildComponentsManage &&
+    //     ClosetParentCom.ChildComponentsManage.del(this._eid)
+    // }
   }
   // 会被覆盖的方法
   $data () {
@@ -82,14 +88,17 @@ class Yam {
   $updated () { }
   // 渲染
   renderAt (el, props = null) {
-    if (!this.isCustomElements) {
-      // if(el).
-      this.props = this.props || props
-      this.elm = typeof el === 'string' ? document.querySelector(el) : el
-      if (!this.elm || this.elm.isInited) return
-      this.elm.isInited = true
-      this.__connectedCallback(true)
+    // 需要判断是否移除后从新加载的
+    isRerenderSlotElment(this, el)
+    if (isSlotComponentsAndRender(el)) {
+      return
     }
+    this.props = this.props || props
+    this.elm = isStr(el) ? document.querySelector(el) : el
+    if ((!this.elm || this.elm.isInited)) return
+    this.elm.isInited = true
+    syncSlotComponentsState(this.elm, true)
+    this.__connectedCallback(true)
   }
   // 手动更新方法
   update () {
@@ -102,7 +111,7 @@ class Yam {
       console.warn(`需要传入方法名`)
       return
     }
-    return typeof this[fnName] === 'function'
+    return isFunc(this[fnName])
       ? this[fnName](...params)
       : (() => {
         console.warn(`该组件【${this._tagName}】没有这个方法:【${fnName}】`)
@@ -115,7 +124,7 @@ class Yam {
       return
     }
     if (this.props) {
-      if (typeof this.props[fnName] === 'function') {
+      if (isFunc(this.props[fnName])) {
         return this.props[fnName](...params)
       } else {
         // console.warn(`该组件【${this._tagName}】没有接收到父组件的传值:【${fnName}】`)
@@ -126,7 +135,7 @@ class Yam {
       let fn = getCallFnName(this, fnName)
       let runfn =
         window[fn] || (this.elm['_runfn_'] ? this.elm['_runfn_'][fn] : null)
-      if (fn && typeof runfn === 'function') {
+      if (fn && isFunc(runfn)) {
         return runfn(...params)
       } else {
         // console.warn(`该元素上【${this._tagName}】没有接收到父组件的传值:【${fnName}${fn}】`)
@@ -162,11 +171,14 @@ export function Component (Config) {
   hasCompsName.push(tagName)
   return function (Target) {
     if (Target._classIsInitedOk) return
+    const isCustomElements = (customElements || typeof customElements === 'undefined') &&
+      canUseCustomElements
     Target._tagName = tagName
     // Target._$config = Config
     Target._shadow = !!shadow
     Target.prototype._config = function () {
       this.$config = Config
+      this.isCustomElements = isCustomElements
       this._tagName = tagName
       this._name = toCamelCase(tagName)
       this._shadow = !!shadow || false
@@ -179,10 +191,10 @@ export function Component (Config) {
       let keys = Object.keys(params)
       forEach(keys, v => {
         let vv = params[v]
-        if (typeof vv === 'function') {
+        if (isFunc(vv)) {
           return vv(this)
         } else {
-          typeof vv === 'object' && typeof vv.apply === 'function' && typeof vv.apply === 'function' && vv.apply(this)
+          typeof vv === 'object' && isFunc(vv) && vv.apply(this)
         }
       })
       if (!Array.isArray(mixin)) {
@@ -201,15 +213,14 @@ export function Component (Config) {
     // }
     // 允许覆盖 ；使用最新的组件去渲染
     // if (!cacheLib.get('com-' + tagName)) {
-    cacheLib.set('com-' + tagName, Target)
+    cacheLib.set(getCid(tagName), Target)
     // }
     if (
-      (customElements || typeof customElements === 'undefined') &&
-      canUseCustomElements && window.customElements
+      isCustomElements
     ) {
       Target.customElements = true
       try {
-        window.customElements.define(tagName, BaseCustomElements(Target))
+        window.customElements.define(tagName, BaseCustomElements(Target, props))
       } catch (e) {
         // console.log('e' + tagName, e)
       }
@@ -221,7 +232,10 @@ export function Component (Config) {
       domOnLoad(() => {
         let doms = document.querySelectorAll(tagName)
         forEach(doms, node => {
-          if (!node.isInited) {
+          if (isSlotComponentsAndRender(node)) {
+            return
+          }
+          if (!node.isInited && getSlotComponentsIsOrInstallState(node, true)) {
             new Target().renderAt(node)
           }
         })
@@ -239,6 +253,6 @@ console.log(`
     
     Bate-${version} for this version of yamjs, 
     
-    that is a baseComponet for html and can run in html or Vue or reactjs
+    that is a baseComponet for html and can run in html or Vue or reactjs or ng
     
 `)

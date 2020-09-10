@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-02-29 22:46:10
+ * @LastEditTime: 2020-09-09 15:37:13
  */
 import { creatMutationObserser } from './index'
 let domIsLoaded = false
@@ -12,8 +12,8 @@ function addObserse () {
   // 在dom变化时需要从新渲染
   let isRun = null
   creatMutationObserser(document.body, (option) => {
-    console.log('childList', option.addedNodes, option)
     if (option.type === 'childList') {
+      console.log(option)
       if (option.addedNodes.length) {
         if (isRun) {
           clearTimeout(isRun)

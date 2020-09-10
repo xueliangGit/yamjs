@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-07-31 17:41:54
+ * @LastEditTime: 2020-09-08 16:24:25
  */
 // import './ast'
 import Yam from '../lib/index'
@@ -19,6 +19,9 @@ Yam.use(router)
 // Yam.use(reactAdapter)
 Yam.mixin({
   $created () {
-    console.log('Yam.mixin:$created')
+    console.log('Yam.mixin:$created', this._tagName)
+  },
+  $destroyed () {
+    console.log('Yam.mixin:$destroyed', this._tagName)
   }
 })

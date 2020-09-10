@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-07-03 16:00:17
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-03-10 16:17:58
+ * @LastEditTime: 2020-09-08 20:08:31
  */
 // not use laoder
 import Yam, { Component } from './Yam'
@@ -45,3 +45,4 @@ export { Component }
 // function setI (src) {
 //   getFraem().src = src
 // }
+// 针对IE 做深层次兼容处理

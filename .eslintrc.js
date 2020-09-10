@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 1984-01-24 16:00:00
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-02-19 14:27:34
+ * @LastEditTime: 2020-09-09 20:20:37
  */
 // https://eslint.org/docs/user-guide/configuring
 
@@ -32,6 +32,7 @@ module.exports = {
   // add your custom rules here
   rules: {
     // allow async-await
+    "react/prop-types": 0,
     'react/no-string-refs': 'off',
     'generator-star-spacing': 'off',
     'template-curly-spacing': 'off',

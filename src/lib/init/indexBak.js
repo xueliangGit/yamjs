@@ -83,7 +83,7 @@ function createdComponent () {
           parent.parentNode.insertBefore(style, parent)
         }
         // nameStyle
-        console.log('parent', parent.parentNode, styleIsInstalled)
+        // console.log('parent', parent.parentNode, styleIsInstalled)
         styleIsInstalled[nameStyle].push(this._cid)
       }
     }

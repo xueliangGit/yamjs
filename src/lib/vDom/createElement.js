@@ -2,14 +2,16 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-03-29 18:36:09
+ * @LastEditTime: 2020-09-10 15:42:41
  */
 /** @jsx createElement */
 import { HTML_TAGS, GLOBAL_ATTRIBUTES, EVENT_HANDLERS } from './creatConfig'
 import nodeOps from '../utils/nodeOps'
-import { forEach, toCamelCase, getCid, addSlot } from '../utils/index'
+import { forEach, toCamelCase, getCid, isFunc, isUndef, isStr } from '../utils/index'
+import { addSlot, isSlotTag } from '../helpers/slotHelper'
 import { getCallFnName, getComponentMark, setComponentForElm, getComponentByElm, getparentCom } from '../utils/componentUtil'
 import renderAsync from './renderAsync'
+import { preFixCom, isFunctionComponent } from '../Conf'
 // import { $slotSymbol } from '../symbol/index'
 // import cacheLib from '../utils/cacheLib'
 // eslint-disable-next-line no-extend-native
@@ -19,7 +21,7 @@ Array.prototype.flat = Array.prototype.flat || function () {
 // let i = 0
 class Element {
   constructor(tagName, props = {}, childNodes, _root, isText) {
-    // if (typeof tagName === 'function' && tagName._isLazyLoad) {
+    // if (isFunc(tagName) && tagName._isLazyLoad) {
     //   this._isloading = true
     //   this._renderTask = []
     //   tagName(res => {
@@ -38,6 +40,12 @@ class Element {
   //   }
   // }
   _init (tagName, props = {}, childNodes, _root, isText) {
+    // 处理 $props
+    if (props && props.$props) {
+      // 自定义函数组件
+      Object.assign(props, props.$props)
+      delete props.$props
+    }
     if (isText) {
       this.tagName = tagName
       this.props = props
@@ -52,8 +60,8 @@ class Element {
       this.props = props || {}
       this.childNodes = Array.isArray(childNodes) ? childNodes.flat(3) : [childNodes]
       this.childNodes = this.childNodes.map((v, key) => {
-        // if (typeof v === 'string' || typeof v === 'number' || typeof v === 'function' || typeof v === 'undefined' || typeof v === 'null') {
-        if (typeof v !== 'object' || v === null) {
+        // if (typeof v === 'string' || typeof v === 'number' || isFunc(v) || typeof v === 'undefined' || typeof v === 'null') {
+        if (typeof v !== 'object' || isUndef(v)) {
           v = new Element('textNode', '', v + '', _root, true)
         } else if (!v.tagName) {
           try {
@@ -73,16 +81,20 @@ class Element {
         return v
       })
       // console.log(this[$slotSymbol])
+
       // 异步的组件
-      if (typeof this.tagName === 'function' && !this.tagName._tagName && !HTML_TAGS[this.tagName.name]) {
+      if (isFunc(this.tagName) && !this.tagName._tagName && !HTML_TAGS[this.tagName.name]) {
         // maybe is a async component
         this.isAsyncComponent = true
         this.asyncComponent = this.tagName
+        if (this.tagName[isFunctionComponent]) {
+          this[isFunctionComponent] = true
+        }
       }
       // 正常的component
-      const tag = typeof this.tagName === 'function' && this.tagName._tagName ? HTML_TAGS[this.tagName._tagName] : (HTML_TAGS[this.tagName] || HTML_TAGS[this.tagName.name] || this.tagName)
+      const tag = isFunc(this.tagName) && this.tagName._tagName ? HTML_TAGS[this.tagName._tagName] : (HTML_TAGS[this.tagName] || HTML_TAGS[this.tagName.name] || this.tagName)
       const object = typeof tag === 'object'
-      const tagClass = typeof tag === 'function' && this.tagName._tagName
+      const tagClass = isFunc(tag) && this.tagName._tagName
       const localAttrs = object ? tag.attributes || {} : {}
       const attrs = Object.assign({}, GLOBAL_ATTRIBUTES, localAttrs)
       const tagType = object ? tag.name : tagClass ? tag._tagName : tag
@@ -120,7 +132,7 @@ class Element {
     // 自定义webcomponent
     // console.log()
     if (this.needClass) {
-      let cacheDom = document.createElement('div')
+      let cacheDom = this.mountElm || document.createElement('div')
       // 回调
       cacheDom._parentNode = parentELm
       cacheDom._parentElement = parentELm
@@ -132,9 +144,9 @@ class Element {
       // console.log('components-slot', slot, this)
       forEach(this.childNodes, (v) => {
         if (v instanceof Element) {
-          addSlot.call(component, v, v.props.slot)
+          addSlot(component, v, v.props.slot, true)
         } else {
-          addSlot.call(component, v, v.getAttribute('slot'))
+          addSlot(component, v, v.getAttribute ? v.getAttribute('slot') : null, true)
         }
       })
       component.props = this.props
@@ -209,10 +221,10 @@ class Element {
     }
     // slot = el.querySelectorAll('[tag=slot]') // 由新的slot 机制代替
     // el.props = this.props
-    if (this.props && this.tagName !== 'slot') {
+    if (this.props && !isSlotTag(this)) {
       Object.keys(this.props).forEach(prop => {
         if (prop in this.attrs) {
-          if (typeof this.props[prop] === 'function') {
+          if (isFunc(this.props[prop])) {
             if (prop === 'ref') {
               this.props[prop](getComponentByElm(el))
             } else {
@@ -224,9 +236,9 @@ class Element {
           }
         } else if (prop in EVENT_HANDLERS) {
           el.addEventListener(EVENT_HANDLERS[prop], this.props[prop])
-        } else if (typeof this.props[prop] !== 'function' && !this.class) {
+        } else if (!isFunc(this.props[prop]) && !this.class) {
           el.setAttribute(prop, this.props[prop])
-        } else if (typeof this.props[prop] === 'function') {
+        } else if (isFunc(this.props[prop])) {
           if (this.isElement) {
             // let fnName = getCallFnName(this, prop) // `${this.tagType}_${prop}_fn`
             el._runfn_ = el._runfn_ || {}
@@ -236,7 +248,7 @@ class Element {
             //  不需要赋值
             // this.props[prop] = this.props[prop]()
           }
-        } else if (prop.indexOf('com-') === 0) {
+        } else if (prop.indexOf(preFixCom) === 0) {
           el.setAttribute(prop, '')
         }
       })
@@ -248,14 +260,14 @@ class Element {
             const value = styles[prop]
             if (typeof value === 'number') {
               if (prop !== 'zIndex') {
-                el.style[prop] = `${ value }px`
+                el.style[prop] = `${value}px`
               } else {
-                el.style[prop] = `${ value }`
+                el.style[prop] = `${value}`
               }
-            } else if (typeof value === 'string') {
+            } else if (isStr(value)) {
               el.style[prop] = value
             } else {
-              throw new Error(`Expected "number" or "string" but received "${ typeof value }"`)
+              throw new Error(`Expected "number" or "string" but received "${typeof value}"`)
             }
           })
         } else {
@@ -275,7 +287,7 @@ class Element {
     // let coms = getComponentByElm(el)
     // console.log('components-slot', slot, this)
     // forEach(this.childNodes, (v) => {
-    //   addSlot.call(coms, v, v.props.slot)
+    //   addSlot(coms, v, v.props.slot)
     // })
     // old
     // this.rand = this.rand || Math.random()
@@ -313,7 +325,7 @@ class Element {
           // 优化若是null 就不进行下一步操作了
           if (newParents) {
             // console.log('appendChild:nodeOps.default.appendChild', nodeOps.appendChild)
-            nodeOps.appendChild(newParents, child.render(key, el))
+            nodeOps.appendChild(newParents, child.render(key, el, domFlag))
           }
         } else {
           nodeOps.appendChild(newParents, child)

@@ -2,11 +2,11 @@
  * @Author: xuxueliang
  * @Date: 2019-06-25 13:56:05
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-07-30 16:18:22
+ * @LastEditTime: 2020-09-10 11:40:36
  */
 import { global as window } from './global'
-import { $slotSymbol } from '../symbol'
 import { isDev } from '../env'
+import { preFixCom } from '../Conf'
 /**
  * [def 定义对象属性]
  * @param  {Object}  obj        对象
@@ -122,7 +122,7 @@ function getDomStyleFlag (_id, attr) {
 
 function _getStrByStyle (_id, style) {
   if (style) {
-    var str = (typeof style === 'string' ? style : style[1]).split('\n')
+    var str = (isStr(style) ? style : style[1]).split('\n')
     let styleConfig = {}
     if (~str[0].indexOf('[config]')) {
       // 获取配置信息
@@ -178,7 +178,12 @@ function getIdStyle (str, id) {
 function isUndef (v) {
   return v === undefined || v === null
 }
-
+function isFunc (v) {
+  return typeof v === 'function'
+}
+function isStr (v) {
+  return typeof v === 'string'
+}
 function isDef (v) {
   return v !== undefined && v !== null
 }
@@ -256,20 +261,10 @@ let requestAnimationFrame = function (callback, isNeed = true) {
   callback()
   // !isNeed ? callback() : window.requestAnimationFrame ? window.requestAnimationFrame(callback) : callback()
 }
-let getCid = (value) => 'com-' + value
+let getCid = (value) => preFixCom + value
 
 // 添加slot
-let addSlot = function (child, slotAttr = 'default', cb = () => { }) {
-  !this[$slotSymbol] && (this[$slotSymbol] = {})
-  if (!child.render) {
-    child.render = () => child
-  }
-  if (!child.elm) {
-    child.elm = child
-  }
-  (this[$slotSymbol][slotAttr] = this[$slotSymbol][slotAttr] || []).push(child)
-  cb()
-}
+
 // const supportMutationObserver = !!MutationObserver
 
 export {
@@ -285,8 +280,10 @@ export {
   getStyleStr,
   isDef,
   isUndef,
+  isStr,
   isTrue,
   isFalse,
+  isFunc,
   forEach,
   map,
   setProp,
@@ -298,7 +295,6 @@ export {
   info,
   requestIdleCallback,
   requestAnimationFrame,
-  getDomStyleFlag, getCid,
-  addSlot
+  getDomStyleFlag, getCid
   // , supportMutationObserver
 }

@@ -2,11 +2,13 @@
  * @Author: xuxueliang
  * @Date: 2019-06-25 13:56:05
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-03-12 13:28:47
+ * @LastEditTime: 2020-09-10 11:58:13
  */
 import { isDev } from '../env'
 
 import { $ComponentSymbol, $closestParentSymbol } from '../symbol'
+import { getSlotComponentsIsOrInstallState } from '../helpers/slotHelper'
+import { isFunctionComponent } from '../Conf'
 // 设置组件标示
 const syncComponentMark = (context) => {
   context.elm.isComponent = true
@@ -22,12 +24,15 @@ const getComponentMark = (dom) => {
     if (elm.isComponent) {
       return getComponentByElm(elm)
     }
+    if (elm[isFunctionComponent]) {
+      return getComponentByElm(elm)
+    }
     oldelm = elm
     elm = elm._parentNode
   }
   return oldelm
 }
-const getCallFnName = (context, prop) => `${ context.tagType || context._tagName }_${ prop }_fn`
+const getCallFnName = (context, prop) => `${context.tagType || context._tagName}_${prop}_fn`
 // 获取component
 function getComponentByElm (elm) {
   if (!elm.isComponent) {
@@ -71,7 +76,7 @@ function getClosetParentCom (context) {
 function onReadyElmFn (elm) {
   elm._readyCall = []
   elm.onReady = function (fn) {
-    if (elm.isInited) {
+    if (elm.isInited && getSlotComponentsIsOrInstallState(elm, false)) {
       fn()
     } else {
       elm._readyCall.push(fn)
