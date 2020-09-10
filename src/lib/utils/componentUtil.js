@@ -2,13 +2,12 @@
  * @Author: xuxueliang
  * @Date: 2019-06-25 13:56:05
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-09-10 11:58:13
+ * @LastEditTime: 2020-09-10 18:12:01
  */
 import { isDev } from '../env'
 
 import { $ComponentSymbol, $closestParentSymbol } from '../symbol'
 import { getSlotComponentsIsOrInstallState } from '../helpers/slotHelper'
-import { isFunctionComponent } from '../Conf'
 // 设置组件标示
 const syncComponentMark = (context) => {
   context.elm.isComponent = true
@@ -22,9 +21,6 @@ const getComponentMark = (dom) => {
   let oldelm = dom
   while (elm) {
     if (elm.isComponent) {
-      return getComponentByElm(elm)
-    }
-    if (elm[isFunctionComponent]) {
       return getComponentByElm(elm)
     }
     oldelm = elm

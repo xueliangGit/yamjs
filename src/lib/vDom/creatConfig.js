@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-06-25 13:56:05
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-03-10 17:12:35
+ * @LastEditTime: 2020-09-10 18:03:26
  */
 // const translateTpLow = (input) => {
 //   if (!Array.isArray(input)) {
@@ -439,6 +439,7 @@ export const EVENT_HANDLERS = {
   onMouseLeave: 'mouseleave',
   onTouchStart: 'touchstart',
   onTouchEnd: 'touchend',
+  onTouchMove: 'touchmove',
   onTouchCancel: 'touchcancel',
   onContextMenu: 'Ccntextmenu',
   onDoubleClick: 'dblclick',

@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-09-09 17:34:52
+ * @LastEditTime: 2020-09-10 17:37:27
  */
 // import { _createElementJson } from '../vDom/createElement'
 import updateElement from '../diff/index'
@@ -181,9 +181,11 @@ function createdComponent () {
       shadowRoot._parentNode = this.elm
       nodeOps.appendChild(shadowRoot, style)
       nodeOps.appendChild(shadowRoot, getFram.call(this, true))
+      this.$dom = shadowRoot.lastChild
     } else {
       this.__shadowRoot = this.elm
       nodeOps.appendChild(this.elm, getFram.call(this))
+      this.$dom = this.__shadowRoot.lastChild
       let parentS = this[$closestParentSymbol]
       if (!parentS) parentS = getComponentByElm(this.elm)
       while (!parentS._shadow && parentS[$closestParentSymbol]) {
@@ -262,12 +264,13 @@ function setRootName (element, tagName, context) {
 }
 // 获取dom片段
 function getFram (isNeedDiv = false) {
+  let dom = null
   if (isNeedDiv) {
-    this.$dom = document.createDocumentFragment() || document.createElement('div')
+    dom = document.createDocumentFragment() || document.createElement('div')
   } else {
-    this.$dom = document.createDocumentFragment() || document.createElement('div')
+    dom = document.createDocumentFragment() || document.createElement('div')
   }
-  // this.$dom.setAttribute('dom', this._cid)
+  // dom.setAttribute('dom', this._cid)
   // try { 移除trycatch
   this[$vdomSymbol] = getRenderData(this)// .render()
   // console.log(this[$vdomSymbol])
@@ -275,15 +278,15 @@ function getFram (isNeedDiv = false) {
   // } catch (e) {
   //   // log('e', e)
   // }
-  // this.$dom._childrenOri = this._childrenOri
-  this.$dom._parentElement = this.__shadowRoot
-  this.$dom._parentNode = this.__shadowRoot
-  updateElement(this.$dom, this[$vdomSymbol])
-  this.$dom._eid = this._eid
-  this.$dom.lastChild._eid = this._eid
-  // this.$dom.lastChild.setAttribute(getDomStyleFlag(this._cid, true), '')
-  this.$dom.lastChild.setAttribute(getDomStyleFlag(this._cid + '-root', true), '')
-  return this.$dom
+  // dom._childrenOri = this._childrenOri
+  dom._parentElement = this.__shadowRoot
+  dom._parentNode = this.__shadowRoot
+  updateElement(dom, this[$vdomSymbol])
+  dom._eid = this._eid
+  dom.lastChild._eid = this._eid
+  // dom.lastChild.setAttribute(getDomStyleFlag(this._cid, true), '')
+  dom.lastChild.setAttribute(getDomStyleFlag(this._cid + '-root', true), '')
+  return dom
 }
 // 更新dom
 function update () {

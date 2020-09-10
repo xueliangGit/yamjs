@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-20 20:09:03
  * @LastEditors: xuxueliang
- * @LastEditTime: 2019-09-27 17:14:51
+ * @LastEditTime: 2020-09-10 18:00:19
  */
 import Yam, { Component } from '../../lib/index'
 // eslint-disable-next-line no-unused-vars
@@ -20,7 +20,7 @@ class datePicker extends Yam {
  */
   $data () {
     return {
-      listData: [],
+      listData: [1, 2, 3],
       showDate: '',
       indexs: [],
 
@@ -69,18 +69,18 @@ class datePicker extends Yam {
   }
   getWheel () {
     return this.listData.map((v, i) =>
-      <WheelView key={i} className=' dib' style={{ 'width': 1 / this.listData.length * 100 + '%' }} type={'key' + i} data={v}
-        index={this.indexs[i]}
-        onDataChange={this.onDataChange.bind(this)} />
+      <WheelView key={ i } className=' dib' style={ { 'width': 1 / this.listData.length * 100 + '%' } } type={ 'key' + i } data={ v }
+        index={ this.indexs[i] }
+        onDataChange={ this.onDataChange.bind(this) } />
     )
   }
   render () {
     return (
-      <div className='dialog'>
+      <div className='dialog' onTouchmove={ (e) => e.preeventDefault() }>
         <div className='buttons'>
-          <span onClick={this.hide.bind(this)} className='button left'>取消</span>
+          <span onClick={ this.hide.bind(this) } className='button left'>取消</span>
           <div className='title '>{ this.showDate }</div>
-          <span onClick={this.dateSure.bind(this)} className='button right'>确定</span>
+          <span onClick={ this.dateSure.bind(this) } className='button right'>确定</span>
         </div>
         <div className='box' >
           { this.getWheel() }

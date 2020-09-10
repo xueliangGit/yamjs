@@ -16,9 +16,8 @@
       &.active
         font-size: 16px
         color #333
-[root]
+.bk
   position relative
-  overflow hidden
   &:before
     position absolute
     content: ''

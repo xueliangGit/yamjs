@@ -2,7 +2,7 @@
  * Yam.js v0.6.0
  * (c) 2019-2020 xuxueliang
  * Released under the MIT License.
- * lastTime:Thu Sep 10 2020 17:04:54 GMT+0800 (GMT+08:00).
+ * lastTime:Thu Sep 10 2020 18:47:27 GMT+0800 (GMT+08:00).
  */
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
@@ -514,7 +514,7 @@
 	 * @Author: xuxueliang
 	 * @Date: 2019-06-25 13:56:05
 	 * @LastEditors: xuxueliang
-	 * @LastEditTime: 2020-03-10 17:12:35
+	 * @LastEditTime: 2020-09-10 18:03:26
 	 */
 	// const translateTpLow = (input) => {
 	//   if (!Array.isArray(input)) {
@@ -953,6 +953,7 @@
 	  onMouseLeave: 'mouseleave',
 	  onTouchStart: 'touchstart',
 	  onTouchEnd: 'touchend',
+	  onTouchMove: 'touchmove',
 	  onTouchCancel: 'touchcancel',
 	  onContextMenu: 'Ccntextmenu',
 	  onDoubleClick: 'dblclick',
@@ -1007,7 +1008,7 @@
 	 * @Author: xuxueliang
 	 * @Date: 2019-06-25 13:56:05
 	 * @LastEditors: xuxueliang
-	 * @LastEditTime: 2020-09-10 11:58:13
+	 * @LastEditTime: 2020-09-10 18:12:01
 	 */
 
 	var syncComponentMark = function syncComponentMark(context) {
@@ -1023,10 +1024,6 @@
 
 	  while (elm) {
 	    if (elm.isComponent) {
-	      return getComponentByElm(elm);
-	    }
-
-	    if (elm[isFunctionComponent]) {
 	      return getComponentByElm(elm);
 	    }
 
@@ -2086,8 +2083,6 @@
 	        elm.setAttribute(attrs[keys], props);
 	      }
 	    }
-	  } else if (!isFunc(props)) {
-	    elm.setAttribute(keys, props);
 	  }
 
 	  if (isFunc(props)) { return; }
@@ -2845,9 +2840,11 @@
 	      shadowRoot._parentNode = this.elm;
 	      nodeOps.appendChild(shadowRoot, style);
 	      nodeOps.appendChild(shadowRoot, getFram.call(this, true));
+	      this.$dom = shadowRoot.lastChild;
 	    } else {
 	      this.__shadowRoot = this.elm;
 	      nodeOps.appendChild(this.elm, getFram.call(this));
+	      this.$dom = this.__shadowRoot.lastChild;
 	      var parentS = this[$closestParentSymbol];
 	      if (!parentS) { parentS = getComponentByElm(this.elm); }
 
@@ -2940,12 +2937,13 @@
 
 	function getFram() {
 	  var isNeedDiv = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+	  var dom = null;
 
 	  if (isNeedDiv) {
-	    this.$dom = document.createDocumentFragment() || document.createElement('div');
+	    dom = document.createDocumentFragment() || document.createElement('div');
 	  } else {
-	    this.$dom = document.createDocumentFragment() || document.createElement('div');
-	  } // this.$dom.setAttribute('dom', this._cid)
+	    dom = document.createDocumentFragment() || document.createElement('div');
+	  } // dom.setAttribute('dom', this._cid)
 	  // try { 移除trycatch
 
 
@@ -2955,16 +2953,16 @@
 	  this[$vdomSymbol]._rootId = this._rootId; // } catch (e) {
 	  //   // log('e', e)
 	  // }
-	  // this.$dom._childrenOri = this._childrenOri
+	  // dom._childrenOri = this._childrenOri
 
-	  this.$dom._parentElement = this.__shadowRoot;
-	  this.$dom._parentNode = this.__shadowRoot;
-	  patch(this.$dom, this[$vdomSymbol]);
-	  this.$dom._eid = this._eid;
-	  this.$dom.lastChild._eid = this._eid; // this.$dom.lastChild.setAttribute(getDomStyleFlag(this._cid, true), '')
+	  dom._parentElement = this.__shadowRoot;
+	  dom._parentNode = this.__shadowRoot;
+	  patch(dom, this[$vdomSymbol]);
+	  dom._eid = this._eid;
+	  dom.lastChild._eid = this._eid; // dom.lastChild.setAttribute(getDomStyleFlag(this._cid, true), '')
 
-	  this.$dom.lastChild.setAttribute(getDomStyleFlag(this._cid + '-root', true), '');
-	  return this.$dom;
+	  dom.lastChild.setAttribute(getDomStyleFlag(this._cid + '-root', true), '');
+	  return dom;
 	} // 更新dom
 
 

@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-06-25 13:56:05
  * @LastEditors: xuxueliang
- * @LastEditTime: 2019-06-25 13:56:05
+ * @LastEditTime: 2020-09-10 17:40:05
  */
 import Yam, { Component } from '../../lib/index'
 const lineHeight = 40
@@ -22,6 +22,7 @@ class App extends Yam {
     this.$refs.scroller.scrollTop = lineHeight * this.index
   }
   $mounted () {
+    debugger
     this.distance = lineHeight
     this.$refs.scroller.scrollTop = lineHeight * this.index
     var self = this
@@ -113,13 +114,13 @@ class App extends Yam {
   render () {
     return (<div className='container'
       ref='scroller'
-      onScroll={this.onScroll.bind(this)}
-      onClick={this.handleClick.bind(this)}>
+      onScroll={ this.onScroll.bind(this) }
+      onClick={ this.handleClick.bind(this) }>
       <div className='scroller'>
         {
           Array.isArray(this.data) ? this.data.map((item, i) => {
             // 循环把数据显示出来
-            return <div key={i} className={this.index === i ? 'active item' : 'item'}>{ item } { this.index === i ? this.gzName : '' }</div>
+            return <div key={ i } className={ this.index === i ? 'active item' : 'item' }>{ item } { this.index === i ? this.gzName : '' }</div>
           }) : ''
         }
       </div>

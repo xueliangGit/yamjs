@@ -1,6 +1,6 @@
 import Yam, { Component } from '../../lib/index'
 // eslint-disable-next-line no-unused-vars
-import WheelView from './WheelView'
+import WheelView from '../wheelView/WheelView'
 import calendar from './daytool'
 @Component({
   tagName: 'date-picker',
@@ -87,7 +87,7 @@ class datePicker extends Yam {
       dIndex: 0// 当前的日
     })
     let data = year[this.state.yIndex] + '-' + month[this.state.mIndex] +
-    '-' + day[this.state.dIndex]
+      '-' + day[this.state.dIndex]
     this.onDataSelect(data)// 初次渲染后，触发回调
   }
   onDataSelect (data) {
@@ -126,9 +126,9 @@ class datePicker extends Yam {
     switch (type) {
       case 'year':// 年带动月日变化
         isInStartYear = this.state.year[index] ===
-        this.startYear
+          this.startYear
         isInEndYear = this.state.year[index] ===
-        this.endYear
+          this.endYear
         isInStartYearmonth = this.state.month[0] ===
           this.startMonth
         isInEndYearmonth = this.state.month[0] ===
@@ -213,22 +213,22 @@ class datePicker extends Yam {
 
   render () {
     return (
-      <div className='dialog'>
+      <div className='dialog' onTouchMove={ (e) => false }>
         <div className='buttons'>
-          <span onClick={this.hide.bind(this)} className='button left'>取消</span>
-          <div className='title '>{this.showDate}</div>
-          <span onClick={this.dateSure.bind(this)} className='button right'>确定</span>
+          <span onClick={ this.hide.bind(this) } className='button left'>取消</span>
+          <div className='title '>{ this.showDate }</div>
+          <span onClick={ this.dateSure.bind(this) } className='button right'>确定</span>
         </div>
         <div className='box' >
-          <wheel-view className='year dib' type='year' gzName={this.showzg && this.gzYear} data={this.state.year}
-            index={this.state.yIndex}
-            onDataChange={this.onDataChange.bind(this)} />
-          <WheelView className='month dib' type='month' gzName={this.showzg && this.gzMonth} data={this.state.month}
-            index={this.state.mIndex}
-            onDataChange={this.onDataChange.bind(this)} />
-          <WheelView className='day dib' type='day' gzName={this.showzg && this.gzDay} data={this.state.day}
-            index={this.state.dIndex}
-            onDataChange={this.onDataChange.bind(this)} />
+          <WheelView className='year dib' type='year' gzName={ this.showzg && this.gzYear } data={ this.state.year }
+            index={ this.state.yIndex }
+            onDataChange={ this.onDataChange.bind(this) } />
+          <WheelView className='month dib' type='month' gzName={ this.showzg && this.gzMonth } data={ this.state.month }
+            index={ this.state.mIndex }
+            onDataChange={ this.onDataChange.bind(this) } />
+          <WheelView className='day dib' type='day' gzName={ this.showzg && this.gzDay } data={ this.state.day }
+            index={ this.state.dIndex }
+            onDataChange={ this.onDataChange.bind(this) } />
         </div>
       </div>
     )

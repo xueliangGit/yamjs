@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-09-10 15:43:34
+ * @LastEditTime: 2020-09-10 18:45:59
  */
 import nodeOps from '../utils/nodeOps'
 import { initSolt, isSlotTag } from '../helpers/slotHelper'
@@ -309,7 +309,8 @@ function setProp (keys, attrs, props, elm) {
       }
     }
   } else if (!isFunc(props)) {
-    elm.setAttribute(keys, props)
+    // 不要设置无用的属性
+    // elm.setAttribute(keys, props)
   }
   if (isFunc(props)) return
   if (elm.isComponent) {
