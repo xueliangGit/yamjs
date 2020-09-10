@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-06-25 13:56:05
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-09-10 11:39:02
+ * @LastEditTime: 2020-09-10 19:29:27
  */
 import { doc as document } from './global'
 import { requestAnimationFrame } from './index'
@@ -83,7 +83,17 @@ function setAttribute (node, key, val) {
   node.setAttribute(key, val)
 }
 function setAttachShadow (node, conf = {}) {
-  return node.attachShadow(conf)
+  // ie 没有影子树，后期再考虑使用iframe替代
+  // if (node.attachShadow) {
+  //   return node.attachShadow(conf)
+  // } else {
+  //   let ifa = createElement$1('iframe')
+  //   ifa.setAttribute('style', 'border:none;display:block;display:inline-block;')
+  //   node.appendChild(ifa)
+  //   window.ifa = ifa
+  //   return ifa
+  // }
+  return node.attachShadow ? node.attachShadow(conf) : node
 }
 // addCallBack
 function insertCall (child) {

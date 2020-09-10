@@ -13,6 +13,7 @@
       color #ddd
       transition: all 0.1s
       font-size 14px
+      height 40px
       &.active
         font-size: 16px
         color #333

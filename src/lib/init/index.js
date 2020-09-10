@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-09-10 17:37:27
+ * @LastEditTime: 2020-09-10 19:29:00
  */
 // import { _createElementJson } from '../vDom/createElement'
 import updateElement from '../diff/index'
@@ -175,6 +175,10 @@ function createdComponent () {
     // style.innerText = this._style
     if (this._shadow) {
       var shadowRoot = this.__shadowRoot || (this.__shadowRoot = nodeOps.setAttachShadow(this.elm, { mode: 'closed' }))
+      // 判断是否是iframe
+      // if (shadowRoot.nodeName && shadowRoot.nodeName === 'IFRAME') {
+      //   shadowRoot = shadowRoot.contentDocument.body
+      // }
       componenesSize[this._tagName] = componenesSize[this._tagName] ? componenesSize[this._tagName] + 1 : 1
       shadowRoot._root = this._tagName + '-' + componenesSize[this._tagName]
       shadowRoot._parentElement = this.elm
@@ -264,12 +268,12 @@ function setRootName (element, tagName, context) {
 }
 // 获取dom片段
 function getFram (isNeedDiv = false) {
-  let dom = null
-  if (isNeedDiv) {
-    dom = document.createDocumentFragment() || document.createElement('div')
-  } else {
-    dom = document.createDocumentFragment() || document.createElement('div')
-  }
+  // let dom = null
+  // if (isNeedDiv) {
+  //   dom = document.createDocumentFragment() || document.createElement('div')
+  // } else {
+  let dom = document.createDocumentFragment() || document.createElement('div')
+  // }
   // dom.setAttribute('dom', this._cid)
   // try { 移除trycatch
   this[$vdomSymbol] = getRenderData(this)// .render()

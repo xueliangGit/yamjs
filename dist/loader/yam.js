@@ -1,8 +1,8 @@
 /*
- * Yam.js v0.6.0
+ * Yam.js v0.6.1
  * (c) 2019-2020 xuxueliang
  * Released under the MIT License.
- * lastTime:Thu Sep 10 2020 18:47:27 GMT+0800 (GMT+08:00).
+ * lastTime:Thu Sep 10 2020 19:40:28 GMT+0800 (GMT+08:00).
  */
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
@@ -267,7 +267,7 @@
 	 * @Author: xuxueliang
 	 * @Date: 2019-06-25 13:56:05
 	 * @LastEditors: xuxueliang
-	 * @LastEditTime: 2020-09-10 11:39:02
+	 * @LastEditTime: 2020-09-10 19:29:27
 	 */
 
 	function createElement$1(tagName, vnode) {
@@ -363,7 +363,17 @@
 
 	function setAttachShadow(node) {
 	  var conf = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-	  return node.attachShadow(conf);
+	  // ie 没有影子树，后期再考虑使用iframe替代
+	  // if (node.attachShadow) {
+	  //   return node.attachShadow(conf)
+	  // } else {
+	  //   let ifa = createElement$1('iframe')
+	  //   ifa.setAttribute('style', 'border:none;display:block;display:inline-block;')
+	  //   node.appendChild(ifa)
+	  //   window.ifa = ifa
+	  //   return ifa
+	  // }
+	  return node.attachShadow ? node.attachShadow(conf) : node;
 	} // addCallBack
 
 
@@ -2732,7 +2742,11 @@
 	    if (this._shadow) {
 	      var shadowRoot = this.__shadowRoot || (this.__shadowRoot = nodeOps.setAttachShadow(this.elm, {
 	        mode: 'closed'
-	      }));
+	      })); // 判断是否是iframe
+	      // if (shadowRoot.nodeName && shadowRoot.nodeName === 'IFRAME') {
+	      //   shadowRoot = shadowRoot.contentDocument.body
+	      // }
+
 	      componenesSize[this._tagName] = componenesSize[this._tagName] ? componenesSize[this._tagName] + 1 : 1;
 	      shadowRoot._root = this._tagName + '-' + componenesSize[this._tagName];
 	      shadowRoot._parentElement = this.elm;
@@ -2835,16 +2849,13 @@
 
 
 	function getFram() {
-	  var isNeedDiv = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
-	  var dom = null;
-
-	  if (isNeedDiv) {
-	    dom = document.createDocumentFragment() || document.createElement('div');
-	  } else {
-	    dom = document.createDocumentFragment() || document.createElement('div');
-	  } // dom.setAttribute('dom', this._cid)
+	  // let dom = null
+	  // if (isNeedDiv) {
+	  //   dom = document.createDocumentFragment() || document.createElement('div')
+	  // } else {
+	  var dom = document.createDocumentFragment() || document.createElement('div'); // }
+	  // dom.setAttribute('dom', this._cid)
 	  // try { 移除trycatch
-
 
 	  this[$vdomSymbol] = getRenderData(this); // .render()
 	  // console.log(this[$vdomSymbol])
@@ -3585,7 +3596,7 @@
 
 	}
 
-	var version = "0.6.0";
+	var version = "0.6.2";
 
 	var _dec, _class;
 	// var isIE = userAgent.indexOf('compatible') > -1 && userAgent.indexOf('MSIE') > -1 // 判断是否IE<11浏览器

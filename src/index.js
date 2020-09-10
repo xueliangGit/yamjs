@@ -2,9 +2,9 @@
  * @Author: xuxueliang
  * @Date: 2019-08-13 16:13:59
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-09-10 17:44:16
+ * @LastEditTime: 2020-09-10 18:53:00
  */
-
+import './lib/polyfill'
 import './components/common'
 // import './lib/plugins/router/routerView'
 // import './components/goTop.js'
