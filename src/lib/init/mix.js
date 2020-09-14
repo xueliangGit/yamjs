@@ -2,13 +2,14 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-09-10 20:24:15
+ * @LastEditTime: 2020-09-14 16:43:30
  */
 import { _createElementJson } from '../vDom/createElement'
 import { forEach, isFunc, isStr } from '../utils/index'
 import lifeCycle, { addGlobalLife } from './lifeCycle'
 import mixin from './_mixin'
 import { isDev } from '../env'
+import { initHandleError } from './handlerError'
 let lifeCycleArray = Object.keys(lifeCycle).map(v => '$' + v)
 // 注解
 // 预留字段
@@ -53,12 +54,12 @@ export function Mix () {
         }
         forEach(needs, v => {
           if (!~installed.indexOf(v)) {
-            console.info(`%c 该扩展【 ${name} 】需要依赖 【${v}】扩展`, 'background:#ff0')
+            isDev && console.info(`%c 该扩展【 ${name} 】需要依赖 【${v}】扩展`, 'background:#ff0')
           }
         })
       }
       if (~installed.indexOf(name)) {
-        console.info(`已经注册此扩展:${name}`)
+        isDev && console.info(`已经注册此扩展:${name}`)
       } else {
         installed.push(name)
         Config.install(addPrototype(Target, name))
@@ -67,6 +68,7 @@ export function Mix () {
     Target.mixin = (config = {}) => {
       mixin(config)
     }
+    Target.errorHandler = initHandleError
   }
 }
 function addPrototype (Target, name) {
@@ -122,7 +124,7 @@ function addPrototype (Target, name) {
         if (!Target.prototype._autoDo[name]) {
           Target.prototype._autoDo[name] = fn
         } else {
-          console.info(`
+          isDev && console.info(`
           自动执行的方法名：${name} 已存在，请查看是否重复注册该方法
           `)
         }
@@ -138,12 +140,12 @@ function addPrototype (Target, name) {
         if (isFunc(fn)) {
           addGlobalLife(lifeCycleName, fn)
         } else {
-          console.warn(`
+          isDev && console.warn(`
           要添加的组件周期回调必须是函数
           `)
         }
       } else {
-        console.warn(`
+        isDev && console.warn(`
         要添加的组件周期回调的参数[${lifeCycleName}]，只能是 ${lifeCycleArray.join(',')} ，请检查
         `)
       }

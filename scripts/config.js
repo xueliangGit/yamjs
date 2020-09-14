@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-13 18:50:38
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-09-10 15:46:53
+ * @LastEditTime: 2020-09-11 12:34:27
  */
 const json = require('rollup-plugin-json')
 const babel = require('rollup-plugin-babel')
@@ -75,7 +75,6 @@ const builds = {
     entry: resolve('lib/entrys/index.use.loader.js'),
     dest: resolve('dist/loader/yam.esm.js'),
     format: 'es',
-    env: 'development',
     banner
   },
   'umd:prod:loader': {

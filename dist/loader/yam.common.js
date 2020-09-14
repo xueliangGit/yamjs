@@ -1,8 +1,8 @@
 /*
- * Yam.js v0.6.3
+ * Yam.js v0.6.4
  * (c) 2019-2020 xuxueliang
  * Released under the MIT License.
- * lastTime:Thu Sep 10 2020 20:24:20 GMT+0800 (GMT+08:00).
+ * lastTime:Mon Sep 14 2020 16:44:42 GMT+0800 (GMT+08:00).
  */
 'use strict';
 
@@ -125,277 +125,6 @@ function _toConsumableArray(arr) {
 }
 
 var toConsumableArray = _toConsumableArray;
-
-/*
- * @Author: xuxueliang
- * @Date: 2019-08-08 18:17:44
- * @LastEditors: xuxueliang
- * @LastEditTime: 2019-08-16 14:29:14
- */
-var global = window || {
-  MutationObserver: window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver || function () {}
-};
-var doc = document || {};
-
-/*
- * @Author: xuxueliang
- * @Date: 2019-06-25 13:56:05
- * @LastEditors: xuxueliang
- * @LastEditTime: 2020-09-10 20:00:11
- */
-var canUseCustomElements = !!(window.customElements && window.customElements.define);
-var preFixCom = 'com-';
-var isFunctionComponent = 'isFC';
-
-var MutationObserver = global.MutationObserver || global.WebKitMutationObserver || global.MozMutationObserver; // 浏览器兼容
-
-function creatMutationObserser(el, callFn) {
-  var config = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {
-    attributes: true
-  };
-  if (!MutationObserver) { return; }
-  var observer = new MutationObserver(function (mutations) {
-    // 构造函数回调
-    mutations.forEach(function (record) {
-      callFn && callFn(record);
-
-      if (record.type === 'attributes') ;
-
-      if (record.type === 'childList') ;
-    });
-  });
-
-  try {
-    observer.observe(el, config);
-  } catch (e) {// console.log(e)
-  }
-
-  return observer;
-} // 代理
-
-
-function setAttributes(obj, name, value) {
-  if (obj[name] === value) { return; }
-
-  try {
-    obj[name] = JSON.parse(value);
-  } catch (e) {
-    obj[name] = value;
-  }
-}
-
-function getDomStyleFlag(_id, attr) {
-  return attr ? _id : '[' + _id + ']';
-}
-
-function isUndef(v) {
-  return v === undefined || v === null;
-}
-
-function isFunc(v) {
-  return typeof v === 'function';
-}
-
-function isStr(v) {
-  return typeof v === 'string';
-}
-
-function isDef(v) {
-  return v !== undefined && v !== null;
-}
-
-function isFalse(v) {
-  return v === false;
-}
-
-function forEach(array) {
-  var v = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
-  var get = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-  var getArr = []; // eslint-disable-next-line no-cond-assign
-
-  for (var i = 0, item; item = array[i]; i++) {
-    var runResult = v(item, i);
-    get && getArr.push(runResult);
-
-    if (typeof runResult === 'boolean' && !runResult && !get) {
-      return get ? getArr : null;
-    }
-  }
-
-  return get ? getArr : null;
-}
-
-var toCamelCase = function toCamelCase(str) {
-  return str.replace(/-(\w)/g, function (x) {
-    return x.slice(1).toUpperCase();
-  });
-};
-/**
- * @summary 获取guid
- * @returns [guid]
- */
-
-
-var guid2 = function guid2() {
-  return S4() + S4() + '-' + S4() + S4();
-};
-
-function S4() {
-  return ((1 + Math.random()) * 0x10000 | 0).toString(16).substring(1);
-}
-
-
-var requestIdleCallback = function requestIdleCallback(callback, timeOut) {
-  callback(); // window.requestIdleCallback ? window.requestIdleCallback(callback, timeOut ? { timeout: timeOut } : {}) : callback()
-}; // raf
-
-
-var requestAnimationFrame = function requestAnimationFrame(callback) {
-  // Promise.resolve().then(() => {
-  // callback()
-  // })
-  callback(); // !isNeed ? callback() : window.requestAnimationFrame ? window.requestAnimationFrame(callback) : callback()
-};
-
-var getCid = function getCid(value) {
-  return preFixCom + value;
-}; // 添加slot
-
-/*
- * @Author: xuxueliang
- * @Date: 2019-06-25 13:56:05
- * @LastEditors: xuxueliang
- * @LastEditTime: 2020-09-10 19:29:27
- */
-
-function createElement$1(tagName, vnode) {
-  var elm = doc.createElement(tagName);
-
-  if (tagName !== 'select') {
-    return elm;
-  } // false or null will remove the attribute but undefined will not
-
-
-  if (vnode.data && vnode.data.attrs && vnode.data.attrs.multiple !== undefined) {
-    elm.setAttribute('multiple', 'multiple');
-  }
-
-  return elm;
-} // function createElementNS (namespace, tagName) {
-//   return document.createElementNS(namespaceMap[namespace], tagName)
-// }
-
-
-function createTextNode(text) {
-  return doc.createTextNode(text);
-}
-
-function createComment(text) {
-  return doc.createComment(text);
-}
-
-function insertBefore(parentNode, newNode, referenceNode, isNeed) {
-  if (!parentNode || !newNode) { return; } // 针对内部node 处理 加flag
-
-  requestAnimationFrame(function () {
-    // 针对内部node 处理 加flag
-    newNode.isYamjsInnerNode = true;
-    parentNode.insertBefore(newNode, referenceNode);
-    insertCall(newNode);
-  });
-}
-
-function removeChild(node, child) {
-  if (!child || !node) { return; }
-  requestAnimationFrame(function () {
-    // console.dir(child)
-    // 移除事件 触发
-    if (child.beforeDisconnectedCallback && !child.isRemovedBySlot) {
-      child.beforeDisconnectedCallback();
-    } // 针对内部node 处理 加flag
-
-
-    child.isYamjsInnerNode = true;
-    node.removeChild(child); // 移除事件 触发
-
-    if (!child.isRemovedBySlot && child.disconnectedCallback && !child.isUnset) {
-      child.disconnectedCallback();
-    }
-  });
-}
-
-function appendChild(node, child, isNeed) {
-  if (!node || !child) {
-    return false;
-  }
-
-  requestAnimationFrame(function () {
-    // 针对内部node 处理 加flag
-    child.isYamjsInnerNode = true;
-    node.appendChild(child);
-    insertCall(child);
-  });
-}
-
-function parentNode(node) {
-  return node.parentNode;
-}
-
-function nextSibling(node) {
-  return node.nextSibling;
-}
-
-function tagName(node) {
-  return node.tagName;
-}
-
-function setTextContent(node, text) {
-  requestAnimationFrame(function () {
-    node.textContent = text;
-  });
-}
-
-function setAttribute(node, key, val) {
-  node.setAttribute(key, val);
-}
-
-function setAttachShadow(node) {
-  var conf = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-  // ie 没有影子树，后期再考虑使用iframe替代
-  // if (node.attachShadow) {
-  //   return node.attachShadow(conf)
-  // } else {
-  //   let ifa = createElement$1('iframe')
-  //   ifa.setAttribute('style', 'border:none;display:block;display:inline-block;')
-  //   node.appendChild(ifa)
-  //   window.ifa = ifa
-  //   return ifa
-  // }
-  return node.attachShadow ? node.attachShadow(conf) : node;
-} // addCallBack
-
-
-function insertCall(child) {
-  if (child._domInsertCall) {
-    child._domInsertCall();
-  }
-}
-
-var nodeOps = Object.freeze({
-  createElement: createElement$1,
-  // createElementNS: createElementNS,
-  createTextNode: createTextNode,
-  createComment: createComment,
-  insertBefore: insertBefore,
-  removeChild: removeChild,
-  appendChild: appendChild,
-  parentNode: parentNode,
-  nextSibling: nextSibling,
-  tagName: tagName,
-  setTextContent: setTextContent,
-  setAttribute: setAttribute,
-  setAttachShadow: setAttachShadow
-});
 
 /*
  * @Author: xuxueliang
@@ -913,85 +642,171 @@ var EVENT_HANDLERS = {
 
 /*
  * @Author: xuxueliang
+ * @Date: 2019-08-08 18:17:44
+ * @LastEditors: xuxueliang
+ * @LastEditTime: 2019-08-16 14:29:14
+ */
+var global = window || {
+  MutationObserver: window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver || function () {}
+};
+var doc = document || {};
+
+/*
+ * @Author: xuxueliang
  * @Date: 2019-06-25 13:56:05
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-09-10 18:12:01
+ * @LastEditTime: 2020-09-11 20:28:16
+ */
+var canUseCustomElements = !!(window.customElements && window.customElements.define);
+var preFixCom = 'com-';
+var isFunctionComponent = 'isFC';
+var supporShadow = !!HTMLElement.prototype.attachShadow;
+
+/*
+ * @Author: xuxueliang
+ * @Date: 2020-09-14 16:08:33
+ * @LastEditors: xuxueliang
+ * @LastEditTime: 2020-09-14 16:44:37
  */
 
-var syncComponentMark = function syncComponentMark(context) {
-  context.elm.isComponent = true;
-  context.elm.componentName = context._name;
-  context.elm.componentId = context._rootId;
-}; // 获取元素的最近的组件
-
-
-var getComponentMark = function getComponentMark(dom) {
-  var elm = dom;
-  var oldelm = dom;
-
-  while (elm) {
-    if (elm.isComponent) {
-      return getComponentByElm(elm);
-    }
-
-    oldelm = elm;
-    elm = elm._parentNode;
-  }
-
-  return oldelm;
+var context = [];
+function HandleError$1(e, from) {
+  console.warn(e, from);
+  context.forEach(function (v) {
+    return v(e, from);
+  });
+}
+var initHandleError = function initHandleError(fn) {
+  isFunc(fn) && context.push(fn);
 };
 
-var getCallFnName = function getCallFnName(context, prop) {
-  return "".concat(context.tagType || context._tagName, "_").concat(prop, "_fn");
-}; // 获取component
+var MutationObserver = global.MutationObserver || global.WebKitMutationObserver || global.MozMutationObserver; // 浏览器兼容
 
+function creatMutationObserser(el, callFn) {
+  var config = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {
+    attributes: true
+  };
+  if (!MutationObserver) { return; }
+  var observer = new MutationObserver(function (mutations) {
+    // 构造函数回调
+    mutations.forEach(function (record) {
+      callFn && callFn(record);
 
-function getComponentByElm(elm) {
-  if (!elm.isComponent) {
-    return getComponentMark(elm);
+      if (record.type === 'attributes') ;
+
+      if (record.type === 'childList') ;
+    });
+  });
+
+  try {
+    observer.observe(el, config);
+  } catch (e) {
+    HandleError$1(e); // console.log(e)
   }
 
-  {
-    return elm[$ComponentSymbol];
+  return observer;
+} // 代理
+
+
+function setAttributes(obj, name, value) {
+  if (obj[name] === value) { return; }
+
+  try {
+    obj[name] = JSON.parse(value);
+  } catch (e) {
+    obj[name] = value;
   }
-} // setGet getComponentByElm
+}
 
+function getDomStyleFlag(_id, attr) {
+  return attr ? _id : '[' + _id + ']';
+}
 
-function setComponentForElm(elm, context) {
-  {
-    elm[$ComponentSymbol] = context;
+function isUndef(v) {
+  return v === undefined || v === null;
+}
+
+function isFunc(v) {
+  return typeof v === 'function';
+}
+
+function isStr(v) {
+  return typeof v === 'string';
+}
+
+function isDef(v) {
+  return v !== undefined && v !== null;
+}
+
+function isFalse(v) {
+  return v === false;
+}
+
+function forEach(array) {
+  var v = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+  var get = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+  var getArr = []; // eslint-disable-next-line no-cond-assign
+
+  for (var i = 0, item; item = array[i]; i++) {
+    var runResult = v(item, i);
+    get && getArr.push(runResult);
+
+    if (typeof runResult === 'boolean' && !runResult && !get) {
+      return get ? getArr : null;
+    }
   }
-} // 获取上一个自定义组件
+
+  return get ? getArr : null;
+}
+
+var toCamelCase = function toCamelCase(str) {
+  return str.replace(/-(\w)/g, function (x) {
+    return x.slice(1).toUpperCase();
+  });
+};
+/**
+ * @summary 获取guid
+ * @returns [guid]
+ */
 
 
-function getparentCom(elm) {
-  if (!elm) { return null; }
-  var coms = getComponentMark(elm);
+var guid2 = function guid2() {
+  return S4() + S4() + '-' + S4() + S4();
+};
 
-  if (coms._rootId >= 0) {
-    return coms;
-  }
-
-  return null;
-} // 设定上一个自定义组件
+function S4() {
+  return ((1 + Math.random()) * 0x10000 | 0).toString(16).substring(1);
+}
 
 
-function setClosetParentCom(context) {
-  context[$closestParentSymbol] = context.elm._parentNode ? getparentCom(context.elm._parentNode) : context[$closestParentSymbol] || null;
-} // 获取上一个自定义组件
+var requestIdleCallback = function requestIdleCallback(callback, timeOut) {
+  callback(); // window.requestIdleCallback ? window.requestIdleCallback(callback, timeOut ? { timeout: timeOut } : {}) : callback()
+}; // raf
+
+
+var requestAnimationFrame = function requestAnimationFrame(callback) {
+  // Promise.resolve().then(() => {
+  // callback()
+  // })
+  callback(); // !isNeed ? callback() : window.requestAnimationFrame ? window.requestAnimationFrame(callback) : callback()
+};
+
+var getCid = function getCid(value) {
+  return preFixCom + value;
+}; // 添加slot
 
 /*
  * @Author: xuxueliang
  * @Date: 2020-03-29 17:08:56
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-09-10 15:27:05
+ * @LastEditTime: 2020-09-14 16:40:03
  */
 var defaultIndex = 0;
 var renderFunctionComponent = function renderFunctionComponent(context, comsp) {
   comsp = comsp || context.tagName(context.props);
   context.childNodes = comsp.childNodes;
 };
-function renderAsync (el, context, parent) {
+function renderAsync(el, context, parent) {
   // 获取的是 ()=>import(/**/)
   try {
     var comsp = context.tagName(context.props);
@@ -1043,6 +858,7 @@ function renderAsync (el, context, parent) {
       });
     }
   } catch (e) {
+    HandleError$1(e, 'renderAsync');
     console.warn(e);
   } finally {}
 }
@@ -1200,9 +1016,11 @@ var Element = /*#__PURE__*/function () {
         return this.elm;
       }
 
-      var mark = null;
-      domFlag = domFlag || (this._root ? getCid(this._root) : (mark = getComponentMark(parentELm), mark && getCid(mark._tagName)));
-      var el = null; // let slot = []
+      var mark;
+      var el;
+      var parentCom;
+      var component;
+      domFlag = domFlag || (this._root ? getCid(this._root) : (mark = getComponentMark(parentELm), mark && getCid(mark._tagName))); // let slot = []
       // 自定义webcomponent
       // console.log()
 
@@ -1214,7 +1032,7 @@ var Element = /*#__PURE__*/function () {
         // fix 隐藏 component 使用方法调用
         //  eslint-disable-next-line new-cap
 
-        var component = new this.class(); // new 20191223 处理组件内部的slot
+        component = new this.class(); // new 20191223 处理组件内部的slot
         // console.log('components-slot', slot, this)
 
         forEach(this.childNodes, function (v) {
@@ -1229,14 +1047,12 @@ var Element = /*#__PURE__*/function () {
         setComponentForElm(cacheDom, component);
         el = cacheDom; // 自定义组件 挂在在其父级的自定义组件上
 
-        var parentCom = getparentCom(parentELm);
+        parentCom = getparentCom(parentELm);
 
         if (parentCom && parentCom.ChildComponentsManage) {
           parentCom.ChildComponentsManage.add(component);
-          parentCom = null;
-        }
+        } // 在下一级组件 添加样式
 
-        component = null; // 在下一级组件 添加样式
 
         domFlag && el.setAttribute(domFlag, '');
       } else {
@@ -1307,7 +1123,18 @@ var Element = /*#__PURE__*/function () {
                 _this.props[prop](getComponentByElm(el));
               }
             } else {
-              el.setAttribute(_this.attrs[prop], _this.props[prop]);
+              if (prop === 'ref') {
+                parentCom = parentCom || getparentCom(parentELm);
+
+                if (!parentCom['$refs']) {
+                  parentCom['$refs'] = {};
+                }
+
+                parentCom.$refs[_this.props[prop]] = component || el;
+                el._ref = _this.props[prop];
+              } else {
+                el.setAttribute(_this.attrs[prop], _this.props[prop]);
+              }
             }
           } else if (prop in EVENT_HANDLERS) {
             el.addEventListener(EVENT_HANDLERS[prop], _this.props[prop]);
@@ -1347,6 +1174,9 @@ var Element = /*#__PURE__*/function () {
             el.setAttribute('style', styles);
           }
         }
+
+        parentCom = null;
+        component = null;
       } // if (slot.length) {
       //   forEach(slot, (v) => {
       //     setSlotState(getComponentByElm(el), v.getAttribute('name'), false)
@@ -1604,6 +1434,213 @@ function isRerenderSlotElment(context, el) {
 
 /*
  * @Author: xuxueliang
+ * @Date: 2019-06-25 13:56:05
+ * @LastEditors: xuxueliang
+ * @LastEditTime: 2020-09-10 18:12:01
+ */
+
+var syncComponentMark = function syncComponentMark(context) {
+  context.elm.isComponent = true;
+  context.elm.componentName = context._name;
+  context.elm.componentId = context._rootId;
+}; // 获取元素的最近的组件
+
+
+var getComponentMark = function getComponentMark(dom) {
+  var elm = dom;
+  var oldelm = dom;
+
+  while (elm) {
+    if (elm.isComponent) {
+      return getComponentByElm(elm);
+    }
+
+    oldelm = elm;
+    elm = elm._parentNode;
+  }
+
+  return oldelm;
+};
+
+var getCallFnName = function getCallFnName(context, prop) {
+  return "".concat(context.tagType || context._tagName, "_").concat(prop, "_fn");
+}; // 获取component
+
+
+function getComponentByElm(elm) {
+  if (!elm.isComponent) {
+    return getComponentMark(elm);
+  }
+
+  {
+    return elm[$ComponentSymbol];
+  }
+} // setGet getComponentByElm
+
+
+function setComponentForElm(elm, context) {
+  {
+    elm[$ComponentSymbol] = context;
+  }
+} // 获取上一个自定义组件
+
+
+function getparentCom(elm) {
+  if (!elm) { return null; }
+  var coms = getComponentMark(elm);
+
+  if (coms._rootId >= 0) {
+    return coms;
+  }
+
+  return null;
+} // 设定上一个自定义组件
+
+
+function setClosetParentCom(context) {
+  context[$closestParentSymbol] = context.elm._parentNode ? getparentCom(context.elm._parentNode) : context[$closestParentSymbol] || null;
+} // 获取上一个自定义组件
+
+function createElement$1(tagName, vnode) {
+  var elm = doc.createElement(tagName);
+
+  if (tagName !== 'select') {
+    return elm;
+  } // false or null will remove the attribute but undefined will not
+
+
+  if (vnode.data && vnode.data.attrs && vnode.data.attrs.multiple !== undefined) {
+    elm.setAttribute('multiple', 'multiple');
+  }
+
+  return elm;
+} // function createElementNS (namespace, tagName) {
+//   return document.createElementNS(namespaceMap[namespace], tagName)
+// }
+
+
+function createTextNode(text) {
+  return doc.createTextNode(text);
+}
+
+function createComment(text) {
+  return doc.createComment(text);
+}
+
+function insertBefore(parentNode, newNode, referenceNode, isNeed) {
+  if (!parentNode || !newNode) { return; } // 针对内部node 处理 加flag
+
+  requestAnimationFrame(function () {
+    // 针对内部node 处理 加flag
+    newNode.isYamjsInnerNode = true;
+    parentNode.insertBefore(newNode, referenceNode);
+    insertCall(newNode);
+  });
+}
+
+function removeChild(node, child) {
+  if (!child || !node) { return; }
+  requestAnimationFrame(function () {
+    // console.dir(child)
+    // 移除事件 触发
+    if (child.beforeDisconnectedCallback && !child.isRemovedBySlot) {
+      child.beforeDisconnectedCallback();
+    } // 针对内部node 处理 加flag
+
+
+    child.isYamjsInnerNode = true;
+
+    if (child._ref) {
+      var pCom = getparentCom(child);
+
+      if (pCom && pCom.$refs) {
+        delete pCom.$refs['child._ref'];
+      }
+    }
+
+    node.removeChild(child); // 移除事件 触发
+
+    if (!child.isRemovedBySlot && child.disconnectedCallback && !child.isUnset) {
+      child.disconnectedCallback();
+    }
+  });
+}
+
+function appendChild(node, child, isNeed) {
+  if (!node || !child) {
+    return false;
+  }
+
+  requestAnimationFrame(function () {
+    // 针对内部node 处理 加flag
+    child.isYamjsInnerNode = true;
+    node.appendChild(child);
+    insertCall(child);
+  });
+}
+
+function parentNode(node) {
+  return node.parentNode;
+}
+
+function nextSibling(node) {
+  return node.nextSibling;
+}
+
+function tagName(node) {
+  return node.tagName;
+}
+
+function setTextContent(node, text) {
+  requestAnimationFrame(function () {
+    node.textContent = text;
+  });
+}
+
+function setAttribute(node, key, val) {
+  node.setAttribute(key, val);
+}
+
+function setAttachShadow(node) {
+  var conf = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  // ie 没有影子树，后期再考虑使用iframe替代
+  // if (node.attachShadow) {
+  //   return node.attachShadow(conf)
+  // } else {
+  //   let ifa = createElement$1('iframe')
+  //   ifa.setAttribute('style', 'border:none;display:block;display:inline-block;')
+  //   node.appendChild(ifa)
+  //   window.ifa = ifa
+  //   return ifa
+  // }
+  return node.attachShadow ? node.attachShadow(conf) : node;
+} // addCallBack
+
+
+function insertCall(child) {
+  if (child._domInsertCall) {
+    child._domInsertCall();
+  }
+}
+
+var nodeOps = Object.freeze({
+  createElement: createElement$1,
+  // createElementNS: createElementNS,
+  createTextNode: createTextNode,
+  createComment: createComment,
+  insertBefore: insertBefore,
+  removeChild: removeChild,
+  appendChild: appendChild,
+  parentNode: parentNode,
+  nextSibling: nextSibling,
+  tagName: tagName,
+  setTextContent: setTextContent,
+  setAttribute: setAttribute,
+  setAttachShadow: setAttachShadow
+});
+
+/*
+ * @Author: xuxueliang
  * @Date: 2019-08-16 15:06:26
  * @LastEditors: xuxueliang
  * @LastEditTime: 2020-09-10 15:43:57
@@ -1752,6 +1789,8 @@ function addVnodes(parentElm, refElm, vnodes, startIdx, endIdx, isFirst) {
   if (startIdx > -1) {
     if (startIdx <= endIdx) {
       var flag = document.createDocumentFragment();
+      flag._parentElement = parentElm;
+      flag._parentNode = parentElm;
 
       for (; startIdx <= endIdx; ++startIdx) {
         // createElm(vnodes[startIdx], flag, refElm, isFirst)
@@ -1979,6 +2018,8 @@ function editProp(a, b) {
 }
 
 function setProp(keys, attrs, props, elm) {
+  var closetsComs = null;
+
   if (keys in attrs) {
     if (isFunc(props)) {
       // 优化ref 被输出的情况
@@ -1990,18 +2031,19 @@ function setProp(keys, attrs, props, elm) {
         elm.setAttribute(attrs[keys], props);
       }
     }
-  }
+  } // 不要设置无用的属性
+  // elm.setAttribute(keys, props)
+  // if (isFunc(props)) return
 
-  if (isFunc(props)) { return; }
 
   if (elm.isComponent) {
-    var elmCom = getComponentByElm(elm);
+    closetsComs = closetsComs || getComponentByElm(elm);
 
-    if (elmCom[keys] !== props) {
-      elmCom[keys] = props;
+    if (closetsComs[keys] !== props) {
+      closetsComs[keys] = props;
     }
 
-    elmCom = null;
+    closetsComs = null;
   }
 }
 /**
@@ -2334,7 +2376,9 @@ function _run(context, name) {
     if (context._lifeCycleCall) {
       context._lifeCycleCall.run(name);
     }
-  } catch (e) {}
+  } catch (e) {
+    HandleError(e, name);
+  }
 
   return context[name] && isFunc(context[name]) ? context[name]() : undefined;
 } // 增加全局的生命周期调用函数
@@ -2515,7 +2559,7 @@ var ChildComponentsManage = /*#__PURE__*/function () {
  * @Author: xuxueliang
  * @Date: 2020-07-31 15:32:13
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-07-31 17:51:14
+ * @LastEditTime: 2020-09-14 16:06:52
  */
 var baseConfig = {
   $data: [],
@@ -2536,8 +2580,6 @@ function mixin(config) {
   forEach(Object.keys(config), function (v) {
     if (!_addLifeCycle(v, config[v], context)) {
       _mixin(v, config[v], contextData);
-
-      console.log(v, context);
     }
   });
 }
@@ -2570,8 +2612,8 @@ function _init() {
   lifeCycle.beforeMount(this);
   setClosetParentCom(this);
   createdComponent.call(this); // taskLine.addMicTask(() => {
+  // initRefs.call(this)
 
-  initRefs.call(this);
   lifeCycle.mounted(this); // })
 
   this.update = function () {
@@ -2713,30 +2755,10 @@ function _update(context) {
   });
 }
 
-function initRefs() {
-  var _this3 = this;
-
-  this.$refs = this.$refs || {}; // console.log(ref.forEach)
-
-  forEach(this.__shadowRoot.querySelectorAll('[ref]'), function (v) {
-    // console.log('initRefs', v, this)
-    _this3.$refs[v.getAttribute('ref')] = v.isComponent ? getComponentByElm(v) : v; // v.removeAttribute('ref')
-  });
-} // 创建组件
-
 
 function createdComponent() {
   if (this.render) {
-    var style = document.createElement('style');
-    style.type = 'text/css';
-
-    try {
-      style.appendChild(document.createTextNode(this._style));
-    } catch (ex) {
-      style.styleSheet.cssText = this._style;
-    } // style.innerText = this._style
-
-
+    // style.innerText = this._style
     if (this._shadow) {
       var shadowRoot = this.__shadowRoot || (this.__shadowRoot = nodeOps.setAttachShadow(this.elm, {
         mode: 'closed'
@@ -2749,13 +2771,38 @@ function createdComponent() {
       shadowRoot._root = this._tagName + '-' + componenesSize[this._tagName];
       shadowRoot._parentElement = this.elm;
       shadowRoot._parentNode = this.elm;
-      nodeOps.appendChild(shadowRoot, style);
       nodeOps.appendChild(shadowRoot, getFram.call(this, true));
       this.$dom = shadowRoot.lastChild;
     } else {
       this.__shadowRoot = this.elm;
       nodeOps.appendChild(this.elm, getFram.call(this));
       this.$dom = this.__shadowRoot.lastChild;
+    }
+
+    initStyle.call(this); //
+  }
+
+  this.initStyle = initStyle;
+}
+
+function initStyle() {
+  var style = document.createElement('style');
+  style.type = 'text/css';
+
+  try {
+    style.appendChild(document.createTextNode(this._style));
+  } catch (ex) {
+    style.styleSheet.cssText = this._style;
+  }
+
+  var p;
+
+  if (this._styleDom && (p = this._styleDom.parentNode)) {
+    p.replaceChild(style, this._styleDom);
+  } else {
+    if (this._shadow) {
+      nodeOps.insertBefore(this.__shadowRoot, style, this.$dom);
+    } else {
       var parentS = this[$closestParentSymbol];
       if (!parentS) { parentS = getComponentByElm(this.elm); }
 
@@ -2777,15 +2824,16 @@ function createdComponent() {
         } else {
           // div inner
           // parent.insertBefore(style, parent.lastChild)
-          parentS.__shadowRoot.insertBefore(style, parentS.__shadowRoot.lastChild);
+          nodeOps.insertBefore(parentS.__shadowRoot, style, parentS.$dom);
         } // nameStyle
 
 
         styleIsInstalled[nameStyle].push(this._cid);
       }
-    } //
-
+    }
   }
+
+  this._styleDom = style;
 } // 若不是 自定元素仅仅值一个自定义组件需要绑定 相应的到元素上事件
 
 
@@ -2940,7 +2988,7 @@ function initConfig() {
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-09-10 20:24:15
+ * @LastEditTime: 2020-09-14 16:43:30
  */
 var lifeCycleArray$1 = Object.keys(lifeCycle).map(function (v) {
   return '$' + v;
@@ -2996,13 +3044,13 @@ function Mix() {
 
         forEach(needs, function (v) {
           if (!~installed.indexOf(v)) {
-            console.info("%c \u8BE5\u6269\u5C55\u3010 ".concat(name, " \u3011\u9700\u8981\u4F9D\u8D56 \u3010").concat(v, "\u3011\u6269\u5C55"), 'background:#ff0');
+             console.info("%c \u8BE5\u6269\u5C55\u3010 ".concat(name, " \u3011\u9700\u8981\u4F9D\u8D56 \u3010").concat(v, "\u3011\u6269\u5C55"), 'background:#ff0');
           }
         });
       }
 
       if (~installed.indexOf(name)) {
-        console.info("\u5DF2\u7ECF\u6CE8\u518C\u6B64\u6269\u5C55:".concat(name));
+         console.info("\u5DF2\u7ECF\u6CE8\u518C\u6B64\u6269\u5C55:".concat(name));
       } else {
         installed.push(name);
         Config.install(addPrototype(Target, name));
@@ -3014,6 +3062,8 @@ function Mix() {
 
       mixin(config);
     };
+
+    Target.errorHandler = initHandleError;
   };
 }
 
@@ -3073,7 +3123,7 @@ function addPrototype(Target, name) {
         if (!Target.prototype._autoDo[name]) {
           Target.prototype._autoDo[name] = fn;
         } else {
-          console.info("\n          \u81EA\u52A8\u6267\u884C\u7684\u65B9\u6CD5\u540D\uFF1A".concat(name, " \u5DF2\u5B58\u5728\uFF0C\u8BF7\u67E5\u770B\u662F\u5426\u91CD\u590D\u6CE8\u518C\u8BE5\u65B9\u6CD5\n          "));
+           console.info("\n          \u81EA\u52A8\u6267\u884C\u7684\u65B9\u6CD5\u540D\uFF1A".concat(name, " \u5DF2\u5B58\u5728\uFF0C\u8BF7\u67E5\u770B\u662F\u5426\u91CD\u590D\u6CE8\u518C\u8BE5\u65B9\u6CD5\n          "));
         }
       }
     },
@@ -3088,10 +3138,10 @@ function addPrototype(Target, name) {
         if (isFunc(fn)) {
           addGlobalLife(lifeCycleName, fn);
         } else {
-          console.warn("\n          \u8981\u6DFB\u52A0\u7684\u7EC4\u4EF6\u5468\u671F\u56DE\u8C03\u5FC5\u987B\u662F\u51FD\u6570\n          ");
+           console.warn("\n          \u8981\u6DFB\u52A0\u7684\u7EC4\u4EF6\u5468\u671F\u56DE\u8C03\u5FC5\u987B\u662F\u51FD\u6570\n          ");
         }
       } else {
-        console.warn("\n        \u8981\u6DFB\u52A0\u7684\u7EC4\u4EF6\u5468\u671F\u56DE\u8C03\u7684\u53C2\u6570[".concat(lifeCycleName, "]\uFF0C\u53EA\u80FD\u662F ").concat(lifeCycleArray$1.join(','), " \uFF0C\u8BF7\u68C0\u67E5\n        "));
+         console.warn("\n        \u8981\u6DFB\u52A0\u7684\u7EC4\u4EF6\u5468\u671F\u56DE\u8C03\u7684\u53C2\u6570[".concat(lifeCycleName, "]\uFF0C\u53EA\u80FD\u662F ").concat(lifeCycleArray$1.join(','), " \uFF0C\u8BF7\u68C0\u67E5\n        "));
       }
     }
   };
@@ -3256,7 +3306,7 @@ function getCustom(target, props) {
       value: function connectedCallback() {
         // onReadyElmFn(this)
         try {
-          if (isSlotComponentsAndRender(this)) {
+          if (isSlotComponentsAndRender(this) || this.isInited) {
             return;
           }
 
@@ -3269,7 +3319,8 @@ function getCustom(target, props) {
             comps = null;
           }
         } catch (e) {
-          console.warn('组件【' + this.nodeName + '】渲染错误', e);
+          // console.warn('组件【' + this.nodeName + '】渲染错误', e)
+          HandleError$1(e, '组件【' + this.nodeName + '】渲染错误');
         }
       }
     }, {
@@ -3299,7 +3350,7 @@ function getCustom(target, props) {
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-09-09 15:37:13
+ * @LastEditTime: 2020-09-14 16:08:06
  */
 var domIsLoaded = false;
 var domFnCache = [];
@@ -3309,8 +3360,6 @@ function addObserse() {
   var isRun = null;
   creatMutationObserser(document.body, function (option) {
     if (option.type === 'childList') {
-      console.log(option);
-
       if (option.addedNodes.length) {
         if (isRun) {
           clearTimeout(isRun);
@@ -3594,7 +3643,7 @@ function initHTMLEvent() {
 
 }
 
-var version = "0.6.3";
+var version = "0.6.4";
 
 var _dec, _class;
 // var isIE = userAgent.indexOf('compatible') > -1 && userAgent.indexOf('MSIE') > -1 // 判断是否IE<11浏览器
@@ -3709,7 +3758,7 @@ var Yam = (_dec = Mix(), _dec(_class = /*#__PURE__*/function () {
       var _this = this;
 
       if (!fnName) {
-        console.warn("\u9700\u8981\u4F20\u5165\u65B9\u6CD5\u540D");
+         console.warn("\u9700\u8981\u4F20\u5165\u65B9\u6CD5\u540D");
         return;
       }
 
@@ -3718,7 +3767,7 @@ var Yam = (_dec = Mix(), _dec(_class = /*#__PURE__*/function () {
       }
 
       return isFunc(this[fnName]) ? this[fnName].apply(this, params) : function () {
-        console.warn("\u8BE5\u7EC4\u4EF6\u3010".concat(_this._tagName, "\u3011\u6CA1\u6709\u8FD9\u4E2A\u65B9\u6CD5:\u3010").concat(fnName, "\u3011"));
+         console.warn("\u8BE5\u7EC4\u4EF6\u3010".concat(_this._tagName, "\u3011\u6CA1\u6709\u8FD9\u4E2A\u65B9\u6CD5:\u3010").concat(fnName, "\u3011"));
       }.apply(void 0, params);
     } // 触发父级方法
 
@@ -3728,7 +3777,7 @@ var Yam = (_dec = Mix(), _dec(_class = /*#__PURE__*/function () {
       var arguments$1 = arguments;
 
       if (!fnName) {
-        console.warn("\u9700\u8981\u4F20\u5165\u65B9\u6CD5\u540D");
+         console.warn("\u9700\u8981\u4F20\u5165\u65B9\u6CD5\u540D");
         return;
       }
 
@@ -3794,9 +3843,15 @@ function Component(Config) {
   return function (Target) {
     if (Target._classIsInitedOk) { return; }
     var isCustomElements = (customElements || typeof customElements === 'undefined') && canUseCustomElements;
-    Target._tagName = tagName; // Target._$config = Config
+    Target._tagName = tagName;
+    Target._cid = getCid(tagName); // Target._$config = Config
 
-    Target._shadow = !!shadow;
+    Target._shadow = supporShadow ? !!shadow : false;
+    var styleStr = Yam._gSS ? Yam._gSS(Target._cid, style) : style;
+    var styleArray = Array.isArray(styleStr) && !styleStr.i ? styleStr : [styleStr];
+    Target._style = styleArray.map(function (v) {
+      return v.toString();
+    }).join('\r');
 
     Target.prototype._config = function () {
       var _this2 = this;
@@ -3805,11 +3860,11 @@ function Component(Config) {
       this.isCustomElements = isCustomElements;
       this._tagName = tagName;
       this._name = toCamelCase(tagName);
-      this._shadow = !!shadow || false;
+      this._shadow = Target._shadow;
       this._props = props || [];
       this._canBeCalledExt = typeof canBeCalledExt === 'boolean' ? canBeCalledExt : false;
-      this._cid = getCid(tagName);
-      this._style = (Yam._gSS ? Yam._gSS(this._cid, style) : style).toString(); // getStyleStr(this._cid, style) 使用了loader 后不需要这个了
+      this._cid = Target._cid;
+      this._style = Target._style; // getStyleStr(this._cid, style) 使用了loader 后不需要这个了
       // plugins
 
       var keys = Object.keys(params);
@@ -3850,7 +3905,8 @@ function Component(Config) {
 
       try {
         window.customElements.define(tagName, getCustom(Target, props));
-      } catch (e) {// console.log('e' + tagName, e)
+      } catch (e) {
+        HandleError$1(e, tagName); // console.log('e' + tagName, e)
       }
     } else {
       Target.customElements = false; // if (!supportMutationObserver) {
@@ -3876,7 +3932,7 @@ function Component(Config) {
 //   return function (Target) { }
 // }
 
-console.log("\n    \n    Bate-".concat(version, " for this version of yamjs, \n    \n    that is a baseComponet for html and can run in html or Vue or reactjs or ng\n    \n"));
+ console.log("\n    \n    Bate-".concat(version, " for this version of yamjs, \n    \n    that is a baseComponet for html and can run in html or Vue or reactjs or ng\n    \n"));
 
 /*
  * @Author: xuxueliang

@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-09-07 14:53:31
+ * @LastEditTime: 2020-09-14 16:38:55
  */
 import { $ComponentSymbol, $vdomSymbol, $closestParentSymbol } from '../symbol/index'
 import { forEach, isFunc } from '../utils/index'
@@ -107,7 +107,7 @@ function _run (context, name) {
       context._lifeCycleCall.run(name)
     }
   } catch (e) {
-
+    HandleError(e, name)
   }
   return context[name] && isFunc(context[name]) ? context[name]() : undefined
 }

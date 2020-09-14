@@ -2,11 +2,12 @@
  * @Author: xuxueliang
  * @Date: 2019-06-25 13:56:05
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-09-10 15:26:44
+ * @LastEditTime: 2020-09-14 16:37:13
  */
 import { getComponentByElm, setComponentForElm } from './utils/componentUtil'
 import { HTML_TAGS } from './vDom/creatConfig'
 import { isSlotComponentsAndRender } from './helpers/slotHelper'
+import HandleError from './init/handlerError'
 
 export default function getCustom (target, props) {
   // eslint-disable-next-line
@@ -18,7 +19,7 @@ export default function getCustom (target, props) {
     connectedCallback () {
       // onReadyElmFn(this)
       try {
-        if (isSlotComponentsAndRender(this)) {
+        if (isSlotComponentsAndRender(this) || this.isInited) {
           return
         }
         let Target = target || HTML_TAGS[this.nodeName.toLocaleLowerCase()].class
@@ -29,7 +30,8 @@ export default function getCustom (target, props) {
           comps = null
         }
       } catch (e) {
-        console.warn('组件【' + this.nodeName + '】渲染错误', e)
+        // console.warn('组件【' + this.nodeName + '】渲染错误', e)
+        HandleError(e, '组件【' + this.nodeName + '】渲染错误')
       }
     }
     disconnectedCallback () {

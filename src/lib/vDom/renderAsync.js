@@ -2,18 +2,19 @@
  * @Author: xuxueliang
  * @Date: 2020-03-29 17:08:56
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-09-10 15:27:05
+ * @LastEditTime: 2020-09-14 16:40:03
  */
 // import Yam from '../Yam'
 import { HTML_TAGS } from './creatConfig'
 import nodeOps from '../utils/nodeOps'
 import { isFunctionComponent } from '../Conf'
+import HandleError from '../init/handlerError'
 let defaultIndex = 0
 export const renderFunctionComponent = function (context, comsp) {
   comsp = comsp || context.tagName(context.props)
   context.childNodes = comsp.childNodes
 }
-export default function (el, context, parent) {
+export default function renderAsync (el, context, parent) {
   // 获取的是 ()=>import(/**/)
   try {
     let comsp = context.tagName(context.props)
@@ -63,6 +64,7 @@ export default function (el, context, parent) {
       })
     }
   } catch (e) {
+    HandleError(e, 'renderAsync')
     console.warn(e)
   } finally {
   }

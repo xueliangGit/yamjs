@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-09-10 19:29:00
+ * @LastEditTime: 2020-09-14 15:16:53
  */
 // import { _createElementJson } from '../vDom/createElement'
 import updateElement from '../diff/index'
@@ -29,7 +29,7 @@ function _init () {
   setClosetParentCom(this)
   createdComponent.call(this)
   // taskLine.addMicTask(() => {
-  initRefs.call(this)
+  // initRefs.call(this)
   lifeCycle.mounted(this)
   // })
   this.update = () => {
@@ -165,13 +165,6 @@ function initRefs () {
 // 创建组件
 function createdComponent () {
   if (this.render) {
-    let style = document.createElement('style')
-    style.type = 'text/css'
-    try {
-      style.appendChild(document.createTextNode(this._style))
-    } catch (ex) {
-      style.styleSheet.cssText = this._style
-    }
     // style.innerText = this._style
     if (this._shadow) {
       var shadowRoot = this.__shadowRoot || (this.__shadowRoot = nodeOps.setAttachShadow(this.elm, { mode: 'closed' }))
@@ -183,13 +176,33 @@ function createdComponent () {
       shadowRoot._root = this._tagName + '-' + componenesSize[this._tagName]
       shadowRoot._parentElement = this.elm
       shadowRoot._parentNode = this.elm
-      nodeOps.appendChild(shadowRoot, style)
       nodeOps.appendChild(shadowRoot, getFram.call(this, true))
       this.$dom = shadowRoot.lastChild
     } else {
       this.__shadowRoot = this.elm
       nodeOps.appendChild(this.elm, getFram.call(this))
       this.$dom = this.__shadowRoot.lastChild
+    }
+    initStyle.call(this)
+    //
+  }
+  this.initStyle = initStyle
+}
+function initStyle () {
+  let style = document.createElement('style')
+  style.type = 'text/css'
+  try {
+    style.appendChild(document.createTextNode(this._style))
+  } catch (ex) {
+    style.styleSheet.cssText = this._style
+  }
+  let p
+  if (this._styleDom && (p = this._styleDom.parentNode)) {
+    p.replaceChild(style, this._styleDom)
+  } else {
+    if (this._shadow) {
+      nodeOps.insertBefore(this.__shadowRoot, style, this.$dom)
+    } else {
       let parentS = this[$closestParentSymbol]
       if (!parentS) parentS = getComponentByElm(this.elm)
       while (!parentS._shadow && parentS[$closestParentSymbol]) {
@@ -208,14 +221,14 @@ function createdComponent () {
         } else {
           // div inner
           // parent.insertBefore(style, parent.lastChild)
-          parentS.__shadowRoot.insertBefore(style, parentS.__shadowRoot.lastChild)
+          nodeOps.insertBefore(parentS.__shadowRoot, style, parentS.$dom)
         }
         // nameStyle
         styleIsInstalled[nameStyle].push(this._cid)
       }
     }
-    //
   }
+  this._styleDom = style
 }
 // 若不是 自定元素仅仅值一个自定义组件需要绑定 相应的到元素上事件
 function bindElmentEvent (context) {

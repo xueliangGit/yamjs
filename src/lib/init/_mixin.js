@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2020-07-31 15:32:13
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-07-31 17:51:14
+ * @LastEditTime: 2020-09-14 16:06:52
  */
 // 主要为mixin服务
 import { forEach } from '../utils/index'
@@ -20,7 +20,6 @@ export default function mixin (config, context = null) {
   forEach(Object.keys(config), (v) => {
     if (!_addLifeCycle(v, config[v], context)) {
       _mixin(v, config[v], contextData)
-      console.log(v, context)
     }
   })
 }

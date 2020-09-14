@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-09-10 15:42:41
+ * @LastEditTime: 2020-09-13 00:37:38
  */
 /** @jsx createElement */
 import { HTML_TAGS, GLOBAL_ATTRIBUTES, EVENT_HANDLERS } from './creatConfig'
@@ -125,9 +125,11 @@ class Element {
       this.elm = document.createTextNode(this.text)
       return this.elm
     }
-    let mark = null
+    let mark
+    let el
+    let parentCom
+    let component
     domFlag = domFlag || (this._root ? getCid(this._root) : (mark = getComponentMark(parentELm), mark && getCid(mark._tagName)))
-    let el = null
     // let slot = []
     // 自定义webcomponent
     // console.log()
@@ -139,7 +141,7 @@ class Element {
       // console.log('slot-render', this.childNodes)
       // fix 隐藏 component 使用方法调用
       //  eslint-disable-next-line new-cap
-      let component = new this.class()
+      component = new this.class()
       // new 20191223 处理组件内部的slot
       // console.log('components-slot', slot, this)
       forEach(this.childNodes, (v) => {
@@ -154,12 +156,10 @@ class Element {
       setComponentForElm(cacheDom, component)
       el = cacheDom
       // 自定义组件 挂在在其父级的自定义组件上
-      let parentCom = getparentCom(parentELm)
+      parentCom = getparentCom(parentELm)
       if (parentCom && parentCom.ChildComponentsManage) {
         parentCom.ChildComponentsManage.add(component)
-        parentCom = null
       }
-      component = null
       // 在下一级组件 添加样式
       domFlag && el.setAttribute(domFlag, '')
     } else {
@@ -219,6 +219,7 @@ class Element {
       el._parentNode = parentELm
       el._parentElement = parentELm
     }
+
     // slot = el.querySelectorAll('[tag=slot]') // 由新的slot 机制代替
     // el.props = this.props
     if (this.props && !isSlotTag(this)) {
@@ -232,7 +233,16 @@ class Element {
               // el.setAttribute(this.attrs[prop], this.props[prop](getComponentByElm(el)))
             }
           } else {
-            el.setAttribute(this.attrs[prop], this.props[prop])
+            if (prop === 'ref') {
+              parentCom = parentCom || getparentCom(parentELm)
+              if (!parentCom['$refs']) {
+                parentCom['$refs'] = {}
+              }
+              parentCom.$refs[this.props[prop]] = component || el
+              el._ref = this.props[prop]
+            } else {
+              el.setAttribute(this.attrs[prop], this.props[prop])
+            }
           }
         } else if (prop in EVENT_HANDLERS) {
           el.addEventListener(EVENT_HANDLERS[prop], this.props[prop])
@@ -274,6 +284,8 @@ class Element {
           el.setAttribute('style', styles)
         }
       }
+      parentCom = null
+      component = null
     }
     // if (slot.length) {
     //   forEach(slot, (v) => {

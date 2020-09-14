@@ -1,8 +1,9 @@
+import { getComponentMark, getparentCom } from './componentUtil'
 /*
  * @Author: xuxueliang
  * @Date: 2019-06-25 13:56:05
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-09-10 19:29:27
+ * @LastEditTime: 2020-09-14 16:20:12
  */
 import { doc as document } from './global'
 import { requestAnimationFrame } from './index'
@@ -47,6 +48,12 @@ function removeChild (node, child) {
     }
     // 针对内部node 处理 加flag
     child.isYamjsInnerNode = true
+    if (child._ref) {
+      let pCom = getparentCom(child)
+      if (pCom && pCom.$refs) {
+        delete pCom.$refs['child._ref']
+      }
+    }
     node.removeChild(child)
     // 移除事件 触发
     if (!child.isRemovedBySlot && child.disconnectedCallback && !child.isUnset) {

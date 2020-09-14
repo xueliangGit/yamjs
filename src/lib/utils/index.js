@@ -2,11 +2,12 @@
  * @Author: xuxueliang
  * @Date: 2019-06-25 13:56:05
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-09-10 11:40:36
+ * @LastEditTime: 2020-09-14 16:39:15
  */
 import { global as window } from './global'
 import { isDev } from '../env'
 import { preFixCom } from '../Conf'
+import HandleError from '../init/handlerError'
 /**
  * [def 定义对象属性]
  * @param  {Object}  obj        对象
@@ -68,6 +69,7 @@ function creatMutationObserser (el, callFn, config = { attributes: true }) {
   try {
     observer.observe(el, config)
   } catch (e) {
+    HandleError(e)
     // console.log(e)
   }
   return observer
@@ -131,7 +133,8 @@ function _getStrByStyle (_id, style) {
         styleConfig = getConf.config || {}
         str.splice(0, getConf.index + 1)
       } catch (e) {
-        console.error(e)
+        HandleError(e)
+        // console.error(e)
       }
     }
     return map(str, function (v) {
@@ -139,7 +142,7 @@ function _getStrByStyle (_id, style) {
         if (~v.indexOf('[root]')) {
           return v.replace('[root]', getDomStyleFlag(_id + '-root')) // }
         }
-        return styleConfig.scope ? getIdStyle(v.replace(' {', '').replace('{', ''), getDomStyleFlag(_id)) + '{' : v
+        return (styleConfig.scoped) ? getIdStyle(v.replace(' {', '').replace('{', ''), getDomStyleFlag(_id)) + '{' : v
       }
       return v
     }).join('\n')

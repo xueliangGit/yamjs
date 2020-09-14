@@ -2,11 +2,11 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-09-10 11:40:16
+ * @LastEditTime: 2020-09-14 16:38:06
  */
 // import './polyfill.js'
 import init, { initConfig } from './init/index'
-import { canUseCustomElements } from './Conf'
+import { canUseCustomElements, supporShadow } from './Conf'
 import lifeCycle from './init/lifeCycle' // , { addLifeCycle }
 import { Mix } from './init/mix'
 import _mixin from './init/_mixin'
@@ -20,6 +20,8 @@ import domOnLoad from './utils/domLoad'
 import forNotsupportMutationObserver from './utils/forNotsupportMutationObserver.js'
 import { version } from '../../package.json'
 import { getSlotComponentsIsOrInstallState, syncSlotComponentsState, isSlotComponentsAndRender, isRerenderSlotElment } from './helpers/slotHelper.js'
+import { isDev } from './env'
+import HandleError from './init/handlerError'
 // var userAgent = navigator.userAgent // 取得浏览器的userAgent字符串
 // var isIE = userAgent.indexOf('compatible') > -1 && userAgent.indexOf('MSIE') > -1 // 判断是否IE<11浏览器
 // var isIE11 = userAgent.indexOf('Trident') > -1 && userAgent.indexOf('rv:11.0') > -1
@@ -108,19 +110,19 @@ class Yam {
   // 执行方法
   emit (fnName, ...params) {
     if (!fnName) {
-      console.warn(`需要传入方法名`)
+      isDev && console.warn(`需要传入方法名`)
       return
     }
     return isFunc(this[fnName])
       ? this[fnName](...params)
       : (() => {
-        console.warn(`该组件【${this._tagName}】没有这个方法:【${fnName}】`)
+        isDev && console.warn(`该组件【${this._tagName}】没有这个方法:【${fnName}】`)
       })(...params)
   }
   // 触发父级方法
   emitProp (fnName, ...params) {
     if (!fnName) {
-      console.warn(`需要传入方法名`)
+      isDev && console.warn(`需要传入方法名`)
       return
     }
     if (this.props) {
@@ -174,19 +176,23 @@ export function Component (Config) {
     const isCustomElements = (customElements || typeof customElements === 'undefined') &&
       canUseCustomElements
     Target._tagName = tagName
+    Target._cid = getCid(tagName)
     // Target._$config = Config
-    Target._shadow = !!shadow
+    Target._shadow = supporShadow ? !!shadow : false
+    let styleStr = (Yam._gSS ? Yam._gSS(Target._cid, style) : style)
+    let styleArray = Array.isArray(styleStr) && !styleStr.i ? styleStr : [styleStr]
+    Target._style = styleArray.map(v => v.toString()).join('\r')
     Target.prototype._config = function () {
       this.$config = Config
       this.isCustomElements = isCustomElements
       this._tagName = tagName
       this._name = toCamelCase(tagName)
-      this._shadow = !!shadow || false
+      this._shadow = Target._shadow
       this._props = props || []
       this._canBeCalledExt =
         typeof canBeCalledExt === 'boolean' ? canBeCalledExt : false
-      this._cid = getCid(tagName)
-      this._style = (Yam._gSS ? Yam._gSS(this._cid, style) : style).toString() // getStyleStr(this._cid, style) 使用了loader 后不需要这个了
+      this._cid = Target._cid
+      this._style = Target._style  // getStyleStr(this._cid, style) 使用了loader 后不需要这个了
       // plugins
       let keys = Object.keys(params)
       forEach(keys, v => {
@@ -222,6 +228,7 @@ export function Component (Config) {
       try {
         window.customElements.define(tagName, BaseCustomElements(Target, props))
       } catch (e) {
+        HandleError(e, tagName)
         // console.log('e' + tagName, e)
       }
     } else {
@@ -249,7 +256,7 @@ export function Component (Config) {
 // export function store (Config) {
 //   return function (Target) { }
 // }
-console.log(`
+isDev && console.log(`
     
     Bate-${version} for this version of yamjs, 
     

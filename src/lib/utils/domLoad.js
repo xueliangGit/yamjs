@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-09-09 15:37:13
+ * @LastEditTime: 2020-09-14 16:08:06
  */
 import { creatMutationObserser } from './index'
 let domIsLoaded = false
@@ -13,7 +13,6 @@ function addObserse () {
   let isRun = null
   creatMutationObserser(document.body, (option) => {
     if (option.type === 'childList') {
-      console.log(option)
       if (option.addedNodes.length) {
         if (isRun) {
           clearTimeout(isRun)

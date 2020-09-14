@@ -2,9 +2,10 @@
  * @Author: xuxueliang
  * @Date: 2019-06-25 13:56:05
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-09-10 11:39:54
+ * @LastEditTime: 2020-09-14 16:36:34
  */
 import init from './init'
+import HandleError from './init/handlerError'
 import { Mix } from './init/mix'
 import { getStyleStr } from './utils'
 import { getCid } from './utils/index'
@@ -61,6 +62,7 @@ export function Component (Config) {
     try {
       window.customElements.define(tagName, Target)
     } catch (e) {
+      HandleError(e, tagName)
       // console.log('e', e)
     }
   }

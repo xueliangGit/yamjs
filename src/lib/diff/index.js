@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-09-10 18:45:59
+ * @LastEditTime: 2020-09-14 11:34:52
  */
 import nodeOps from '../utils/nodeOps'
 import { initSolt, isSlotTag } from '../helpers/slotHelper'
@@ -101,6 +101,8 @@ function addVnodes (parentElm, refElm, vnodes, startIdx, endIdx, isFirst) {
   if (startIdx > -1) {
     if (startIdx <= endIdx) {
       let flag = document.createDocumentFragment()
+      flag._parentElement = parentElm
+      flag._parentNode = parentElm
       for (; startIdx <= endIdx; ++startIdx) {
         // createElm(vnodes[startIdx], flag, refElm, isFirst)
         createElmOnly(vnodes[startIdx], flag, refElm, isFirst)
@@ -295,6 +297,7 @@ function editProp (a, b, isFCUpdate = false) {
   return true
 }
 function setProp (keys, attrs, props, elm) {
+  let closetsComs = null
   if (keys in attrs) {
     if (isFunc(props)) {
       // 优化ref 被输出的情况
@@ -306,19 +309,23 @@ function setProp (keys, attrs, props, elm) {
     } else {
       if (keys !== 'ref') {
         elm.setAttribute(attrs[keys], props)
+      } else {
+        // 处理ref
+        // closetsComs = getComponentByElm(elm)
+        // closetsComs.$refs[props] = elm.isComponent ? closetsComs : elm
       }
     }
   } else if (!isFunc(props)) {
     // 不要设置无用的属性
     // elm.setAttribute(keys, props)
   }
-  if (isFunc(props)) return
+  // if (isFunc(props)) return
   if (elm.isComponent) {
-    let elmCom = getComponentByElm(elm)
-    if (elmCom[keys] !== props) {
-      elmCom[keys] = props
+    closetsComs = closetsComs || getComponentByElm(elm)
+    if (closetsComs[keys] !== props) {
+      closetsComs[keys] = props
     }
-    elmCom = null
+    closetsComs = null
   }
 }
 /**

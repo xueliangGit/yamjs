@@ -2,6 +2,7 @@
 import updateElement from '../diff'
 
 import { creatMutationObserser, proxy, setAttributes, _extends } from '../utils/index'
+import HandleError from './handlerError'
 // $vdom Symbol
 var $vdom = Symbol('$vdom')
 // $componentData Symbol
@@ -98,7 +99,7 @@ function getFram () {
   try {
     this[$vdom] = this.render()
   } catch (e) {
-    console.log('e', e)
+    HandleError(e, 'getFram')
   }
   updateElement(this.$dom, this[$vdom])
   return this.$dom
