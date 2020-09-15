@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-09-14 16:38:06
+ * @LastEditTime: 2020-09-14 17:09:44
  */
 // import './polyfill.js'
 import init, { initConfig } from './init/index'
@@ -228,7 +228,7 @@ export function Component (Config) {
       try {
         window.customElements.define(tagName, BaseCustomElements(Target, props))
       } catch (e) {
-        HandleError(e, tagName)
+        !isDev && HandleError(e, tagName)
         // console.log('e' + tagName, e)
       }
     } else {

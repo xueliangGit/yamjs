@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-09-14 15:16:53
+ * @LastEditTime: 2020-09-15 16:53:12
  */
 // import { _createElementJson } from '../vDom/createElement'
 import updateElement from '../diff/index'
@@ -219,8 +219,6 @@ function initStyle () {
           // body
           document.head.appendChild(style)
         } else {
-          // div inner
-          // parent.insertBefore(style, parent.lastChild)
           nodeOps.insertBefore(parentS.__shadowRoot, style, parentS.$dom)
         }
         // nameStyle
@@ -244,9 +242,7 @@ function bindElmentEvent (context) {
     context.elm.emit = (...arg) => context.emit(...arg)
     // 调用父组件的方法
     context.elm.emitProp = (...arg) => context.emitProp(...arg)
-    // context.elm.emit = (fnName) => {
   }
-  // delFlag(context, '_canBeCalledExt')
 }
 // 删除标示
 // eslint-disable-next-line no-unused-vars
@@ -281,27 +277,14 @@ function setRootName (element, tagName, context) {
 }
 // 获取dom片段
 function getFram (isNeedDiv = false) {
-  // let dom = null
-  // if (isNeedDiv) {
-  //   dom = document.createDocumentFragment() || document.createElement('div')
-  // } else {
   let dom = document.createDocumentFragment() || document.createElement('div')
-  // }
-  // dom.setAttribute('dom', this._cid)
-  // try { 移除trycatch
   this[$vdomSymbol] = getRenderData(this)// .render()
-  // console.log(this[$vdomSymbol])
   this[$vdomSymbol]._rootId = this._rootId
-  // } catch (e) {
-  //   // log('e', e)
-  // }
-  // dom._childrenOri = this._childrenOri
   dom._parentElement = this.__shadowRoot
   dom._parentNode = this.__shadowRoot
   updateElement(dom, this[$vdomSymbol])
   dom._eid = this._eid
   dom.lastChild._eid = this._eid
-  // dom.lastChild.setAttribute(getDomStyleFlag(this._cid, true), '')
   dom.lastChild.setAttribute(getDomStyleFlag(this._cid + '-root', true), '')
   return dom
 }
@@ -310,16 +293,12 @@ function update () {
   // 优化 update 默认在¥updated内方法 只是数据更新不是dom更新
   if (this.__stopUpdata) return
   lifeCycle.beforeUpdate(this)
-  // setTimeout(() => {
-  // console.log('setTimeout', this._tagName, this)
   if (this[$vdomSymbol]) {
-    // console.time('------$update')
     let newNode = getRenderData(this)// this.render()
     let oldNode = this[$vdomSymbol]
     this[$vdomSymbol] = newNode
     this[$vdomSymbol]._rootId = this._rootId
     updateElement(this.$dom, newNode, oldNode)
-    // console.timeEnd('------$update')
     if (isFalse(lifeCycle.updated(this))) {
       this.__stopUpdata = true
       setTimeout(() => {
@@ -327,7 +306,6 @@ function update () {
       }, 500)
     }
   }
-  // })
 }
 
 // 处理  已经初始化的组件，再次初始化问题 -- vue 非编译版本出现问题

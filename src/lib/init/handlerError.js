@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2020-09-14 16:08:33
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-09-14 16:44:37
+ * @LastEditTime: 2020-09-15 16:39:58
  */
 
 import { isFunc } from "../utils/index"

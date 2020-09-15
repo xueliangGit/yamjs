@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-09-14 16:43:30
+ * @LastEditTime: 2020-09-15 16:50:36
  */
 import { _createElementJson } from '../vDom/createElement'
 import { forEach, isFunc, isStr } from '../utils/index'
@@ -22,12 +22,12 @@ window.React = window.React || { createElement: _createElementJson }
 export function Mix () {
   return function (Target) {
     Target.__createElement = _createElementJson
-    Target.setConfig = (config = {}) => {
-      addPrototype(Target, 'isDev').addAuto('isDev', function (context) {
-        context.env = config.isDev ? 'development' : 'pro'
-      })
-      Target.isDev = !!config.isDev
-    }
+    // Target.setConfig = (config = {}) => {
+    //   // addPrototype(Target, 'isDev').addAuto('isDev', function (context) {
+    //   //   context.env = config.isDev ? 'development' : 'pro'
+    //   // })
+    //   // Target.isDev = !!config.isDev
+    // }
     Target.use = (Config = {}) => {
       /**
        * obj={
@@ -37,13 +37,13 @@ export function Mix () {
        *  */
       let { name, needs } = Config
       if (!name) {
-        console.warn(`
+        isDev && console.warn(`
             必须填写name
           `)
         return false
       }
       if (!isFunc(Config.install)) {
-        console.warn(`
+        isDev && console.warn(`
             install 必须是个方法
           `)
         return false

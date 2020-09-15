@@ -1,8 +1,8 @@
 /*
- * Yam.js v0.6.4
+ * Yam.js v0.6.5
  * (c) 2019-2020 xuxueliang
  * Released under the MIT License.
- * lastTime:Mon Sep 14 2020 16:44:42 GMT+0800 (GMT+08:00).
+ * lastTime:Tue Sep 15 2020 16:53:34 GMT+0800 (GMT+08:00).
  */
 function createCommonjsModule(fn, module) {
 	return module = { exports: {} }, fn(module, module.exports), module.exports;
@@ -670,7 +670,7 @@ var supporShadow = !!HTMLElement.prototype.attachShadow;
  * @Author: xuxueliang
  * @Date: 2020-09-14 16:08:33
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-09-14 16:44:37
+ * @LastEditTime: 2020-09-15 16:39:58
  */
 
 var context = [];
@@ -2836,8 +2836,6 @@ function initStyle() {
           // body
           document.head.appendChild(style);
         } else {
-          // div inner
-          // parent.insertBefore(style, parent.lastChild)
           nodeOps.insertBefore(parentS.__shadowRoot, style, parentS.$dom);
         } // nameStyle
 
@@ -2870,10 +2868,8 @@ function bindElmentEvent(context) {
 
     context.elm.emitProp = function () {
       return context.emitProp.apply(context, arguments);
-    }; // context.elm.emit = (fnName) => {
-
-  } // delFlag(context, '_canBeCalledExt')
-
+    };
+  }
 } // 删除标示
 
 
@@ -2909,28 +2905,15 @@ function setRootName(element, tagName, context) {
 
 
 function getFram() {
-  // let dom = null
-  // if (isNeedDiv) {
-  //   dom = document.createDocumentFragment() || document.createElement('div')
-  // } else {
-  var dom = document.createDocumentFragment() || document.createElement('div'); // }
-  // dom.setAttribute('dom', this._cid)
-  // try { 移除trycatch
-
+  var dom = document.createDocumentFragment() || document.createElement('div');
   this[$vdomSymbol] = getRenderData(this); // .render()
-  // console.log(this[$vdomSymbol])
 
-  this[$vdomSymbol]._rootId = this._rootId; // } catch (e) {
-  //   // log('e', e)
-  // }
-  // dom._childrenOri = this._childrenOri
-
+  this[$vdomSymbol]._rootId = this._rootId;
   dom._parentElement = this.__shadowRoot;
   dom._parentNode = this.__shadowRoot;
   patch(dom, this[$vdomSymbol]);
   dom._eid = this._eid;
-  dom.lastChild._eid = this._eid; // dom.lastChild.setAttribute(getDomStyleFlag(this._cid, true), '')
-
+  dom.lastChild._eid = this._eid;
   dom.lastChild.setAttribute(getDomStyleFlag(this._cid + '-root', true), '');
   return dom;
 } // 更新dom
@@ -2941,17 +2924,15 @@ function update() {
 
   // 优化 update 默认在¥updated内方法 只是数据更新不是dom更新
   if (this.__stopUpdata) { return; }
-  lifeCycle.beforeUpdate(this); // setTimeout(() => {
-  // console.log('setTimeout', this._tagName, this)
+  lifeCycle.beforeUpdate(this);
 
   if (this[$vdomSymbol]) {
-    // console.time('------$update')
     var newNode = getRenderData(this); // this.render()
 
     var oldNode = this[$vdomSymbol];
     this[$vdomSymbol] = newNode;
     this[$vdomSymbol]._rootId = this._rootId;
-    patch(this.$dom, newNode, oldNode); // console.timeEnd('------$update')
+    patch(this.$dom, newNode, oldNode);
 
     if (isFalse(lifeCycle.updated(this))) {
       this.__stopUpdata = true;
@@ -2959,8 +2940,7 @@ function update() {
         _this4.__stopUpdata = false;
       }, 500);
     }
-  } // })
-
+  }
 } // 处理  已经初始化的组件，再次初始化问题 -- vue 非编译版本出现问题
 // function delChildrenOriThatFromYam (child, context) {
 //   if (!child) return child
@@ -3002,7 +2982,7 @@ function initConfig() {
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-09-14 16:43:30
+ * @LastEditTime: 2020-09-15 16:50:36
  */
 var lifeCycleArray$1 = Object.keys(lifeCycle).map(function (v) {
   return '$' + v;
@@ -3019,15 +2999,12 @@ window.React = window.React || {
 };
 function Mix() {
   return function (Target) {
-    Target.__createElement = _createElementJson;
-
-    Target.setConfig = function () {
-      var config = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-      addPrototype(Target, 'isDev').addAuto('isDev', function (context) {
-        context.env = config.isDev ? 'development' : 'pro';
-      });
-      Target.isDev = !!config.isDev;
-    };
+    Target.__createElement = _createElementJson; // Target.setConfig = (config = {}) => {
+    //   // addPrototype(Target, 'isDev').addAuto('isDev', function (context) {
+    //   //   context.env = config.isDev ? 'development' : 'pro'
+    //   // })
+    //   // Target.isDev = !!config.isDev
+    // }
 
     Target.use = function () {
       var Config = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
@@ -3042,12 +3019,12 @@ function Mix() {
           needs = Config.needs;
 
       if (!name) {
-        console.warn("\n            \u5FC5\u987B\u586B\u5199name\n          ");
+        isDev && console.warn("\n            \u5FC5\u987B\u586B\u5199name\n          ");
         return false;
       }
 
       if (!isFunc(Config.install)) {
-        console.warn("\n            install \u5FC5\u987B\u662F\u4E2A\u65B9\u6CD5\n          ");
+        isDev && console.warn("\n            install \u5FC5\u987B\u662F\u4E2A\u65B9\u6CD5\n          ");
         return false;
       }
 
@@ -3657,7 +3634,7 @@ function initHTMLEvent() {
 
 }
 
-var version = "0.6.4";
+var version = "0.6.5";
 
 var _dec, _class;
 // var isIE = userAgent.indexOf('compatible') > -1 && userAgent.indexOf('MSIE') > -1 // 判断是否IE<11浏览器
@@ -3920,7 +3897,7 @@ function Component(Config) {
       try {
         window.customElements.define(tagName, getCustom(Target, props));
       } catch (e) {
-        HandleError$1(e, tagName); // console.log('e' + tagName, e)
+        !isDev && HandleError$1(e, tagName); // console.log('e' + tagName, e)
       }
     } else {
       Target.customElements = false; // if (!supportMutationObserver) {
