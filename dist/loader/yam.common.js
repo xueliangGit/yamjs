@@ -1,8 +1,8 @@
 /*
- * Yam.js v0.6.5
+ * Yam.js v0.6.7
  * (c) 2019-2020 xuxueliang
  * Released under the MIT License.
- * lastTime:Tue Sep 15 2020 16:53:34 GMT+0800 (GMT+08:00).
+ * lastTime:Thu Sep 24 2020 17:10:09 GMT+0800 (GMT+08:00).
  */
 'use strict';
 
@@ -918,6 +918,17 @@ var Element = /*#__PURE__*/function () {
         // 自定义函数组件
         Object.assign(props, props.$props);
         delete props.$props;
+      }
+
+      if (props) {
+        if (Array.isArray(props)) {
+          childNodes = props;
+          props = {};
+        } else if (typeof props === 'string') {
+          isText = true;
+          childNodes = props;
+          props = {};
+        }
       }
 
       if (isText) {
@@ -2860,7 +2871,7 @@ function bindElmentEvent(context) {
 
 
 function getRenderData(context) {
-  var element = context.render();
+  var element = context.render(_createElementJson);
   setRootName(element, context._tagName, context);
   return element;
 }
@@ -3620,7 +3631,7 @@ function initHTMLEvent() {
 
 }
 
-var version = "0.6.5";
+var version = "0.6.7";
 
 var _dec, _class;
 // var isIE = userAgent.indexOf('compatible') > -1 && userAgent.indexOf('MSIE') > -1 // 判断是否IE<11浏览器
@@ -3827,7 +3838,7 @@ function Component(Config) {
     var styleStr = Yam._gSS ? Yam._gSS(Target._cid, style) : style;
     var styleArray = Array.isArray(styleStr) && !styleStr.i ? styleStr : [styleStr];
     Target._style = styleArray.map(function (v) {
-      return v.toString();
+      return v ? v.toString() : '';
     }).join('\r');
 
     Target.prototype._config = function () {

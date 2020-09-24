@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-09-14 17:09:44
+ * @LastEditTime: 2020-09-15 17:07:38
  */
 // import './polyfill.js'
 import init, { initConfig } from './init/index'
@@ -181,7 +181,7 @@ export function Component (Config) {
     Target._shadow = supporShadow ? !!shadow : false
     let styleStr = (Yam._gSS ? Yam._gSS(Target._cid, style) : style)
     let styleArray = Array.isArray(styleStr) && !styleStr.i ? styleStr : [styleStr]
-    Target._style = styleArray.map(v => v.toString()).join('\r')
+    Target._style = styleArray.map(v => v ? v.toString() : '').join('\r')
     Target.prototype._config = function () {
       this.$config = Config
       this.isCustomElements = isCustomElements

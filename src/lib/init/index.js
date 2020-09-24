@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-09-15 16:53:12
+ * @LastEditTime: 2020-09-15 20:17:07
  */
 // import { _createElementJson } from '../vDom/createElement'
 import updateElement from '../diff/index'
@@ -18,6 +18,7 @@ import ChildComponentsManage from './childComponentsManage'
 import { $vdomSymbol, $componentDataSymbol, $closestParentSymbol, $slotSymbol } from '../symbol/index'
 import { isDev } from '../env'
 import { getMixinConfig } from './_mixin'
+import { _createElementJson } from '../vDom/createElement'
 // 初始化 init
 let componenesSize = {}
 let styleIsInstalled = {}
@@ -254,7 +255,7 @@ function delFlag (context, key) {
 }
 //
 function getRenderData (context) {
-  let element = context.render()
+  let element = context.render(_createElementJson)
   setRootName(element, context._tagName, context)
   return element
 }

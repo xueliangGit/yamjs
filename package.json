@@ -1,7 +1,7 @@
 {
   "name": "yamjs",
-  "version": "0.6.6",
-  "versionBate": "0.6.6",
+  "version": "0.6.7",
+  "versionBate": "0.6.7",
   "description": "yamjs is a basecomponents for html,it can make your can write a components and run any where such as html,vue,react eg.",
   "main": "./dist/yam.common.min.js",
   "module": "./dist/yam.esm.min.js",
@@ -61,6 +61,7 @@
     "extract-text-webpack-plugin": "^4.0.0-beta.0",
     "friendly-errors-webpack-plugin": "^1.7.0",
     "fs-extra": "^8.1.0",
+    "glob": "^7.1.6",
     "html-webpack-plugin": "^3.2.0",
     "mini-css-extract-plugin": "^0.5.0",
     "node-notifier": "^5.4.3",

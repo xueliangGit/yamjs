@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-09-13 00:37:38
+ * @LastEditTime: 2020-09-15 20:55:27
  */
 /** @jsx createElement */
 import { HTML_TAGS, GLOBAL_ATTRIBUTES, EVENT_HANDLERS } from './creatConfig'
@@ -45,6 +45,16 @@ class Element {
       // 自定义函数组件
       Object.assign(props, props.$props)
       delete props.$props
+    }
+    if (props) {
+      if (Array.isArray(props)) {
+        childNodes = props
+        props = {}
+      } else if (typeof props === 'string') {
+        isText = true
+        childNodes = props
+        props = {}
+      }
     }
     if (isText) {
       this.tagName = tagName

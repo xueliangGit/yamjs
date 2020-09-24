@@ -2,14 +2,15 @@
  * @Author: xuxueliang
  * @Date: 2019-08-13 19:10:43
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-02-29 20:39:39
+ * @LastEditTime: 2020-09-15 18:24:33
  */
 const fs = require('fs-extra')
 const path = require('path')
 const zlib = require('zlib')
 const rollup = require('rollup')
 const terser = require('terser')
-
+const babel = require('@babel/core')
+const glob = require('glob')
 if (!fs.existsSync('dist')) {
   fs.mkdirSync('dist')
 }
@@ -47,6 +48,14 @@ function build (builds) {
             path.join(__dirname, '../src/lib/plugins'),
             path.join(__dirname, '../dist/plugins')
           )
+          glob(path.join(__dirname, '../dist/plugins') + '/**/*.js', function (er, files) {
+            files.forEach(v => {
+              babel.transformFileAsync(v).then(result => {
+                fs.writeFile(v, result.code)
+              });
+            })
+          })
+
         }
       })
       .catch(logError)
