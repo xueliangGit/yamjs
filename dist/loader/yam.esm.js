@@ -1,8 +1,8 @@
 /*
- * Yam.js v0.6.7
+ * Yam.js v0.6.9
  * (c) 2019-2020 xuxueliang
  * Released under the MIT License.
- * lastTime:Wed Oct 14 2020 17:22:03 GMT+0800 (GMT+08:00).
+ * lastTime:Wed Oct 14 2020 17:48:48 GMT+0800 (GMT+08:00).
  */
 function createCommonjsModule(fn, module) {
 	return module = { exports: {} }, fn(module, module.exports), module.exports;
@@ -3666,7 +3666,7 @@ function initHTMLEvent() {
 
 }
 
-var version = "0.6.7";
+var version = "0.6.9";
 
 var _dec, _class;
 // var isIE = userAgent.indexOf('compatible') > -1 && userAgent.indexOf('MSIE') > -1 // 判断是否IE<11浏览器
