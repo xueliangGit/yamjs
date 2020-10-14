@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2020-06-22 17:20:53
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-09-08 10:37:35
+ * @LastEditTime: 2020-10-14 18:56:56
  */
 import Yam, { Component } from 'yamjs'
 import store from '../store2'
@@ -45,8 +45,9 @@ class App extends Yam {
     img.onload = () => {
       setTimeout(() => {
         this.isReady = true
-        console.log(this)
-      }, 5000)
+        console.log(this.$config = false)
+        console.log(this.$config)
+      }, 1000)
     }
     img.onerror = () => {
       if (!img._isTry) {

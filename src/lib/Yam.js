@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-10-14 16:32:34
+ * @LastEditTime: 2020-10-14 19:44:52
  */
 // import './polyfill.js'
 import init, { initConfig } from './init/index'
@@ -11,7 +11,7 @@ import lifeCycle from './init/lifeCycle' // , { addLifeCycle }
 import { Mix } from './init/mix'
 import _mixin from './init/_mixin'
 // getStyleStr 使用loader后使用这个了
-import { guid2, toCamelCase, forEach, getCid, isFunc, isStr } from './utils/index' // supportMutationObserver
+import { guid2, toCamelCase, forEach, getCid, isFunc, isStr, difineStatic } from './utils/index' // supportMutationObserver
 import { getCallFnName } from './utils/componentUtil' //, getClosetParentCom
 import cacheLib from './utils/cacheLib'
 import BaseCustomElements from './BaseCustomElements'
@@ -184,12 +184,13 @@ export function Component (Config) {
     let styleArray = Array.isArray(styleStr) && !styleStr.i ? styleStr : [styleStr]
     Target._style = styleArray.map(v => v ? v.toString() : '').join('\r')
     Target.prototype._config = function () {
-      this.$config = Config
+      // this.$config = Config
       this.isCustomElements = isCustomElements
       this._tagName = tagName
       this._name = toCamelCase(tagName)
       this._shadow = Target._shadow
-      this._props = props || []
+      this._props = Config.props = props || []
+      difineStatic(this, '$config', Config)
       this._canBeCalledExt =
         typeof canBeCalledExt === 'boolean' ? canBeCalledExt : false
       this._cid = Target._cid

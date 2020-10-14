@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-10-14 16:22:57
+ * @LastEditTime: 2020-10-14 19:47:09
  */
 import nodeOps from '../utils/nodeOps'
 import { initSolt, isSlotTag } from '../helpers/slotHelper'
@@ -283,6 +283,7 @@ function editProp (a, b, isFCUpdate = false) {
 }
 function setProp (keys, attrs, props, elm) {
   let closetsComs = null
+  let isToSetProp = false
   if (keys in attrs) {
     if (isFunc(props)) {
       // 优化ref 被输出的情况
@@ -302,7 +303,7 @@ function setProp (keys, attrs, props, elm) {
     }
   } else if (!isFunc(props)) {
     // 不要设置无用的属性
-    // elm.setAttribute(keys, props)
+    isToSetProp = true
   }
   // if (isFunc(props)) return
   if (elm.isComponent) {
@@ -310,8 +311,12 @@ function setProp (keys, attrs, props, elm) {
     if (closetsComs[keys] !== props) {
       closetsComs[keys] = props
     }
-    closetsComs = null
+    console.log(closetsComs)
   }
+  if (isToSetProp && (!closetsComs || closetsComs.$config.props.indexOf(keys) < 0)) {
+    elm.setAttribute(keys, props)
+  }
+  closetsComs = null
 }
 /**
 * 比较两个节点是否同为 input 标签且 type 相同

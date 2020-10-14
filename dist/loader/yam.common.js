@@ -1,8 +1,8 @@
 /*
- * Yam.js v0.6.10
+ * Yam.js v0.6.11
  * (c) 2019-2020 xuxueliang
  * Released under the MIT License.
- * lastTime:Wed Oct 14 2020 17:52:57 GMT+0800 (GMT+08:00).
+ * lastTime:Wed Oct 14 2020 19:48:05 GMT+0800 (GMT+08:00).
  */
 'use strict';
 
@@ -271,6 +271,32 @@ var initHandleError = function initHandleError(fn) {
   isFunc(fn) && context.push(fn);
 };
 
+/**
+ * [def 定义对象属性]
+ * @param  {Object}  obj        对象
+ * @param  {String}  key        键值
+ * @param  {*}       val        属性值
+ * @param  {Boolean} enumerable 是否可被枚举
+ */
+
+function def(obj, key, val, enumerable) {
+  var other = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : {};
+  Object.defineProperty(obj, key, Object.assign({
+    value: val,
+    enumerable: !!enumerable,
+    configurable: true,
+    writable: true
+  }, other));
+}
+
+function difineStatic(obj, key, val) {
+  def(obj, key, val, false, {
+    configurable: false,
+    writable: false
+  });
+}
+
+
 var MutationObserver = global.MutationObserver || global.WebKitMutationObserver || global.MozMutationObserver; // 浏览器兼容
 
 function creatMutationObserser(el, callFn) {
@@ -336,18 +362,23 @@ function isFalse(v) {
 function forEach(array) {
   var v = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
   var get = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-  var getArr = []; // eslint-disable-next-line no-cond-assign
 
-  for (var i = 0, item; item = array[i]; i++) {
-    var runResult = v(item, i);
-    get && getArr.push(runResult);
+  if (array && array.length) {
+    var getArr = []; // eslint-disable-next-line no-cond-assign
 
-    if (typeof runResult === 'boolean' && !runResult && !get) {
-      return get ? getArr : null;
+    for (var i = 0, item; item = array[i]; i++) {
+      var runResult = v(item, i);
+      get && getArr.push(runResult);
+
+      if (typeof runResult === 'boolean' && !runResult && !get) {
+        return get ? getArr : null;
+      }
     }
+
+    return get ? getArr : null;
   }
 
-  return get ? getArr : null;
+  return null;
 }
 
 var toCamelCase = function toCamelCase(str) {
@@ -1098,11 +1129,8 @@ Array.prototype.flat = Array.prototype.flat || function () {
   return this.reduce(function (acc, val) {
     return Array.isArray(val) ? acc.concat(val.flat()) : acc.concat(val);
   }, []);
-};
+}; // let i = 0
 
-setTimeout(function () {
-  console.log(nodeOps);
-}, 5000); // let i = 0
 
 var Element = /*#__PURE__*/function () {
   function Element(tagName) {
@@ -1390,6 +1418,16 @@ var Element = /*#__PURE__*/function () {
             }
           } else if (prop.indexOf(preFixCom) === 0) {
             el.setAttribute(prop, '');
+          } else if (prop !== 'style') {
+            var comps;
+
+            if (el.isComponent) {
+              comps = getComponentByElm(el);
+            }
+
+            if (!comps || comps.$config.props.indexOf(prop) < 0) {
+              el.setAttribute(prop, _this.props[prop]);
+            }
           }
         }); // 兼容 style 是字符串形式
 
@@ -2041,6 +2079,7 @@ function editProp(a, b) {
 
 function setProp(keys, attrs, props, elm) {
   var closetsComs = null;
+  var isToSetProp = false;
 
   if (keys in attrs) {
     if (isFunc(props)) {
@@ -2053,9 +2092,10 @@ function setProp(keys, attrs, props, elm) {
         elm.setAttribute(attrs[keys], props);
       }
     }
-  } // 不要设置无用的属性
-  // elm.setAttribute(keys, props)
-  // if (isFunc(props)) return
+  } else if (!isFunc(props)) {
+    // 不要设置无用的属性
+    isToSetProp = true;
+  } // if (isFunc(props)) return
 
 
   if (elm.isComponent) {
@@ -2065,8 +2105,14 @@ function setProp(keys, attrs, props, elm) {
       closetsComs[keys] = props;
     }
 
-    closetsComs = null;
+    console.log(closetsComs);
   }
+
+  if (isToSetProp && (!closetsComs || closetsComs.$config.props.indexOf(keys) < 0)) {
+    elm.setAttribute(keys, props);
+  }
+
+  closetsComs = null;
 }
 /**
 * 比较两个节点是否同为 input 标签且 type 相同
@@ -3651,7 +3697,7 @@ function initHTMLEvent() {
 
 }
 
-var version = "0.6.10";
+var version = "0.6.11";
 
 var _dec, _class;
 // var isIE = userAgent.indexOf('compatible') > -1 && userAgent.indexOf('MSIE') > -1 // 判断是否IE<11浏览器
@@ -3864,12 +3910,13 @@ function Component(Config) {
     Target.prototype._config = function () {
       var _this2 = this;
 
-      this.$config = Config;
+      // this.$config = Config
       this.isCustomElements = isCustomElements;
       this._tagName = tagName;
       this._name = toCamelCase(tagName);
       this._shadow = Target._shadow;
-      this._props = props || [];
+      this._props = Config.props = props || [];
+      difineStatic(this, '$config', Config);
       this._canBeCalledExt = typeof canBeCalledExt === 'boolean' ? canBeCalledExt : false;
       this._cid = Target._cid;
       this._style = Target._style; // getStyleStr(this._cid, style) 使用了loader 后不需要这个了

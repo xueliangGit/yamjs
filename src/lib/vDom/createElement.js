@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-10-14 16:50:29
+ * @LastEditTime: 2020-10-14 19:46:41
  */
 import { HTML_TAGS, GLOBAL_ATTRIBUTES, EVENT_HANDLERS } from './creatConfig'
 import nodeOps from '../utils/nodeOps'
@@ -17,9 +17,6 @@ import { preFixCom, isFunctionComponent } from '../Conf'
 Array.prototype.flat = Array.prototype.flat || function () {
   return this.reduce((acc, val) => Array.isArray(val) ? acc.concat(val.flat()) : acc.concat(val), [])
 }
-setTimeout(() => {
-  console.log(nodeOps)
-}, 5000)
 // let i = 0
 class Element {
   constructor(tagName, props = {}, childNodes, _root, isText) {
@@ -272,6 +269,14 @@ class Element {
           }
         } else if (prop.indexOf(preFixCom) === 0) {
           el.setAttribute(prop, '')
+        } else if (prop !== 'style') {
+          let comps
+          if (el.isComponent) {
+            comps = getComponentByElm(el)
+          }
+          if ((!comps || comps.$config.props.indexOf(prop) < 0)) {
+            el.setAttribute(prop, this.props[prop])
+          }
         }
       })
       // 兼容 style 是字符串形式

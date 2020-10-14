@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-06-25 13:56:05
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-10-14 16:50:18
+ * @LastEditTime: 2020-10-14 18:54:03
  */
 import { global as window } from './global'
 import { isDev } from '../env'
@@ -15,15 +15,17 @@ import HandleError from '../init/handlerError'
  * @param  {*}       val        属性值
  * @param  {Boolean} enumerable 是否可被枚举
  */
-function def (obj, key, val, enumerable) {
-  Object.defineProperty(obj, key, {
+function def (obj, key, val, enumerable, other = {}) {
+  Object.defineProperty(obj, key, Object.assign({
     value: val,
     enumerable: !!enumerable,
     configurable: true,
     writable: true
-  })
+  }, other))
 }
-
+function difineStatic (obj, key, val) {
+  def(obj, key, val, false, { configurable: false, writable: false })
+}
 /**
  * [protoAugment  支持 __proto__ , 直接将对象的__proto__指向 src 这一组方法]
  * @param  {Object} target [目标对象]
@@ -199,16 +201,19 @@ function isFalse (v) {
   return v === false
 }
 function forEach (array, v = () => { }, get = false) {
-  let getArr = []
-  // eslint-disable-next-line no-cond-assign
-  for (let i = 0, item; item = array[i]; i++) {
-    let runResult = v(item, i)
-    get && getArr.push(runResult)
-    if (typeof runResult === 'boolean' && !runResult && !get) {
-      return get ? getArr : null
+  if (array && array.length) {
+    let getArr = []
+    // eslint-disable-next-line no-cond-assign
+    for (let i = 0, item; item = array[i]; i++) {
+      let runResult = v(item, i)
+      get && getArr.push(runResult)
+      if (typeof runResult === 'boolean' && !runResult && !get) {
+        return get ? getArr : null
+      }
     }
+    return get ? getArr : null
   }
-  return get ? getArr : null
+  return null
 }
 function map (array, v = () => { }) {
   return forEach(array, v, true)
@@ -298,6 +303,6 @@ export {
   info,
   requestIdleCallback,
   requestAnimationFrame,
-  getDomStyleFlag, getCid
+  getDomStyleFlag, getCid, difineStatic
   // , supportMutationObserver
 }
