@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2020-03-29 17:08:56
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-10-14 17:19:54
+ * @LastEditTime: 2020-10-14 17:50:25
  */
 // import Yam from '../Yam'
 import { HTML_TAGS } from './creatConfig'
@@ -15,7 +15,6 @@ export const renderFunctionComponent = function (context, comsp) {
   context.childNodes = comsp.childNodes
 }
 export default function renderAsync (el, context, parent) {
-  debugger
   // 获取的是 ()=>import(/**/)
   try {
     let comsp = context.tagName(context.props)

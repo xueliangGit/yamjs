@@ -1,8 +1,8 @@
 /*
- * Yam.js v0.6.9
+ * Yam.js v0.6.10
  * (c) 2019-2020 xuxueliang
  * Released under the MIT License.
- * lastTime:Wed Oct 14 2020 17:48:48 GMT+0800 (GMT+08:00).
+ * lastTime:Wed Oct 14 2020 17:52:57 GMT+0800 (GMT+08:00).
  */
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
@@ -1129,7 +1129,7 @@
 	 * @Author: xuxueliang
 	 * @Date: 2020-03-29 17:08:56
 	 * @LastEditors: xuxueliang
-	 * @LastEditTime: 2020-10-14 17:19:54
+	 * @LastEditTime: 2020-10-14 17:50:25
 	 */
 	var defaultIndex = 0;
 	var renderFunctionComponent = function renderFunctionComponent(context, comsp) {
@@ -1137,8 +1137,7 @@
 	  context.childNodes = comsp.childNodes;
 	};
 	function renderAsync(el, context, parent) {
-	  debugger; // 获取的是 ()=>import(/**/)
-
+	  // 获取的是 ()=>import(/**/)
 	  try {
 	    var comsp = context.tagName(context.props);
 
@@ -3755,7 +3754,7 @@
 
 	}
 
-	var version = "0.6.9";
+	var version = "0.6.10";
 
 	var _dec, _class;
 	// var isIE = userAgent.indexOf('compatible') > -1 && userAgent.indexOf('MSIE') > -1 // 判断是否IE<11浏览器
