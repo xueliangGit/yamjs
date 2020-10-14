@@ -2,20 +2,15 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-09-14 11:34:52
+ * @LastEditTime: 2020-10-14 16:22:57
  */
 import nodeOps from '../utils/nodeOps'
 import { initSolt, isSlotTag } from '../helpers/slotHelper'
-// import { renderElement } from '../vDom/createElement'
-//
 import { isDef, requestIdleCallback, isFunc, isStr, isUndef } from '../utils/index'
 import { getComponentByElm } from '../utils/componentUtil'
 import taskLine from '../utils/taskLine'
 import { renderFunctionComponent } from '../vDom/renderAsync'
 import { isFunctionComponent } from '../Conf'
-
-// import { $ComponentSymbol } from '../symbol/index'
-// import _ from 'lodash'
 /**
 * 核心patch算法，比较新旧node树的差异
 */
@@ -54,19 +49,9 @@ function insert (parent, elm, ref, isFirst) {
     if (ref) {
       if (ref.parentNode === parent) {
         nodeOps.insertBefore(parent, elm, ref, !isFirst)
-        // if (parent.nodeType === 11) {
-        //   nodeOps.insertBefore(parent, elm, ref, !isFirst)
-        // } else {
-        //   taskLine.addMicTask(() => { nodeOps.insertBefore(parent, elm, ref, !isFirst) })
-        // }
       }
     } else {
       nodeOps.appendChild(parent, elm, !isFirst)
-      // if (parent.nodeType === 11) {
-      // nodeOps.appendChild(parent, elm, !isFirst)
-      // } else {
-      // taskLine.addMicTask(() => { nodeOps.appendChild(parent, elm, !isFirst) })
-      // }
     }
   }
 }

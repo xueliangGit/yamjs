@@ -2,11 +2,12 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-09-14 16:38:55
+ * @LastEditTime: 2020-10-14 15:19:31
  */
 import { $ComponentSymbol, $vdomSymbol, $closestParentSymbol } from '../symbol/index'
 import { forEach, isFunc } from '../utils/index'
 import { syncSlotComponentsState } from '../helpers/slotHelper'
+import HandleError from './handlerError'
 // import { runOnReadyElmFn } from '../utils/componentUtil'
 
 let lifeCycleCallFn = {}

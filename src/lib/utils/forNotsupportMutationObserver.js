@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2020-02-29 16:15:59
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-09-09 17:44:40
+ * @LastEditTime: 2020-10-14 16:35:03
  */
 /*
 * 针对不支持MutationObserver  做法，添加 appendYamNode 方法
@@ -11,7 +11,8 @@
 import { setAttributes } from './index' // supportMutationObserver
 import { getComponentByElm } from './componentUtil'
 import { canUseCustomElements } from '../Conf'
-import { getSlotComponentsIsOrInstallState, isSlotComponentsAndRender } from '../helpers/slotHelper'
+import { isSlotComponentsAndRender } from '../helpers/slotHelper'
+import { getSlotComponentsIsOrInstallState } from '../helpers/index.js'
 // import taskLine from './taskLine' // 暂不做修复
 let __localYamjsElm = {}
 export default function (k, v) {

@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-06-25 13:56:05
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-09-10 18:03:26
+ * @LastEditTime: 2020-10-14 16:48:04
  */
 // const translateTpLow = (input) => {
 //   if (!Array.isArray(input)) {
@@ -18,7 +18,7 @@
 //     }
 //   }))
 // }
-export const HTML_TAGS = {} /* {
+export const HTML_TAGS = window.HTML_TAGS = {} /* {
   a: {
     name: 'a',
     attributes: {

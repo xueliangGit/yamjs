@@ -2,12 +2,11 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-09-15 20:55:27
+ * @LastEditTime: 2020-10-14 16:50:29
  */
-/** @jsx createElement */
 import { HTML_TAGS, GLOBAL_ATTRIBUTES, EVENT_HANDLERS } from './creatConfig'
 import nodeOps from '../utils/nodeOps'
-import { forEach, toCamelCase, getCid, isFunc, isUndef, isStr } from '../utils/index'
+import { forEach, toCamelCase, getCid, isFunc, isUndef, isStr, toKebabCase } from '../utils/index'
 import { addSlot, isSlotTag } from '../helpers/slotHelper'
 import { getCallFnName, getComponentMark, setComponentForElm, getComponentByElm, getparentCom } from '../utils/componentUtil'
 import renderAsync from './renderAsync'
@@ -18,6 +17,9 @@ import { preFixCom, isFunctionComponent } from '../Conf'
 Array.prototype.flat = Array.prototype.flat || function () {
   return this.reduce((acc, val) => Array.isArray(val) ? acc.concat(val.flat()) : acc.concat(val), [])
 }
+setTimeout(() => {
+  console.log(nodeOps)
+}, 5000)
 // let i = 0
 class Element {
   constructor(tagName, props = {}, childNodes, _root, isText) {
@@ -93,7 +95,7 @@ class Element {
       // console.log(this[$slotSymbol])
 
       // 异步的组件
-      if (isFunc(this.tagName) && !this.tagName._tagName && !HTML_TAGS[this.tagName.name]) {
+      if (isFunc(this.tagName) && !this.tagName._tagName && !HTML_TAGS[this.tagName._tagName || toKebabCase(this.tagName.name)]) {
         // maybe is a async component
         this.isAsyncComponent = true
         this.asyncComponent = this.tagName

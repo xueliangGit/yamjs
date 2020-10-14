@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-09-15 17:07:38
+ * @LastEditTime: 2020-10-14 16:32:34
  */
 // import './polyfill.js'
 import init, { initConfig } from './init/index'
@@ -19,7 +19,8 @@ import { HTML_TAGS } from './vDom/creatConfig'
 import domOnLoad from './utils/domLoad'
 import forNotsupportMutationObserver from './utils/forNotsupportMutationObserver.js'
 import { version } from '../../package.json'
-import { getSlotComponentsIsOrInstallState, syncSlotComponentsState, isSlotComponentsAndRender, isRerenderSlotElment } from './helpers/slotHelper.js'
+import { syncSlotComponentsState, isSlotComponentsAndRender, isRerenderSlotElment } from './helpers/slotHelper.js'
+import { getSlotComponentsIsOrInstallState } from './helpers/index.js'
 import { isDev } from './env'
 import HandleError from './init/handlerError'
 // var userAgent = navigator.userAgent // 取得浏览器的userAgent字符串
@@ -192,7 +193,7 @@ export function Component (Config) {
       this._canBeCalledExt =
         typeof canBeCalledExt === 'boolean' ? canBeCalledExt : false
       this._cid = Target._cid
-      this._style = Target._style  // getStyleStr(this._cid, style) 使用了loader 后不需要这个了
+      this._style = Target._style // getStyleStr(this._cid, style) 使用了loader 后不需要这个了
       // plugins
       let keys = Object.keys(params)
       forEach(keys, v => {

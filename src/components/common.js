@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-09-08 16:24:25
+ * @LastEditTime: 2020-10-14 15:13:39
  */
 // import './ast'
 import Yam from '../lib/index'
@@ -11,7 +11,7 @@ import Yam from '../lib/index'
 // import reactAdapter from '../lib/plugins/reactAdapter'
 import store from './store'
 import router from './router'
-Yam.setConfig({ isDev: true })
+// Yam.setConfig({ isDev: true })
 console.log(store)
 // Yam.use(store)
 // Yam.use(animate)

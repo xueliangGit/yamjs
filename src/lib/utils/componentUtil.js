@@ -2,12 +2,12 @@
  * @Author: xuxueliang
  * @Date: 2019-06-25 13:56:05
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-09-10 18:12:01
+ * @LastEditTime: 2020-10-14 16:31:10
  */
 import { isDev } from '../env'
 
 import { $ComponentSymbol, $closestParentSymbol } from '../symbol'
-import { getSlotComponentsIsOrInstallState } from '../helpers/slotHelper'
+import { getSlotComponentsIsOrInstallState } from '../helpers/index'
 // 设置组件标示
 const syncComponentMark = (context) => {
   context.elm.isComponent = true

@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2020-09-03 12:16:01
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-09-08 19:10:16
+ * @LastEditTime: 2020-10-14 16:30:44
  */
 import { $slotSymbol } from '../symbol/index'
 import { HTML_TAGS } from '../vDom/creatConfig'
@@ -72,12 +72,12 @@ export function syncSlotComponentsState (elm, state = false) {
     elm.innerComponentInstallState = !!state
   }
 }
-export function getSlotComponentsIsOrInstallState (elm, def = true) {
-  if (elm.innerComponent) {
-    return elm.innerComponentInstallState
-  }
-  return !!def
-}
+// export function getSlotComponentsIsOrInstallState (elm, def = true) {
+//   if (elm.innerComponent) {
+//     return elm.innerComponentInstallState
+//   }
+//   return !!def
+// }
 export function isSlotComponentsAndRender (node) {
   // console.dir('isSlotComponentsAndRender')
   // console.dir(node)

@@ -2,13 +2,13 @@
  * @Author: xuxueliang
  * @Date: 2019-06-25 13:56:05
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-09-14 16:36:34
+ * @LastEditTime: 2020-10-14 17:17:41
  */
 import init from './init'
 import HandleError from './init/handlerError'
 import { Mix } from './init/mix'
 import { getStyleStr } from './utils'
-import { getCid } from './utils/index'
+import { getCid, toKebabCase } from './utils/index'
 var comps = window.comps = {}
 @Mix()
 // eslint-disable-next-line
@@ -48,6 +48,7 @@ export default Yam
 // 注解
 export function Component (Config) {
   let { tagName, shadow, style, props } = Config
+  tagName = tagName.indexOf('-') > -1 ? tagName : toKebabCase(tagName)
   return function (Target) {
     Target._tagName = tagName
     Target._shadow = !!shadow

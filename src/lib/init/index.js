@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-09-15 20:17:07
+ * @LastEditTime: 2020-10-14 16:35:15
  */
 // import { _createElementJson } from '../vDom/createElement'
 import updateElement from '../diff/index'
@@ -154,15 +154,15 @@ function _update (context) {
     update.call(context)
   })
 }
-function initRefs () {
-  this.$refs = this.$refs || {}
-  // console.log(ref.forEach)
-  forEach(this.__shadowRoot.querySelectorAll('[ref]'), (v) => {
-    // console.log('initRefs', v, this)
-    this.$refs[v.getAttribute('ref')] = v.isComponent ? getComponentByElm(v) : v
-    // v.removeAttribute('ref')
-  })
-}
+// function initRefs () {
+//   this.$refs = this.$refs || {}
+//   // console.log(ref.forEach)
+//   forEach(this.__shadowRoot.querySelectorAll('[ref]'), (v) => {
+//     // console.log('initRefs', v, this)
+//     this.$refs[v.getAttribute('ref')] = v.isComponent ? getComponentByElm(v) : v
+//     // v.removeAttribute('ref')
+//   })
+// }
 // 创建组件
 function createdComponent () {
   if (this.render) {
