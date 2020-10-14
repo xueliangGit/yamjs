@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-10-14 19:47:09
+ * @LastEditTime: 2020-10-14 19:52:14
  */
 import nodeOps from '../utils/nodeOps'
 import { initSolt, isSlotTag } from '../helpers/slotHelper'
@@ -311,7 +311,6 @@ function setProp (keys, attrs, props, elm) {
     if (closetsComs[keys] !== props) {
       closetsComs[keys] = props
     }
-    console.log(closetsComs)
   }
   if (isToSetProp && (!closetsComs || closetsComs.$config.props.indexOf(keys) < 0)) {
     elm.setAttribute(keys, props)

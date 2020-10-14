@@ -2,7 +2,7 @@
  * Yam.js v0.6.11
  * (c) 2019-2020 xuxueliang
  * Released under the MIT License.
- * lastTime:Wed Oct 14 2020 19:48:05 GMT+0800 (GMT+08:00).
+ * lastTime:Wed Oct 14 2020 19:52:57 GMT+0800 (GMT+08:00).
  */
 'use strict';
 
@@ -2205,8 +2205,6 @@ function setProp(keys, attrs, props, elm) {
     if (closetsComs[keys] !== props) {
       closetsComs[keys] = props;
     }
-
-    console.log(closetsComs);
   }
 
   if (isToSetProp && (!closetsComs || closetsComs.$config.props.indexOf(keys) < 0)) {

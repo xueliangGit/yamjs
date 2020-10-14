@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-06-25 13:56:05
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-10-14 18:54:03
+ * @LastEditTime: 2020-10-14 19:51:53
  */
 import { global as window } from './global'
 import { isDev } from '../env'

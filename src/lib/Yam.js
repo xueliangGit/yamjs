@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-10-14 19:44:52
+ * @LastEditTime: 2020-10-14 19:51:00
  */
 // import './polyfill.js'
 import init, { initConfig } from './init/index'
