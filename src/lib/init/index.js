@@ -2,7 +2,7 @@
  * @Author: xuxueliang
  * @Date: 2019-08-01 15:22:48
  * @LastEditors: xuxueliang
- * @LastEditTime: 2020-10-14 16:35:15
+ * @LastEditTime: 2020-10-21 14:27:59
  */
 // import { _createElementJson } from '../vDom/createElement'
 import updateElement from '../diff/index'
@@ -184,6 +184,7 @@ function createdComponent () {
       nodeOps.appendChild(this.elm, getFram.call(this))
       this.$dom = this.__shadowRoot.lastChild
     }
+    this.elm.setAttribute(getDomStyleFlag(this._cid + '-root', true), '')
     initStyle.call(this)
     //
   }
@@ -286,7 +287,7 @@ function getFram (isNeedDiv = false) {
   updateElement(dom, this[$vdomSymbol])
   dom._eid = this._eid
   dom.lastChild._eid = this._eid
-  dom.lastChild.setAttribute(getDomStyleFlag(this._cid + '-root', true), '')
+  // dom.lastChild.setAttribute(getDomStyleFlag(this._cid + '-root', true), '')
   return dom
 }
 // 更新dom
